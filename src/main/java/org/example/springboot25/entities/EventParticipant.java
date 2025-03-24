@@ -25,19 +25,19 @@ public class EventParticipant {
         return eventParticipantId;
     }
 
-    public @NotNull User getUserEventParticipant() {
+    public User getUserEventParticipant() {
         return userEventParticipant;
     }
 
-    public void setUserEventParticipant(@NotNull User userEventParticipant) {
+    public void setUserEventParticipant(User userEventParticipant) {
         this.userEventParticipant = userEventParticipant;
     }
 
-    public @NotNull Event getEventParticipantEvent() {
+    public Event getEventParticipantEvent() {
         return eventParticipantEvent;
     }
 
-    public void setEventParticipantEvent(@NotNull Event eventParticipantEvent) {
+    public void setEventParticipantEvent(Event eventParticipantEvent) {
         this.eventParticipantEvent = eventParticipantEvent;
     }
 

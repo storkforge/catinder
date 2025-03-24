@@ -49,43 +49,43 @@ public class User {
         return userId;
     }
 
-    public @NotBlank String getUserName() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setUserName(@NotBlank String userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public @Email @NotBlank String getUserEmail() {
+    public String getUserEmail() {
         return userEmail;
     }
 
-    public void setUserEmail(@Email @NotBlank String userEmail) {
+    public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
 
-    public @NotBlank String getUserLocation() {
+    public String getUserLocation() {
         return userLocation;
     }
 
-    public void setUserLocation(@NotBlank String userLocation) {
+    public void setUserLocation(String userLocation) {
         this.userLocation = userLocation;
     }
 
-    public @NotNull String getUserRole() {
+    public String getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(@NotNull String userRole) {
+    public void setUserRole(String userRole) {
         this.userRole = userRole;
     }
 
-    public @NotBlank String getUserAuthProvider() {
+    public String getUserAuthProvider() {
         return userAuthProvider;
     }
 
-    public void setUserAuthProvider(@NotBlank String userAuthProvider) {
+    public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
     }
 

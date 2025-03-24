@@ -32,11 +32,11 @@ public class CatPhoto {
         return catPhotoId;
     }
 
-    public @NotBlank String getCatPhotoUrl() {
+    public String getCatPhotoUrl() {
         return catPhotoUrl;
     }
 
-    public void setCatPhotoUrl(@NotBlank String catPhotoUrl) {
+    public void setCatPhotoUrl(String catPhotoUrl) {
         this.catPhotoUrl = catPhotoUrl;
     }
 
@@ -48,19 +48,19 @@ public class CatPhoto {
         this.catPhotoCaption = catPhotoCaption;
     }
 
-    public @PastOrPresent LocalDateTime getCatPhotoCreatedAt() {
+    public LocalDateTime getCatPhotoCreatedAt() {
         return catPhotoCreatedAt;
     }
 
-    public void setCatPhotoCreatedAt(@PastOrPresent LocalDateTime catPhotoCreatedAt) {
+    public void setCatPhotoCreatedAt(LocalDateTime catPhotoCreatedAt) {
         this.catPhotoCreatedAt = catPhotoCreatedAt;
     }
 
-    public @NotNull Cat getCatPhotoCat() {
+    public Cat getCatPhotoCat() {
         return catPhotoCat;
     }
 
-    public void setCatPhotoCat(@NotNull Cat catPhotoCat) {
+    public void setCatPhotoCat(Cat catPhotoCat) {
         this.catPhotoCat = catPhotoCat;
     }
 

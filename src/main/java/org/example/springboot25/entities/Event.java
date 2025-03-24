@@ -42,43 +42,43 @@ public class Event {
         return eventId;
     }
 
-    public @NotBlank String getEventName() {
+    public String getEventName() {
         return eventName;
     }
 
-    public void setEventName(@NotBlank String eventName) {
+    public void setEventName(String eventName) {
         this.eventName = eventName;
     }
 
-    public @NotBlank String getEventDescription() {
+    public String getEventDescription() {
         return eventDescription;
     }
 
-    public void setEventDescription(@NotBlank String eventDescription) {
+    public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
     }
 
-    public @NotBlank String getEventLocation() {
+    public String getEventLocation() {
         return eventLocation;
     }
 
-    public void setEventLocation(@NotBlank String eventLocation) {
+    public void setEventLocation(String eventLocation) {
         this.eventLocation = eventLocation;
     }
 
-    public @NotNull @FutureOrPresent LocalDateTime getEventDateTime() {
+    public LocalDateTime getEventDateTime() {
         return eventDateTime;
     }
 
-    public void setEventDateTime(@NotNull @FutureOrPresent LocalDateTime eventDateTime) {
+    public void setEventDateTime(LocalDateTime eventDateTime) {
         this.eventDateTime = eventDateTime;
     }
 
-    public @NotNull User getUserEventPlanner() {
+    public User getUserEventPlanner() {
         return userEventPlanner;
     }
 
-    public void setUserEventPlanner(@NotNull User userEventPlanner) {
+    public void setUserEventPlanner(User userEventPlanner) {
         this.userEventPlanner = userEventPlanner;
     }
 

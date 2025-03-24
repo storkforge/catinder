@@ -33,43 +33,43 @@ public class Recommendation {
         return recommendationId;
     }
 
-    public @NotBlank String getRecommendationCategory() {
+    public String getRecommendationCategory() {
         return recommendationCategory;
     }
 
-    public void setRecommendationCategory(@NotBlank String recommendationCategory) {
+    public void setRecommendationCategory(String recommendationCategory) {
         this.recommendationCategory = recommendationCategory;
     }
 
-    public @NotBlank String getRecommendationProductName() {
+    public String getRecommendationProductName() {
         return recommendationProductName;
     }
 
-    public void setRecommendationProductName(@NotBlank String recommendationProductName) {
+    public void setRecommendationProductName(String recommendationProductName) {
         this.recommendationProductName = recommendationProductName;
     }
 
-    public @NotBlank String getRecommendationProductDescription() {
+    public String getRecommendationProductDescription() {
         return recommendationProductDescription;
     }
 
-    public void setRecommendationProductDescription(@NotBlank String recommendationProductDescription) {
+    public void setRecommendationProductDescription(String recommendationProductDescription) {
         this.recommendationProductDescription = recommendationProductDescription;
     }
 
-    public @NotBlank String getRecommendationProductLink() {
+    public String getRecommendationProductLink() {
         return recommendationProductLink;
     }
 
-    public void setRecommendationProductLink(@NotBlank String recommendationProductLink) {
+    public void setRecommendationProductLink(String recommendationProductLink) {
         this.recommendationProductLink = recommendationProductLink;
     }
 
-    public @NotNull Cat getCatRecommendationCat() {
+    public Cat getCatRecommendationCat() {
         return catRecommendationCat;
     }
 
-    public void setCatRecommendationCat(@NotNull Cat catRecommendationCat) {
+    public void setCatRecommendationCat(Cat catRecommendationCat) {
         this.catRecommendationCat = catRecommendationCat;
     }
 

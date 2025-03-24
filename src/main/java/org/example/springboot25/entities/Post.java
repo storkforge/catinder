@@ -32,11 +32,11 @@ public class Post {
         return postId;
     }
 
-    public @NotBlank String getPostText() {
+    public String getPostText() {
         return postText;
     }
 
-    public void setPostText(@NotBlank String postText) {
+    public void setPostText(String postText) {
         this.postText = postText;
     }
 
@@ -48,19 +48,19 @@ public class Post {
         this.postImageUrl = postImageUrl;
     }
 
-    public @PastOrPresent LocalDateTime getPostCreatedAt() {
+    public LocalDateTime getPostCreatedAt() {
         return postCreatedAt;
     }
 
-    public void setPostCreatedAt(@PastOrPresent LocalDateTime postCreatedAt) {
+    public void setPostCreatedAt(LocalDateTime postCreatedAt) {
         this.postCreatedAt = postCreatedAt;
     }
 
-    public @NotNull User getUserPostAuthor() {
+    public User getUserPostAuthor() {
         return userPostAuthor;
     }
 
-    public void setUserPostAuthor(@NotNull User userPostAuthor) {
+    public void setUserPostAuthor(User userPostAuthor) {
         this.userPostAuthor = userPostAuthor;
     }
 

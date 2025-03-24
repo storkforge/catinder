@@ -47,11 +47,11 @@ public class Cat {
         return catId;
     }
 
-    public @NotBlank String getCatName() {
+    public String getCatName() {
         return catName;
     }
 
-    public void setCatName(@NotBlank String catName) {
+    public void setCatName(String catName) {
         this.catName = catName;
     }
 
@@ -79,12 +79,11 @@ public class Cat {
         this.catGender = catGender;
     }
 
-    @Min(0)
     public int getCatAge() {
         return catAge;
     }
 
-    public void setCatAge(@Min(0) int catAge) {
+    public void setCatAge(int catAge) {
         this.catAge = catAge;
     }
 
@@ -96,11 +95,11 @@ public class Cat {
         this.catPersonality = catPersonality;
     }
 
-    public @NotNull User getUserCatOwner() {
+    public User getUserCatOwner() {
         return userCatOwner;
     }
 
-    public void setUserCatOwner(@NotNull User userCatOwner) {
+    public void setUserCatOwner(User userCatOwner) {
         this.userCatOwner = userCatOwner;
     }
 

@@ -34,35 +34,35 @@ public class Reminder {
         return reminderId;
     }
 
-    public @NotBlank String getReminderType() {
+    public String getReminderType() {
         return reminderType;
     }
 
-    public void setReminderType(@NotBlank String reminderType) {
+    public void setReminderType(String reminderType) {
         this.reminderType = reminderType;
     }
 
-    public @NotBlank String getReminderInfo() {
+    public String getReminderInfo() {
         return reminderInfo;
     }
 
-    public void setReminderInfo(@NotBlank String reminderInfo) {
+    public void setReminderInfo(String reminderInfo) {
         this.reminderInfo = reminderInfo;
     }
 
-    public @NotNull @FutureOrPresent LocalDateTime getReminderDate() {
+    public LocalDateTime getReminderDate() {
         return reminderDate;
     }
 
-    public void setReminderDate(@NotNull @FutureOrPresent LocalDateTime reminderDate) {
+    public void setReminderDate(LocalDateTime reminderDate) {
         this.reminderDate = reminderDate;
     }
 
-    public @NotNull Cat getCatReminderCat() {
+    public Cat getCatReminderCat() {
         return catReminderCat;
     }
 
-    public void setCatReminderCat(@NotNull Cat catReminderCat) {
+    public void setCatReminderCat(Cat catReminderCat) {
         this.catReminderCat = catReminderCat;
     }
 
