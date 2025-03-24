@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,7 +35,7 @@ public class Event {
     private User userEventPlanner;
 
     @OneToMany(mappedBy = "eventParticipantEvent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventParticipant> eventParticipants;
+    private List<EventParticipant> eventParticipants = new ArrayList<>();
 
 
     public Long getEventId() {

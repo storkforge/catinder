@@ -5,9 +5,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -31,16 +33,16 @@ public class User {
     private String userAuthProvider;
 
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Cat> userCats;
+    private List<Cat> userCats = new ArrayList<>();
 
     @OneToMany(mappedBy = "userEventPlanner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Event> userPlannedEvents;
+    private List<Event> userPlannedEvents = new ArrayList<>();
 
     @OneToMany(mappedBy = "userEventParticipant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventParticipant> userEventParticipants;
+    private List<EventParticipant> userEventParticipants = new ArrayList<>();
 
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> userPost;
+    private List<Post> userPost = new ArrayList<>();
 
 
     public Long getUserId() {
