@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -22,10 +21,10 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
-        path: |
-          ~/.m2
-        key: ${{ runner.os }}-cache-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-cache
+          path: |
+            ~/.m2
+            key: ${{ runner.os }}-cache-${{ hashFiles('**/pom.xml') }}
+            restore-keys: ${{ runner.os }}-cache
 
       - name: Compile and run tests with Maven
         run: mvn clean verify -B --no-transfer-progress
