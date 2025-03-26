@@ -41,6 +41,29 @@
             cursor: default;
         }
 
+        .link-box {
+            background: rgba(0, 0, 0, 0.1); /* semi-transparent white */
+            border-radius: 10px; /* rounded corners */
+            padding: 20px; /* extra padding */
+            display: inline-block; /* centers the box */
+            margin-top: 20px;
+        }
+
+        .link-box ul li {
+            margin-bottom: 15px;
+        }
+
+        .link-box ul li:last-child {
+            margin-bottom: 8px;
+        }
+
+        .cat-emoji {
+            font-size: 1em;
+            text-shadow: none;
+            vertical-align: middle;
+            margin: 0 10px;
+        }
+
         ul {
             list-style: none;
             padding: 0;
@@ -50,13 +73,13 @@
 
         a {
             text-decoration: none;
-            color: #fffaef; /* Link color */
+            color: #fffaef;
             font-weight: 600;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         a:hover {
-            color: #e79a6f; /* Darken on hover */
+            color: #e79a6f;
             cursor: pointer;
             text-shadow: none;
 
@@ -69,18 +92,18 @@
 </head>
 <body>
 <header>
-    <h1>Catinder</h1>
+    <h1><span class="cat-emoji">🐱</span>Catinder<span class="cat-emoji">🐱</span></h1>
 </header>
 <p>Select a section to explore:</p>
-<ul>
-    <div>
-        <a th:href="@{/users}">Users<br></a>
-        <a th:href="@{/cats}">Cats<br></a>
-        <a th:href="@{/events}">Events<br></a>
-        <a th:href="@{/posts}">Posts<br></a>
-        <a th:href="@{/reminders}">Reminders<br></a>
-        <a th:href="@{/recommendations}">Recommendations</a>
-    </div>
-</ul>
+<div class="link-box">
+    <ul>
+        <li><a th:href="@{/users}">Users</a></li>
+        <li><a th:href="@{/cats}">Cats</a></li>
+        <li><a th:href="@{/events}">Events</a></li>
+        <li><a th:href="@{/posts}">Posts</a></li>
+        <li><a th:href="@{/reminders}">Reminders</a></li>
+        <li><a th:href="@{/recommendations}">Recommendations</a></li>
+    </ul>
+</div>
 </body>
 </html>
