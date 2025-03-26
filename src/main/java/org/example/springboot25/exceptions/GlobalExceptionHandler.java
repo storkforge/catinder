@@ -24,6 +24,13 @@ public class GlobalExceptionHandler {
         return Map.of("error", ex.getMessage());
     }
 
+    // 404 - Recommendation hittas inte
+    @ExceptionHandler(RecommendationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleRecommendationNotFound(RecommendationNotFoundException ex) {
+        return Map.of("error", ex.getMessage());
+    }
+
     // 400 – Valideringsfel (t.ex. @NotBlank)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
