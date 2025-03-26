@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -65,19 +66,26 @@ public class EventService {
     @Transactional
     public Event patchEvent(Long id, Map<String, Object> updates) {
         Event existing = eventRepository.findById(id)
-                .orElseThrow(() -> new EventNotFoundException("Event with id " + id + " not found"));
+                .orElseThrow(() -> new EventNotFoundException("Event med id " + id + " hittades inte"));
 
         if (updates.get("eventName") instanceof String name) {
             existing.setEventName(name);
         }
+
         if (updates.get("eventDescription") instanceof String description) {
-            existing.setEventDescription("eventDescription");
+            existing.setEventDescription(description);
         }
+
         if (updates.get("eventLocation") instanceof String location) {
-            existing.setEventLocation("eventLocation");
+            existing.setEventLocation(location);
         }
+
         if (updates.get("eventDateTime") instanceof String dateTimeStr) {
-            existing.setEventDateTime(LocalDateTime.parse(dateTimeStr));
+            try {
+                existing.setEventDateTime(LocalDateTime.parse(dateTimeStr));
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("Ogiltigt datumformat för 'eventDateTime'. Använd ISO 8601-format, t.ex. 2025-04-01T14:00");
+            }
         }
 
         return eventRepository.save(existing);
