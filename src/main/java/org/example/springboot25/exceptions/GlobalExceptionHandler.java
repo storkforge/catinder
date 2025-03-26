@@ -1,6 +1,5 @@
 package org.example.springboot25.exceptions;
 
-import org.example.springboot25.exceptions.EventNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +23,9 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.put(error.getField(), error.getDefaultMessage());
-        });
+        ex.getBindingResult().getFieldErrors().forEach(
+                error -> errors.put(error.getField(), error.getDefaultMessage())
+        );
 
         return errors;
     }
