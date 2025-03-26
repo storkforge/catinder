@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/events") // Endpoints
@@ -25,25 +26,40 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
-    // GET /api/events/{id} – Returnerar ett enskilt event, status 200 OK
+    // Returnerar ett enskilt event
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Event getEventById(@PathVariable Long id) {
         return eventService.getEventById(id);
     }
 
-    // POST /api/events – Skapar ett nytt event, status 201 Created
+    // Skapar ett nytt event
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Event createEvent(@RequestBody @Valid Event event) {
         return eventService.createEvent(event);
     }
 
-    // DELETE /api/events/{id} – Tar bort ett event, status 204 No Content
+    // Tar bort ett event
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEvent(@PathVariable Long id) {
         eventService.getEventById(id); // Kontrollera om det finns
         eventService.deleteEvent(id);
     }
+
+    // Uppdaterar ett event
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Event updateEvent(@PathVariable Long id, @RequestBody @Valid Event event) {
+        return eventService.updateEvent(id, event);
+    }
+
+    // Deluppdaterar ett event
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Event patchEvent(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        return eventService.patchEvent(id, updates);
+    }
+
 }
