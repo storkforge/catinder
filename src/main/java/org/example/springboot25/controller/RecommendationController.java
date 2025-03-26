@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/recommendations")
