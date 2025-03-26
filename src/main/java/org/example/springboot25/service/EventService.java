@@ -4,6 +4,7 @@ import org.example.springboot25.entities.Event;
 import org.example.springboot25.exceptions.EventNotFoundException;
 import org.example.springboot25.repository.EventRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,27 +21,34 @@ public class EventService {
     }
 
     // Hämta alla events från databasen
+    @Transactional
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
 
     // Hämta ett specifikt event
+    @Transactional
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new EventNotFoundException("Event with id " + id + " not found"));
     }
 
     // Skapa ett nytt event och spara i databasen
+    @Transactional
     public Event createEvent(Event event) {
         return eventRepository.save(event);
     }
 
     // Ta bort ett event
+    @Transactional
     public void deleteEvent(Long id) {
-        eventRepository.deleteById(id);
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+        eventRepository.delete(event);
     }
 
     // Uppdaterar ett event
+    @Transactional
     public Event updateEvent(Long id, Event updatedEvent) {
         Event existing = eventRepository.findById(id)
                 .orElseThrow(() -> new EventNotFoundException("Event with id " + id + " not found"));
@@ -53,6 +61,8 @@ public class EventService {
         return eventRepository.save(existing);
     }
 
+    // Deluppdaterar ett event
+    @Transactional
     public Event patchEvent(Long id, Map<String, Object> updates) {
         Event existing = eventRepository.findById(id)
                 .orElseThrow(() -> new EventNotFoundException("Event with id " + id + " not found"));
