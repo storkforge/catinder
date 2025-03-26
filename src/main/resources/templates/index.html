@@ -19,7 +19,6 @@
         }
 
 
-
         header {
             display: flex;
             justify-content: space-between;
@@ -60,6 +59,7 @@
             margin-left: 20px;
             font-weight: bold;
         }
+
         .about-link:hover {
             color: rgba(255, 255, 255, 0.3);
         }
@@ -100,9 +100,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: calc(100vh - 120px); /* adjust this if header's height changes */
+            min-height: calc(100vh - 120px);
             text-align: center;
         }
+
         .link-box {
             background: rgba(255, 223, 209, 0.31);
             border-radius: 10px;
@@ -110,25 +111,30 @@
             width: 300px;
             margin: auto;
         }
+
         .link-box ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .link-box ul li {
             margin-bottom: 20px;
             font-size: 22px;
             text-align: center;
         }
+
         .link-box ul li:last-child {
             margin-bottom: 0;
         }
+
         a {
             text-decoration: none;
             color: #505050;
             font-weight: 600;
             text-shadow: none;
         }
+
         a:hover {
             color: #555;
             cursor: pointer;
@@ -146,12 +152,13 @@
         <a class="about-link" th:href="@{/about}">About</a>
     </div>
     <div class="header-right">
-        <button class="lang-button">&#127760 Language</button>
+        <button class="lang-button" aria-label="Change language" title="Change language">&#127760; Language</button>
     </div>
 </header>
 <p class="select-text">Select a section to explore:</p>
-<div class="link-box">
-    <ul>
+<nav class="link-box">
+    <ul role="menu">
+
         <li><a th:href="@{/users}">Users</a></li>
         <li><a th:href="@{/cats}">Cats</a></li>
         <li><a th:href="@{/events}">Events</a></li>
@@ -159,6 +166,6 @@
         <li><a th:href="@{/reminders}">Reminders</a></li>
         <li><a th:href="@{/recommendations}">Recommendations</a></li>
     </ul>
-</div>
+</nav>
 </body>
 </html>
