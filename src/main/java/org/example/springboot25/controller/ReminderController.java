@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/reminders")
@@ -46,12 +47,19 @@ public class ReminderController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Reminder updateReminder(@PathVariable Long id, @RequestBody @Valid Reminder reminder) {
+        reminder.setReminderId(id); // 💡 viktigt!
         return reminderService.updateReminder(id, reminder);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Reminder patchReminder(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        Set<String> allowedFields = Set.of("reminderType", "reminderInfo", "reminderDate");
+        for (String key : updates.keySet()) {
+            if (!allowedFields.contains(key)) {
+                throw new IllegalArgumentException("Otillåtet fältnamn: " + key);
+            }
+        }
         return reminderService.patchReminder(id, updates);
     }
 }
