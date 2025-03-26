@@ -31,6 +31,14 @@ public class GlobalExceptionHandler {
         return Map.of("error", ex.getMessage());
     }
 
+    // 404 - Reminder hittas inte
+    @ExceptionHandler(ReminderNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleReminderNotFound(ReminderNotFoundException ex) {
+        return Map.of("error", ex.getMessage());
+    }
+
+
     // 400 – Valideringsfel (t.ex. @NotBlank)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -43,4 +51,5 @@ public class GlobalExceptionHandler {
 
         return errors;
     }
+
 }
