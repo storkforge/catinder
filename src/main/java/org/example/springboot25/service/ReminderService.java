@@ -6,6 +6,7 @@ import org.example.springboot25.repository.ReminderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -40,5 +41,48 @@ public class ReminderService {
             throw new ReminderNotFoundException("Påminnelse med id " + id + " hittades inte");
         }
         reminderRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Reminder updateReminder(Long id, Reminder updated) {
+        Reminder existing = reminderRepository.findById(id)
+                .orElseThrow(() -> new ReminderNotFoundException("Påminnelse med id " + id + " hittades inte"));
+
+        if (updated.getReminderType() != null) {
+            existing.setReminderType(updated.getReminderType());
+        }
+        if (updated.getReminderInfo() != null) {
+            existing.setReminderInfo(updated.getReminderInfo());
+        }
+        if (updated.getReminderDate() != null) {
+            existing.setReminderDate(updated.getReminderDate());
+        }
+        if (updated.getCatReminderCat() != null) {
+            existing.setCatReminderCat(updated.getCatReminderCat());
+        }
+
+        return reminderRepository.save(existing);
+    }
+
+    @Transactional
+    public Reminder patchReminder(Long id, Map<String, Object> updates) {
+        Reminder existing = reminderRepository.findById(id)
+                .orElseThrow(() -> new ReminderNotFoundException("Påminnelse med id " + id + " hittades inte"));
+
+        if (updates.get("reminderType") instanceof String type) {
+            existing.setReminderType(type);
+        }
+        if (updates.get("reminderInfo") instanceof String info) {
+            existing.setReminderInfo(info);
+        }
+        if (updates.get("reminderDate") instanceof String dateStr) {
+            existing.setReminderDate(LocalDateTime.parse(dateStr));
+        }
+
+        boolean changesMade = updates.containsKey("reminderType") ||
+                updates.containsKey("reminderInfo") ||
+                updates.containsKey("reminderDate");
+
+        return changesMade ? reminderRepository.save(existing) : existing;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reminders")
@@ -40,5 +41,17 @@ public class ReminderController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteReminder(@PathVariable Long id) {
         reminderService.deleteReminder(id);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Reminder updateReminder(@PathVariable Long id, @RequestBody @Valid Reminder reminder) {
+        return reminderService.updateReminder(id, reminder);
+    }
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Reminder patchReminder(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        return reminderService.patchReminder(id, updates);
     }
 }
