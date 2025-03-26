@@ -67,17 +67,16 @@ public class EventService {
         Event existing = eventRepository.findById(id)
                 .orElseThrow(() -> new EventNotFoundException("Event with id " + id + " not found"));
 
-        if (updates.containsKey("eventName")) {
-            existing.setEventName((String) updates.get("eventName"));
+        if (updates.get("eventName") instanceof String name) {
+            existing.setEventName(name);
         }
-        if (updates.containsKey("eventDescription")) {
-            existing.setEventDescription((String) updates.get("eventDescription"));
+        if (updates.get("eventDescription") instanceof String description) {
+            existing.setEventDescription("eventDescription");
         }
-        if (updates.containsKey("eventLocation")) {
-            existing.setEventLocation((String) updates.get("eventLocation"));
+        if (updates.get("eventLocation") instanceof String location) {
+            existing.setEventLocation("eventLocation");
         }
-        if (updates.containsKey("eventDateTime")) {
-            String dateTimeStr = (String) updates.get("eventDateTime");
+        if (updates.get("eventDateTime") instanceof String dateTimeStr) {
             existing.setEventDateTime(LocalDateTime.parse(dateTimeStr));
         }
 
