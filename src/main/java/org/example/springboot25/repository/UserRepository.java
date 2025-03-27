@@ -10,22 +10,22 @@ import java.util.List;
 public interface UserRepository extends ListCrudRepository<User, Long> {
 
     User findByFullName(String fullName);
-    User findByUsername(String username);
-    User findByEmail(String email);
+    User findByUserName(String userName);
+    User findByUserEmail(String userEmail);
 
     User deleteUserByUserName(String userName);
 
     @Query("SELECT u FROM User u WHERE u.userName LIKE %:userName%")
-    List<User> findAllByUserName(String name);
+    List<User> findAllByUserName(String userName);
 
     @Query("SELECT u FROM User u WHERE u.userLocation = :userLocation")
-    List<User> findAllByLocation(String location);
+    List<User> findAllByLocation(String userLocation);
 
     @Query("SELECT u FROM User u WHERE u.userRole = :userRole")
-    List<User> findAllByRole(String role);
+    List<User> findAllByRole(String userRole);
 
     @Query("SELECT u FROM User u WHERE u.userRole = :userRole AND u.userLocation = :userLocation")
-    List<User> findAllByRoleAndLocation(String role, String location);
+    List<User> findAllByRoleAndLocation(String userRole, String userLocation);
 
     @Query("SELECT u FROM User u JOIN u.userCats c WHERE c.catName LIKE %:catName%")
     List<User> findAllUsersByCatName(String catName);

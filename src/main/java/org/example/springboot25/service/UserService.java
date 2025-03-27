@@ -35,28 +35,28 @@ public class UserService {
         return userRepository.findByFullName(fullName);
     }
 
-    public User getByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User getByUsername(String userName) {
+        return userRepository.findByUserName(userName);
     }
 
-    public User getByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getByEmail(String userEmail) {
+        return userRepository.findByUserEmail(userEmail);
     }
 
-    public List<User> getAllByUsername(String username) {
-        return userRepository.findAllByUserName(username);
+    public List<User> getAllByUsername(String userName) {
+        return userRepository.findAllByUserName(userName);
     }
 
-    public List<User> getAllByLocation(String location) {
-        return userRepository.findAllByLocation(location);
+    public List<User> getAllByLocation(String userLocation) {
+        return userRepository.findAllByLocation(userLocation);
     }
 
-    public List<User> getAllByRole(String role) {
-        return userRepository.findAllByRole(role);
+    public List<User> getAllByRole(String userRole) {
+        return userRepository.findAllByRole(userRole);
     }
 
-    public List<User> getAllByRoleAndLocation(String role, String location) {
-        return userRepository.findAllByRoleAndLocation(role, location);
+    public List<User> getAllByRoleAndLocation(String userRole, String userLocation) {
+        return userRepository.findAllByRoleAndLocation(userRole, userLocation);
     }
 
     public List<User> getAllByCatName(String catName) {
@@ -81,13 +81,13 @@ public class UserService {
      * </p>
      *
      * @param user the User object containing the updated details
-     * @param id   the ID of the user to update
+     * @param userId   the ID of the user to update
      * @return the updated User
      * @throws IllegalArgumentException if no user exists with the provided ID
      */
-    public User updateUser(User user, Long id) {
-        var oldUser = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not found"));
+    public User updateUser(User user, Long userId) {
+        var oldUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
         log.info("Updating user: {}", user.getUserName());
         oldUser.setUserName(user.getUserName());
         oldUser.setFullName(user.getFullName());
@@ -106,14 +106,14 @@ public class UserService {
      * User object.
      * </p>
      *
-     * @param id      the ID of the user to update
+     * @param userId      the ID of the user to update
      * @param updates a map where keys are field names (e.g., "userName", "fullName") and values are the new values for those fields
      * @return the updated User
      * @throws IllegalArgumentException if no user exists with the provided ID
      */
-    public User updateUser(Long id, Map<String, Object> updates) {
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not found"));
+    public User updateUser(Long userId, Map<String, Object> updates) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
         log.info("Updating user: {}", existingUser.getUserName());
         if (updates.containsKey("fullName")) {
             existingUser.setFullName((String) updates.get("fullName"));
@@ -137,9 +137,9 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    public void deleteUserById(Long id) {
-        log.info("Deleting user with id: {}", id);
-        userRepository.deleteById(id);
+    public void deleteUserById(Long userId) {
+        log.info("Deleting user with id: {}", userId);
+        userRepository.deleteById(userId);
     }
 
     public void deleteUserByUserName(String username) {
