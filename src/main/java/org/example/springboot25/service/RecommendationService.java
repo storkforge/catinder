@@ -1,7 +1,7 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Recommendation;
-import org.example.springboot25.exceptions.RecommendationNotFoundException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.RecommendationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class RecommendationService {
     @Transactional
     public Recommendation getRecommendationById(Long id) {
         return recommendationRepository.findById(id)
-                .orElseThrow(() -> new RecommendationNotFoundException("Rekommendation med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Rekommendation med id " + id + " hittades inte"));
     }
 
     @Transactional
@@ -37,7 +37,7 @@ public class RecommendationService {
     @Transactional
     public void deleteRecommendation(Long id) {
         if (!recommendationRepository.existsById(id)) {
-            throw new RecommendationNotFoundException("Rekommendation med id " + id + " hittades inte");
+            throw new NotFoundException("Rekommendation med id " + id + " hittades inte");
         }
         recommendationRepository.deleteById(id);
     }
@@ -45,7 +45,7 @@ public class RecommendationService {
     @Transactional
     public Recommendation updateRecommendation(Long id, Recommendation updated) {
         Recommendation existing = recommendationRepository.findById(id)
-                .orElseThrow(() -> new RecommendationNotFoundException("Rekommendation med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Rekommendation med id " + id + " hittades inte"));
 
         if (updated.getRecommendationCategory() != null) {
             existing.setRecommendationCategory(updated.getRecommendationCategory());
@@ -63,7 +63,6 @@ public class RecommendationService {
             existing.setRecommendationProductLink(updated.getRecommendationProductLink());
         }
 
-        // Om ni vill tillåta att byta katt också (men oftast inte i en PATCH)
         if (updated.getCatRecommendationCat() != null) {
             existing.setCatRecommendationCat(updated.getCatRecommendationCat());
         }
@@ -74,7 +73,7 @@ public class RecommendationService {
     @Transactional
     public Recommendation patchRecommendation(Long id, Map<String, Object> updates) {
         Recommendation existing = recommendationRepository.findById(id)
-                .orElseThrow(() -> new RecommendationNotFoundException("Rekommendation med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Rekommendation med id " + id + " hittades inte"));
 
         if (updates.get("recommendationCategory") instanceof String cat) {
             existing.setRecommendationCategory(cat);
@@ -94,10 +93,6 @@ public class RecommendationService {
                 || updates.containsKey("recommendationProductDescription")
                 || updates.containsKey("recommendationProductLink");
 
-        if (!updatesApplied) {
-            return existing;
-        }
-
-        return recommendationRepository.save(existing);
+        return updatesApplied ? recommendationRepository.save(existing) : existing;
     }
 }
