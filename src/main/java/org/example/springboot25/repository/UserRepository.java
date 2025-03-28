@@ -9,11 +9,9 @@ import java.util.List;
 
 public interface UserRepository extends ListCrudRepository<User, Long> {
 
-    User findByFullName(String fullName);
+    List<User> findByFullName(String fullName);
     User findByUserName(String userName);
     User findByUserEmail(String userEmail);
-
-    User deleteUserByUserName(String userName);
 
     @Query("SELECT u FROM User u WHERE u.userName LIKE %:userName%")
     List<User> findAllByUserName(String userName);

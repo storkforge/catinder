@@ -2,6 +2,7 @@ package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.UserNotFoundException;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +28,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
-    public User getByFullName(String fullName) {
+    public List<User> getAllByFullName(String fullName) {
         return userRepository.findByFullName(fullName);
     }
 
@@ -67,7 +69,7 @@ public class UserService {
         return userRepository.findUsersByUsernameOrCatName(searchTerm);
     }
 
-    public User createUser(User user) {
+    public User addUser(User user) {
         log.info("Creating new user: {}", user.getUserName());
         return userRepository.save(user);
     }
@@ -141,10 +143,4 @@ public class UserService {
         log.info("Deleting user with id: {}", userId);
         userRepository.deleteById(userId);
     }
-
-    public void deleteUserByUserName(String username) {
-        log.info("Deleting user: {}", username);
-        userRepository.deleteUserByUserName(username);
-    }
-
 }
