@@ -1,7 +1,7 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Event;
-import org.example.springboot25.exceptions.EventNotFoundException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.EventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,10 +31,10 @@ public class EventService {
     @Transactional
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new EventNotFoundException("Event with id " + id + " not found"));
-    }
+        throw new NotFoundException("Event med id " + id + " not found");
+}
 
-    // Skapa ett nytt event och spara i databasen
+        // Skapa ett nytt event och spara i databasen
     @Transactional
     public Event createEvent(Event event) {
         return eventRepository.save(event);
