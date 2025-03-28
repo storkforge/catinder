@@ -1,7 +1,7 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Reminder;
-import org.example.springboot25.exceptions.ReminderNotFoundException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.ReminderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,7 @@ public class ReminderService {
     @Transactional
     public Reminder getReminderById(Long id) {
         return reminderRepository.findById(id)
-                .orElseThrow(() -> new ReminderNotFoundException("Påminnelse med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Påminnelse med id " + id + " hittades inte"));
     }
 
     @Transactional
@@ -38,7 +38,7 @@ public class ReminderService {
     @Transactional
     public void deleteReminder(Long id) {
         if (!reminderRepository.existsById(id)) {
-            throw new ReminderNotFoundException("Påminnelse med id " + id + " hittades inte");
+            throw new NotFoundException("Påminnelse med id " + id + " hittades inte");
         }
         reminderRepository.deleteById(id);
     }
@@ -46,7 +46,7 @@ public class ReminderService {
     @Transactional
     public Reminder updateReminder(Long id, Reminder updated) {
         Reminder existing = reminderRepository.findById(id)
-                .orElseThrow(() -> new ReminderNotFoundException("Påminnelse med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Påminnelse med id " + id + " hittades inte"));
 
         if (updated.getReminderType() != null) {
             existing.setReminderType(updated.getReminderType());
@@ -67,7 +67,7 @@ public class ReminderService {
     @Transactional
     public Reminder patchReminder(Long id, Map<String, Object> updates) {
         Reminder existing = reminderRepository.findById(id)
-                .orElseThrow(() -> new ReminderNotFoundException("Påminnelse med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Påminnelse med id " + id + " hittades inte"));
 
         if (updates.get("reminderType") instanceof String type) {
             existing.setReminderType(type);
