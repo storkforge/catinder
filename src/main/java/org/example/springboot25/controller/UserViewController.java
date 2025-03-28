@@ -25,7 +25,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("users", "Unable to retrieve user list");
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     //Todo: Fix custom exceptions and error handling in UserService
@@ -34,7 +34,7 @@ public class UserViewController {
         try {
             User user = userService.getUserById(userId);
             model.addAttribute("user", user);
-            return "user-details";
+            return "user/user-details";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "error-page";
@@ -49,7 +49,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping
@@ -60,10 +60,10 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-details";
+        return "user/user-details";
     }
 
-    //Todo: this is weird
+    //Todo: dont know if email string will work normally
     @GetMapping
     String userByUserEmail(@RequestParam String userEmail, Model model) {
         try {
@@ -72,7 +72,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-details";
+        return "user/user-details";
     }
 
     @GetMapping("/by-username")
@@ -83,7 +83,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping("/by-location")
@@ -94,7 +94,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping("/by-role")
@@ -105,7 +105,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping("/by-role-and-location")
@@ -116,7 +116,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping("/by-cat")
@@ -127,7 +127,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping("/by-search-term")
@@ -138,7 +138,7 @@ public class UserViewController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping("/users/add")
@@ -146,7 +146,7 @@ public class UserViewController {
         if (model.containsAttribute("user")) {
             model.addAttribute("user", new User());
         }
-        return "user-add";
+        return "user/user-add";
     }
 
     @PostMapping("/addUser")
@@ -162,10 +162,10 @@ public class UserViewController {
         if (model.containsAttribute("user")) {
             model.addAttribute("user", new User());
         }
-        return "user-update";
+        return "user/user-update";
     }
 
-    //Todo: PatchMapping is not supported?
+    //Todo: PatchMapping is not supported? Look up update
     @PatchMapping("/users/update")
     String updateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         userService.updateUser(user, user.getUserId());
