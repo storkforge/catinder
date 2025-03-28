@@ -31,10 +31,10 @@ public class EventService {
     @Transactional
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
-        throw new NotFoundException("Event med id " + id + " not found");
-}
+                .orElseThrow(() -> new NotFoundException("Event med id " + id + " not found"));
+    }
 
-        // Skapa ett nytt event och spara i databasen
+    // Skapa ett nytt event och spara i databasen
     @Transactional
     public Event createEvent(Event event) {
         return eventRepository.save(event);
@@ -44,7 +44,7 @@ public class EventService {
     @Transactional
     public void deleteEvent(Long id) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event med id " + id + " not found"));
         eventRepository.delete(event);
     }
 
@@ -52,7 +52,7 @@ public class EventService {
     @Transactional
     public Event updateEvent(Long id, Event updatedEvent) {
         Event existing = eventRepository.findById(id)
-                .orElseThrow(() -> new EventNotFoundException("Event with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("Event med id " + id + " not found"));
 
         existing.setEventName(updatedEvent.getEventName());
         existing.setEventDescription(updatedEvent.getEventDescription());
@@ -66,7 +66,7 @@ public class EventService {
     @Transactional
     public Event patchEvent(Long id, Map<String, Object> updates) {
         Event existing = eventRepository.findById(id)
-                .orElseThrow(() -> new EventNotFoundException("Event med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Event med id " + id + " not found"));
 
         if (updates.get("eventName") instanceof String name) {
             existing.setEventName(name);
