@@ -2,7 +2,6 @@ package org.example.springboot25.controller;
 
 import org.example.springboot25.entities.User;
 import org.example.springboot25.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,7 @@ public class UserViewController {
         this.userService = userService;
     }
 
-    @GetMapping("/api/users")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/users")
     public String users(Model model) {
         try {
             List<User> allUsers = userService.getAllUsers();
@@ -31,9 +29,8 @@ public class UserViewController {
     }
 
     //Todo: Fix custom exceptions and error handling in UserService
-    @GetMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    public String userById(@PathVariable Long userId, Model model) {
+    @GetMapping
+    public String userById(@RequestParam Long userId, Model model) {
         try {
             User user = userService.getUserById(userId);
             model.addAttribute("user", user);
@@ -44,8 +41,8 @@ public class UserViewController {
         }
     }
 
-    @GetMapping("/byName/{fullName}")
-    String usersByFullName(@PathVariable String fullName, Model model) {
+    @GetMapping("/by-name")
+    String usersByFullName(@RequestParam String fullName, Model model) {
         try {
             List<User> users = userService.getAllByFullName("%" + fullName + "%");
             model.addAttribute("users", users);
@@ -55,8 +52,8 @@ public class UserViewController {
         return "user-list";
     }
 
-    @GetMapping("/{userName}")
-    String userByUserName(@PathVariable String userName, Model model) {
+    @GetMapping
+    String userByUserName(@RequestParam String userName, Model model) {
         try {
             User user = userService.getByUserName(userName);
             model.addAttribute("user", user);
@@ -67,8 +64,8 @@ public class UserViewController {
     }
 
     //Todo: this is weird
-    @GetMapping("/{userEmail}")
-    String userByUserEmail(@PathVariable String userEmail, Model model) {
+    @GetMapping
+    String userByUserEmail(@RequestParam String userEmail, Model model) {
         try {
             User user = userService.getByEmail(userEmail);
             model.addAttribute("user", user);
@@ -78,8 +75,8 @@ public class UserViewController {
         return "user-details";
     }
 
-    @GetMapping("/byUserName/{userName}")
-    String usersByUserName(@PathVariable String userName, Model model) {
+    @GetMapping("/by-username")
+    String usersByUserName(@RequestParam String userName, Model model) {
         try {
             List<User> users = userService.getAllByUserName("%" + userName + "%");
             model.addAttribute("user", users);
@@ -89,8 +86,8 @@ public class UserViewController {
         return "user-list";
     }
 
-    @GetMapping("/byLocation/{userLocation}")
-    String usersByUserLocation(@PathVariable String userLocation, Model model) {
+    @GetMapping("/by-location")
+    String usersByUserLocation(@RequestParam String userLocation, Model model) {
         try {
             List<User> users = userService.getAllByLocation(userLocation);
             model.addAttribute("user", users);
@@ -100,10 +97,43 @@ public class UserViewController {
         return "user-list";
     }
 
-    @GetMapping("/byRole/{userRole}")
-    String usersByUserRole(@PathVariable String userRole, Model model) {
+    @GetMapping("/by-role")
+    String usersByUserRole(@RequestParam String userRole, Model model) {
         try {
             List<User> users = userService.getAllByRole(userRole);
+            model.addAttribute("user", users);
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "user-list";
+    }
+
+    @GetMapping("/by-role-and-location")
+    String usersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
+        try {
+            List<User> users = userService.getAllByRoleAndLocation(userRole, userLocation);
+            model.addAttribute("user", users);
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "user-list";
+    }
+
+    @GetMapping("/by-cat")
+    String usersByCatName(@RequestParam String catName, Model model) {
+        try {
+            List<User> users = userService.getAllByCatName(catName);
+            model.addAttribute("user", users);
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "user-list";
+    }
+
+    @GetMapping("/by-search-term")
+    String usersBySearchTerm(@RequestParam String searchTerm, Model model) {
+        try {
+            List<User> users = userService.getAllByUserNameOrCatName(searchTerm);
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
