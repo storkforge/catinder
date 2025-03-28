@@ -10,31 +10,10 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 404 – Event hittades inte
-    @ExceptionHandler(EventNotFoundException.class)
+    // 404 – Generell
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleEventNotFound(EventNotFoundException ex) {
-        return Map.of("error", ex.getMessage());
-    }
-
-    // 404 - Post hittades inte
-    @ExceptionHandler(PostNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handlePostNotFound(PostNotFoundException ex) {
-        return Map.of("error", ex.getMessage());
-    }
-
-    // 404 - Recommendation hittas inte
-    @ExceptionHandler(RecommendationNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleRecommendationNotFound(RecommendationNotFoundException ex) {
-        return Map.of("error", ex.getMessage());
-    }
-
-    // 404 - Reminder hittas inte
-    @ExceptionHandler(ReminderNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleReminderNotFound(ReminderNotFoundException ex) {
+    public Map<String, String> handleNotFoundException(NotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
 
