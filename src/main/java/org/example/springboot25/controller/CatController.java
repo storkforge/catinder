@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/cats")
 public class CatController {
@@ -22,7 +20,7 @@ public class CatController {
         this.catService = catService;
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public ResponseEntity<Cat> getCatById(@PathVariable Long id) {
         return catService.getCatById(id)
                 .map(ResponseEntity::ok)
