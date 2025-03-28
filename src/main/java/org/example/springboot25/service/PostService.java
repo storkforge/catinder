@@ -1,7 +1,7 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Post;
-import org.example.springboot25.exceptions.PostNotFoundException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ public class PostService {
     @Transactional
     public Post getPostById(Long id) {
         return postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("Inlägg med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
     }
 
     // Skapa ett nytt inlägg
@@ -44,7 +44,7 @@ public class PostService {
     @Transactional
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("Inlägg med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
         postRepository.delete(post);
     }
 
@@ -52,7 +52,7 @@ public class PostService {
     @Transactional
     public Post updatePost(Long id, Post updatedPost) {
         Post existing = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("Post med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
 
         existing.setPostText(updatedPost.getPostText());
         existing.setPostImageUrl(updatedPost.getPostImageUrl());
@@ -65,7 +65,7 @@ public class PostService {
     @Transactional
     public Post patchPost(Long id, Map<String, Object> updates) {
         Post existing = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException("Post med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
 
         if (updates.get("postText") instanceof String text) {
             existing.setPostText(text);
