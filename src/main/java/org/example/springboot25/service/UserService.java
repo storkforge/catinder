@@ -2,7 +2,7 @@ package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
 import org.example.springboot25.entities.User;
-import org.example.springboot25.exceptions.UserNotFoundException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,45 +27,75 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
     }
 
     public List<User> getAllByFullName(String fullName) {
-        return userRepository.findByFullName(fullName);
+        List<User> users = userRepository.findByFullName(fullName);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with name " + fullName + " was found");
+        }
+        return users;
     }
 
-    public User getByUsername(String userName) {
-        return userRepository.findByUserName(userName);
+    public User getByUserName(String userName) {
+        return userRepository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User with name" + userName + " not found"));
     }
 
     public User getByEmail(String userEmail) {
-        return userRepository.findByUserEmail(userEmail);
+        return userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("User with email " + userEmail + " not found"));
     }
 
-    public List<User> getAllByUsername(String userName) {
-        return userRepository.findAllByUserName(userName);
+    public List<User> getAllByUserName(String userName) {
+        List<User> users = userRepository.findAllByUserName(userName);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with username " + userName + " was found");
+        }
+        return users;
     }
 
     public List<User> getAllByLocation(String userLocation) {
-        return userRepository.findAllByLocation(userLocation);
+        List<User> users = userRepository.findAllByLocation(userLocation);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with location " + userLocation + " was found");
+        }
+        return users;
     }
 
     public List<User> getAllByRole(String userRole) {
-        return userRepository.findAllByRole(userRole);
+        List<User> users = userRepository.findAllByRole(userRole);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with name " + userRole + " was found");
+        }
+        return users;
     }
 
     public List<User> getAllByRoleAndLocation(String userRole, String userLocation) {
-        return userRepository.findAllByRoleAndLocation(userRole, userLocation);
+        List<User> users = userRepository.findAllByRoleAndLocation(userRole, userLocation);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with role " + userRole + " and location " + userLocation + " was found");
+        }
+        return users;
     }
 
     public List<User> getAllByCatName(String catName) {
-        return userRepository.findAllUsersByCatName(catName);
+        List<User> users = userRepository.findAllUsersByCatName(catName);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with belonging cat " + catName + " was found");
+        }
+        return users;
     }
 
     public List<User> getAllByUserNameOrCatName(String searchTerm) {
-        return userRepository.findUsersByUsernameOrCatName(searchTerm);
+        List<User> users = userRepository.findUsersByUsernameOrCatName(searchTerm);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with username/cat " + searchTerm + " was found");
+        }
+        return users;
     }
 
     public User addUser(User user) {

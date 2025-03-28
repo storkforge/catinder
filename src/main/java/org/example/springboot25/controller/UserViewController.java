@@ -11,10 +11,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-public class UserController {
+public class UserViewController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserViewController(UserService userService) {
         this.userService = userService;
     }
 
@@ -58,7 +58,7 @@ public class UserController {
     @GetMapping("/{userName}")
     String userByUserName(@PathVariable String userName, Model model) {
         try {
-            User user = userService.getByUsername(userName);
+            User user = userService.getByUserName(userName);
             model.addAttribute("user", user);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -81,7 +81,7 @@ public class UserController {
     @GetMapping("/byUserName/{userName}")
     String usersByUserName(@PathVariable String userName, Model model) {
         try {
-            List<User> users = userService.getAllByUsername("%" + userName + "%");
+            List<User> users = userService.getAllByUserName("%" + userName + "%");
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());

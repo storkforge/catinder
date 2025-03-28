@@ -6,12 +6,13 @@ import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends ListCrudRepository<User, Long> {
 
     List<User> findByFullName(String fullName);
-    User findByUserName(String userName);
-    User findByUserEmail(String userEmail);
+    Optional<User> findByUserName(String userName);
+    Optional<User> findByUserEmail(String userEmail);
 
     @Query("SELECT u FROM User u WHERE u.userName LIKE %:userName%")
     List<User> findAllByUserName(String userName);
