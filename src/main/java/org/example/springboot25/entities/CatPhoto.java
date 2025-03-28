@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -15,21 +16,37 @@ public class CatPhoto {
     private Long catPhotoId;
 
     @NotBlank
+    @Column(nullable = false, length = 500)
     private String catPhotoUrl;
 
+    @Column(length = 1000)
     private String catPhotoCaption;
 
     @PastOrPresent
+    @CreationTimestamp
     private LocalDateTime catPhotoCreatedAt;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "cat_photo_cat_id")
+    @JoinColumn(name = "cat_photo_cat_id", nullable = false)
     private Cat catPhotoCat;
 
 
+    public CatPhoto() {}
+
+
+    public CatPhoto(String url, String caption, Cat cat) {
+        this.catPhotoUrl = url;
+        this.catPhotoCaption = caption;
+        this.catPhotoCat = cat;
+    }
+
     public Long getCatPhotoId() {
         return catPhotoId;
+    }
+
+    public void setCatPhotoId(Long catPhotoId) {
+        this.catPhotoId = catPhotoId;
     }
 
     public String getCatPhotoUrl() {
