@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cats")
-public class CatController {
+public class CatRestController {
 
     private final CatService catService;
 
@@ -18,7 +18,7 @@ public class CatController {
     @Autowired Injectar en instans av CatRepo.
      */
     @Autowired
-    public CatController(CatService catService) {
+    public CatRestController(CatService catService) {
         this.catService = catService;
     }
 
