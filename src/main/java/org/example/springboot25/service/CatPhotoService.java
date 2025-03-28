@@ -1,5 +1,6 @@
 package org.example.springboot25.service;
 
+import jakarta.transaction.Transactional;
 import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.repository.CatPhotoRepository;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class CatPhotoService {
 
