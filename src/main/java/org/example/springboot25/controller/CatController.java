@@ -44,7 +44,7 @@ public class CatController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCat(@PathVariable Long id) {
         catService.deleteCat(id);
         return ResponseEntity.noContent().build();
