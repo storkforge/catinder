@@ -27,9 +27,9 @@ public class CatController {
         return catService.getAllCats();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cat> getCatById(@PathVariable Long id) {
-        return catService.getCatById(id)
+    @GetMapping("/{catId}")
+    public ResponseEntity<Cat> getCatById(@PathVariable Long catId) {
+        return catService.getCatById(catId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
@@ -41,19 +41,19 @@ public class CatController {
         return ResponseEntity.ok(createdCat);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Cat> updateCat(@PathVariable Long id, @RequestBody Cat catDetails) {
+    @PutMapping("/{catId}")
+    public ResponseEntity<Cat> updateCat(@PathVariable Long catId, @RequestBody Cat catDetails) {
         try {
-            Cat updatedCat = catService.updateCat(id, catDetails);
+            Cat updatedCat = catService.updateCat(catId, catDetails);
             return ResponseEntity.ok(updatedCat);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCat(@PathVariable Long id) {
-        catService.deleteCat(id);
+    @DeleteMapping("/{catId}")
+    public ResponseEntity<Void> deleteCat(@PathVariable Long catId) {
+        catService.deleteCat(catId);
         return ResponseEntity.noContent().build();
     }
 }

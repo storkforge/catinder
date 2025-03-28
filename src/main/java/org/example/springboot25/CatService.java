@@ -23,15 +23,15 @@ public class CatService {
     public List<Cat> getAllCats() {
         return catRepository.findAll();
     }
-    public Optional<Cat> getCatById(Long id) {
-        return catRepository.findById(id);
+    public Optional<Cat> getCatById(Long catId) {
+        return catRepository.findById(catId);
     }
     public Cat createCat(Cat cat) {
         return catRepository.save(cat);
     }
 
-    public Cat updateCat(Long id, Cat catDetails) throws Exception {
-        return catRepository.findById(id).map(cat -> {
+    public Cat updateCat(Long catId, Cat catDetails) throws Exception {
+        return catRepository.findById(catId).map(cat -> {
             cat.setCatName(catDetails.getCatName());
             cat.setCatProfilePicture(catDetails.getCatProfilePicture());
             cat.setCatBreed(catDetails.getCatBreed());
@@ -40,11 +40,11 @@ public class CatService {
             cat.setCatPersonality(catDetails.getCatPersonality());
             cat.setUserCatOwner(catDetails.getUserCatOwner());
             return catRepository.save(cat);
-        }).orElseThrow(()-> new Exception("Cat not found with id " + id));
+        }).orElseThrow(()-> new Exception("Cat not found with id " + catId));
     }
 
-    public void deleteCat(Long id) {
-        catRepository.deleteById(id);
+    public void deleteCat(Long catId) {
+        catRepository.deleteById(catId);
     }
 
 
