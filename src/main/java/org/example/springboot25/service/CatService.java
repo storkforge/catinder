@@ -1,5 +1,6 @@
-package org.example.springboot25;
+package org.example.springboot25.service;
 
+import org.example.springboot25.repository.CatRepository;
 import org.example.springboot25.entities.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

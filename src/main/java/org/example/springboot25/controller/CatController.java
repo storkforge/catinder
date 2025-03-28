@@ -1,6 +1,6 @@
 package org.example.springboot25.controller;
 
-import org.example.springboot25.CatService;
+import org.example.springboot25.service.CatService;
 import org.example.springboot25.entities.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
