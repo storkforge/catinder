@@ -66,47 +66,42 @@ public class UserViewController {
 
     @GetMapping("/by-username")
     String getUsersByUserName(@RequestParam String userName, Model model) {
-        try {
-            List<User> users = userService.getAllUsersByUserName("%" + userName + "%");
-            model.addAttribute("user", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
+        List<User> users = userService.getAllUsersByUserName("%" + userName + "%");
+        model.addAttribute("user", users);
+        if (users.isEmpty())
+            model.addAttribute("error", "No users found with username '" + userName + "'.");
         return "user/user-list";
     }
 
     @GetMapping("/by-name")
     String getUsersByFullName(@RequestParam String fullName, Model model) {
-        try {
-            List<User> users = userService.getAllUsersByFullName("%" + fullName + "%");
-            model.addAttribute("users", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
+        List<User> users = userService.getAllUsersByFullName("%" + fullName + "%");
+        model.addAttribute("users", users);
+        if (users.isEmpty())
+            model.addAttribute("error", "No users found for name '" + fullName + "'.");
         return "user/user-list";
     }
 
     @GetMapping("/by-location")
     String getUsersByUserLocation(@RequestParam String userLocation, Model model) {
-        try {
-            List<User> users = userService.getAllUsersByLocation(userLocation);
-            model.addAttribute("user", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
+        List<User> users = userService.getAllUsersByLocation(userLocation);
+        model.addAttribute("user", users);
+        if (users.isEmpty())
+            model.addAttribute("error", "No users found for location '" + userLocation + "'.");
+
         return "user/user-list";
     }
 
     @GetMapping("/by-role")
-    String getUsersByUserRole(@RequestParam String userRole, Model model) {
-        try {
-            List<User> users = userService.getAllUsersByRole(userRole);
-            model.addAttribute("user", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+    public String getUsersByUserRole(@RequestParam String userRole, Model model) {
+        List<User> users = userService.getAllUsersByRole(userRole);
+        model.addAttribute("users", users);
+        if (users.isEmpty()) {
+            model.addAttribute("message", "No results found for role '" + userRole + "'.");
         }
         return "user/user-list";
     }
+
 
     @GetMapping("/by-role-location")
     String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {

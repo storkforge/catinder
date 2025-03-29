@@ -14,111 +14,80 @@ import java.util.Map;
 @Service
 @Transactional
 public class UserService {
-    Logger log = LoggerFactory.getLogger(UserService.class);
 
-    UserRepository userRepository;
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    // Returns all users (empty list if none found)
     public List<User> getAllUsers() {
         log.info("Fetching all users");
         return userRepository.findAll();
     }
 
+    // Single user lookup by ID: throw exception if not found
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
     }
 
+    // Single user lookup by username
     public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
-                .orElseThrow(() -> new NotFoundException("User with name" + userName + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
     }
 
+    // Single user lookup by email
     public User getUserByEmail(String userEmail) {
         return userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User with email " + userEmail + " not found"));
     }
 
+    // For collection queries, returning an empty list is a valid result
     public List<User> getAllUsersByUserName(String userName) {
-        List<User> users = userRepository.findAllByUserName(userName);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with username " + userName + " was found");
-        }
-        return users;
+        return userRepository.findAllByUserName(userName);
     }
 
     public List<User> getAllUsersByFullName(String fullName) {
-        List<User> users = userRepository.findByFullName(fullName);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with name " + fullName + " was found");
-        }
-        return users;
+        return userRepository.findByFullName(fullName);
     }
 
     public List<User> getAllUsersByLocation(String userLocation) {
-        List<User> users = userRepository.findAllByLocation(userLocation);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with location " + userLocation + " was found");
-        }
-        return users;
+        return userRepository.findAllByLocation(userLocation);
     }
 
     public List<User> getAllUsersByRole(String userRole) {
-        List<User> users = userRepository.findAllByRole(userRole);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with name " + userRole + " was found");
-        }
-        return users;
+        return userRepository.findAllByRole(userRole);
     }
 
     public List<User> getAllUsersByRoleAndLocation(String userRole, String userLocation) {
-        List<User> users = userRepository.findAllByRoleAndLocation(userRole, userLocation);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with role " + userRole + " and location " + userLocation + " was found");
-        }
-        return users;
+        return userRepository.findAllByRoleAndLocation(userRole, userLocation);
     }
 
     public List<User> getAllUsersByCatName(String catName) {
-        List<User> users = userRepository.findAllUsersByCatName(catName);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with belonging cat " + catName + " was found");
-        }
-        return users;
+        return userRepository.findAllUsersByCatName(catName);
     }
 
     public List<User> getAllUsersByUserNameOrCatName(String searchTerm) {
-        List<User> users = userRepository.findUsersByUsernameOrCatName(searchTerm);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with username/cat " + searchTerm + " was found");
-        }
-        return users;
+        return userRepository.findUsersByUsernameOrCatName(searchTerm);
     }
 
+    // Add a new user
     public User addUser(User user) {
         log.info("Creating new user: {}", user.getUserName());
         return userRepository.save(user);
     }
 
     /**
-     * Updates an existing user by replacing its properties with those from the given user object.
-     * <p>
-     * This method retrieves the current user with the specified ID, updates all relevant fields
-     * (userName, fullName, email, etc.) with the values from the provided user object, and then saves
-     * the updated entity. It is intended for full updates where all fields are provided.
-     * </p>
-     *
-     * @param user the User object containing the updated details
-     * @param userId   the ID of the user to update
-     * @return the updated User
-     * @throws IllegalArgumentException if no user exists with the provided ID
+     * Full update of a user.
+     * Retrieves the existing user by id, updates all fields, and saves.
      */
-    public User updateUser( Long userId, User user) {
-        var oldUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
+    public User updateUser(Long userId, User user) {
+        User oldUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
         log.info("Updating user: {}", user.getUserName());
         oldUser.setUserName(user.getUserName());
         oldUser.setFullName(user.getFullName());
@@ -130,22 +99,12 @@ public class UserService {
     }
 
     /**
-     * Partially updates an existing user based on the provided field changes.
-     * <p>
-     * This method retrieves the current user with the specified ID and then updates only those fields
-     * present in the given map. This allows for patching individual fields without needing to send a full
-     * User object.
-     * </p>
-     *
-     * @param userId      the ID of the user to update
-     * @param updates a map where keys are field names (e.g., "userName", "fullName") and values are the new values for those fields
-     * @return the updated User
-     * @throws IllegalArgumentException if no user exists with the provided ID
+     * Partially updates a user based on provided field changes.
      */
     public User updateUser(Long userId, Map<String, Object> updates) {
         User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
-        log.info("Updating user: {}", existingUser.getUserName());
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+        log.info("Partially updating user: {}", existingUser.getUserName());
         if (updates.containsKey("fullName")) {
             existingUser.setFullName((String) updates.get("fullName"));
         }
@@ -164,7 +123,6 @@ public class UserService {
         if (updates.containsKey("userAuthProvider")) {
             existingUser.setUserAuthProvider((String) updates.get("userAuthProvider"));
         }
-
         return userRepository.save(existingUser);
     }
 
