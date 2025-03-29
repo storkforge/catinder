@@ -21,6 +21,6 @@ public class RecommendationViewController {
     public String showRecommendations(Model model) {
         List<Recommendation> recommendations = recommendationService.getAllRecommendations();
         model.addAttribute("recommendations", recommendations);
-        return "recommendations";
+        return "recommendation";
     }
 }
