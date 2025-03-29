@@ -12,11 +12,11 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/reminders")
-public class ReminderController {
+public class ReminderRESTController {
 
     private final ReminderService reminderService;
 
-    public ReminderController(ReminderService reminderService) {
+    public ReminderRESTController(ReminderService reminderService) {
         this.reminderService = reminderService;
     }
 
