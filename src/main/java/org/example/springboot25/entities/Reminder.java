@@ -66,4 +66,8 @@ public class Reminder {
         this.catReminderCat = catReminderCat;
     }
 
+    public void setReminderId(Long reminderId) {
+        this.reminderId = reminderId;
+    }
+
 }
