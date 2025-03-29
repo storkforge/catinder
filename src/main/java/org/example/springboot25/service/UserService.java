@@ -1,0 +1,133 @@
+package org.example.springboot25.service;
+
+import jakarta.transaction.Transactional;
+import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+@Service
+@Transactional
+public class UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // Returns all users (empty list if none found)
+    public List<User> getAllUsers() {
+        log.info("Fetching all users");
+        return userRepository.findAll();
+    }
+
+    // Single user lookup by ID: throw exception if not found
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+    }
+
+    // Single user lookup by username
+    public User getUserByUserName(String userName) {
+        return userRepository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
+    }
+
+    // Single user lookup by email
+    public User getUserByEmail(String userEmail) {
+        return userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("User with email " + userEmail + " not found"));
+    }
+
+    // For collection queries, returning an empty list is a valid result
+    public List<User> getAllUsersByUserName(String userName) {
+        return userRepository.findAllByUserName(userName);
+    }
+
+    public List<User> getAllUsersByFullName(String fullName) {
+        return userRepository.findByFullName(fullName);
+    }
+
+    public List<User> getAllUsersByLocation(String userLocation) {
+        return userRepository.findAllByLocation(userLocation);
+    }
+
+    public List<User> getAllUsersByRole(String userRole) {
+        return userRepository.findAllByRole(userRole);
+    }
+
+    public List<User> getAllUsersByRoleAndLocation(String userRole, String userLocation) {
+        return userRepository.findAllByRoleAndLocation(userRole, userLocation);
+    }
+
+    public List<User> getAllUsersByCatName(String catName) {
+        return userRepository.findAllUsersByCatName(catName);
+    }
+
+    public List<User> getAllUsersByUserNameOrCatName(String searchTerm) {
+        return userRepository.findUsersByUsernameOrCatName(searchTerm);
+    }
+
+    // Add a new user
+    public User addUser(User user) {
+        log.info("Creating new user: {}", user.getUserName());
+        return userRepository.save(user);
+    }
+
+    /**
+     * Full update of a user.
+     * Retrieves the existing user by id, updates all fields, and saves.
+     */
+    public User updateUser(Long userId, User user) {
+        User oldUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+        log.info("Updating user: {}", user.getUserName());
+        oldUser.setUserName(user.getUserName());
+        oldUser.setFullName(user.getFullName());
+        oldUser.setUserEmail(user.getUserEmail());
+        oldUser.setUserLocation(user.getUserLocation());
+        oldUser.setUserRole(user.getUserRole());
+        oldUser.setUserAuthProvider(user.getUserAuthProvider());
+        return userRepository.save(oldUser);
+    }
+
+    /**
+     * Partially updates a user based on provided field changes.
+     */
+    public User updateUser(Long userId, Map<String, Object> updates) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+        log.info("Partially updating user: {}", existingUser.getUserName());
+        if (updates.containsKey("fullName")) {
+            existingUser.setFullName((String) updates.get("fullName"));
+        }
+        if (updates.containsKey("userName")) {
+            existingUser.setUserName((String) updates.get("userName"));
+        }
+        if (updates.containsKey("userEmail")) {
+            existingUser.setUserEmail((String) updates.get("userEmail"));
+        }
+        if (updates.containsKey("userLocation")) {
+            existingUser.setUserLocation((String) updates.get("userLocation"));
+        }
+        if (updates.containsKey("userRole")) {
+            existingUser.setUserRole((String) updates.get("userRole"));
+        }
+        if (updates.containsKey("userAuthProvider")) {
+            existingUser.setUserAuthProvider((String) updates.get("userAuthProvider"));
+        }
+        return userRepository.save(existingUser);
+    }
+
+    public void deleteUserById(Long userId) {
+        log.info("Deleting user with id: {}", userId);
+        userRepository.deleteById(userId);
+    }
+}

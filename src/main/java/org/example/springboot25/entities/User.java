@@ -17,10 +17,15 @@ public class User {
     private Long userId;
 
     @NotBlank
+    private String fullName;
+
+    @NotBlank
+    @Column(unique = true)
     private String userName;
 
     @Email
     @NotBlank
+    @Column(unique = true)
     private String userEmail;
 
     @NotBlank
@@ -47,6 +52,14 @@ public class User {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public @NotBlank String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getUserName() {
