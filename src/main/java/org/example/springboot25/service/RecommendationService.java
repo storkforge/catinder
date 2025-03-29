@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional // Applies to all methods in the class
 public class RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
@@ -18,34 +19,29 @@ public class RecommendationService {
         this.recommendationRepository = recommendationRepository;
     }
 
-    @Transactional
     public List<Recommendation> getAllRecommendations() {
         return recommendationRepository.findAll();
     }
 
-    @Transactional
     public Recommendation getRecommendationById(Long id) {
         return recommendationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Rekommendation med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Recommendation with id " + id + " was not found"));
     }
 
-    @Transactional
     public Recommendation createRecommendation(Recommendation recommendation) {
         return recommendationRepository.save(recommendation);
     }
 
-    @Transactional
     public void deleteRecommendation(Long id) {
         if (!recommendationRepository.existsById(id)) {
-            throw new NotFoundException("Rekommendation med id " + id + " hittades inte");
+            throw new NotFoundException("Recommendation with id " + id + " was not found");
         }
         recommendationRepository.deleteById(id);
     }
 
-    @Transactional
     public Recommendation updateRecommendation(Long id, Recommendation updated) {
         Recommendation existing = recommendationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Rekommendation med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Recommendation with id " + id + " was not found"));
 
         if (updated.getRecommendationCategory() != null) {
             existing.setRecommendationCategory(updated.getRecommendationCategory());
@@ -70,19 +66,18 @@ public class RecommendationService {
         return recommendationRepository.save(existing);
     }
 
-    @Transactional
     public Recommendation patchRecommendation(Long id, Map<String, Object> updates) {
         Recommendation existing = recommendationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Rekommendation med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Recommendation with id " + id + " was not found"));
 
-        if (updates.get("recommendationCategory") instanceof String cat) {
-            existing.setRecommendationCategory(cat);
+        if (updates.get("recommendationCategory") instanceof String category) {
+            existing.setRecommendationCategory(category);
         }
         if (updates.get("recommendationProductName") instanceof String name) {
             existing.setRecommendationProductName(name);
         }
-        if (updates.get("recommendationProductDescription") instanceof String desc) {
-            existing.setRecommendationProductDescription(desc);
+        if (updates.get("recommendationProductDescription") instanceof String description) {
+            existing.setRecommendationProductDescription(description);
         }
         if (updates.get("recommendationProductLink") instanceof String link) {
             existing.setRecommendationProductLink(link);
