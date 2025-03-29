@@ -32,25 +32,17 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
     }
 
-    public List<User> getAllByFullName(String fullName) {
-        List<User> users = userRepository.findByFullName(fullName);
-        if (users.isEmpty()) {
-            throw new NotFoundException("No user with name " + fullName + " was found");
-        }
-        return users;
-    }
-
-    public User getByUserName(String userName) {
+    public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
                 .orElseThrow(() -> new NotFoundException("User with name" + userName + " not found"));
     }
 
-    public User getByEmail(String userEmail) {
+    public User getUserByEmail(String userEmail) {
         return userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User with email " + userEmail + " not found"));
     }
 
-    public List<User> getAllByUserName(String userName) {
+    public List<User> getAllUsersByUserName(String userName) {
         List<User> users = userRepository.findAllByUserName(userName);
         if (users.isEmpty()) {
             throw new NotFoundException("No user with username " + userName + " was found");
@@ -58,7 +50,15 @@ public class UserService {
         return users;
     }
 
-    public List<User> getAllByLocation(String userLocation) {
+    public List<User> getAllUsersByFullName(String fullName) {
+        List<User> users = userRepository.findByFullName(fullName);
+        if (users.isEmpty()) {
+            throw new NotFoundException("No user with name " + fullName + " was found");
+        }
+        return users;
+    }
+
+    public List<User> getAllUsersByLocation(String userLocation) {
         List<User> users = userRepository.findAllByLocation(userLocation);
         if (users.isEmpty()) {
             throw new NotFoundException("No user with location " + userLocation + " was found");
@@ -66,7 +66,7 @@ public class UserService {
         return users;
     }
 
-    public List<User> getAllByRole(String userRole) {
+    public List<User> getAllUsersByRole(String userRole) {
         List<User> users = userRepository.findAllByRole(userRole);
         if (users.isEmpty()) {
             throw new NotFoundException("No user with name " + userRole + " was found");
@@ -74,7 +74,7 @@ public class UserService {
         return users;
     }
 
-    public List<User> getAllByRoleAndLocation(String userRole, String userLocation) {
+    public List<User> getAllUsersByRoleAndLocation(String userRole, String userLocation) {
         List<User> users = userRepository.findAllByRoleAndLocation(userRole, userLocation);
         if (users.isEmpty()) {
             throw new NotFoundException("No user with role " + userRole + " and location " + userLocation + " was found");
@@ -82,7 +82,7 @@ public class UserService {
         return users;
     }
 
-    public List<User> getAllByCatName(String catName) {
+    public List<User> getAllUsersByCatName(String catName) {
         List<User> users = userRepository.findAllUsersByCatName(catName);
         if (users.isEmpty()) {
             throw new NotFoundException("No user with belonging cat " + catName + " was found");
@@ -90,7 +90,7 @@ public class UserService {
         return users;
     }
 
-    public List<User> getAllByUserNameOrCatName(String searchTerm) {
+    public List<User> getAllUsersByUserNameOrCatName(String searchTerm) {
         List<User> users = userRepository.findUsersByUsernameOrCatName(searchTerm);
         if (users.isEmpty()) {
             throw new NotFoundException("No user with username/cat " + searchTerm + " was found");
@@ -116,7 +116,7 @@ public class UserService {
      * @return the updated User
      * @throws IllegalArgumentException if no user exists with the provided ID
      */
-    public User updateUser(User user, Long userId) {
+    public User updateUser( Long userId, User user) {
         var oldUser = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " not found"));
         log.info("Updating user: {}", user.getUserName());

@@ -18,7 +18,7 @@ public class UserViewController {
     }
 
     @GetMapping("/users")
-    public String users(Model model) {
+    public String getUsers(Model model) {
         try {
             List<User> allUsers = userService.getAllUsers();
             model.addAttribute("users", allUsers);
@@ -28,9 +28,9 @@ public class UserViewController {
         return "user/user-list";
     }
 
-    //Todo: Fix custom exceptions and error handling in UserService
+    //Todo: Check with group how we wish to handle error-page
     @GetMapping
-    public String userById(@RequestParam Long userId, Model model) {
+    public String getUserById(@RequestParam Long userId, Model model) {
         try {
             User user = userService.getUserById(userId);
             model.addAttribute("user", user);
@@ -41,21 +41,10 @@ public class UserViewController {
         }
     }
 
-    @GetMapping("/by-name")
-    String usersByFullName(@RequestParam String fullName, Model model) {
-        try {
-            List<User> users = userService.getAllByFullName("%" + fullName + "%");
-            model.addAttribute("users", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
-        return "user/user-list";
-    }
-
     @GetMapping
-    String userByUserName(@RequestParam String userName, Model model) {
+    String getUserByUserName(@RequestParam String userName, Model model) {
         try {
-            User user = userService.getByUserName(userName);
+            User user = userService.getUserByUserName(userName);
             model.addAttribute("user", user);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -65,9 +54,9 @@ public class UserViewController {
 
     //Todo: dont know if email string will work normally
     @GetMapping
-    String userByUserEmail(@RequestParam String userEmail, Model model) {
+    String getUserByUserEmail(@RequestParam String userEmail, Model model) {
         try {
-            User user = userService.getByEmail(userEmail);
+            User user = userService.getUserByEmail(userEmail);
             model.addAttribute("user", user);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -76,9 +65,9 @@ public class UserViewController {
     }
 
     @GetMapping("/by-username")
-    String usersByUserName(@RequestParam String userName, Model model) {
+    String getUsersByUserName(@RequestParam String userName, Model model) {
         try {
-            List<User> users = userService.getAllByUserName("%" + userName + "%");
+            List<User> users = userService.getAllUsersByUserName("%" + userName + "%");
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -86,10 +75,21 @@ public class UserViewController {
         return "user/user-list";
     }
 
-    @GetMapping("/by-location")
-    String usersByUserLocation(@RequestParam String userLocation, Model model) {
+    @GetMapping("/by-name")
+    String getUsersByFullName(@RequestParam String fullName, Model model) {
         try {
-            List<User> users = userService.getAllByLocation(userLocation);
+            List<User> users = userService.getAllUsersByFullName("%" + fullName + "%");
+            model.addAttribute("users", users);
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-location")
+    String getUsersByUserLocation(@RequestParam String userLocation, Model model) {
+        try {
+            List<User> users = userService.getAllUsersByLocation(userLocation);
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -98,9 +98,9 @@ public class UserViewController {
     }
 
     @GetMapping("/by-role")
-    String usersByUserRole(@RequestParam String userRole, Model model) {
+    String getUsersByUserRole(@RequestParam String userRole, Model model) {
         try {
-            List<User> users = userService.getAllByRole(userRole);
+            List<User> users = userService.getAllUsersByRole(userRole);
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -108,10 +108,10 @@ public class UserViewController {
         return "user/user-list";
     }
 
-    @GetMapping("/by-role-and-location")
-    String usersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
+    @GetMapping("/by-role-location")
+    String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
         try {
-            List<User> users = userService.getAllByRoleAndLocation(userRole, userLocation);
+            List<User> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -120,9 +120,9 @@ public class UserViewController {
     }
 
     @GetMapping("/by-cat")
-    String usersByCatName(@RequestParam String catName, Model model) {
+    String getUsersByCatName(@RequestParam String catName, Model model) {
         try {
-            List<User> users = userService.getAllByCatName(catName);
+            List<User> users = userService.getAllUsersByCatName(catName);
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -131,9 +131,9 @@ public class UserViewController {
     }
 
     @GetMapping("/by-search-term")
-    String usersBySearchTerm(@RequestParam String searchTerm, Model model) {
+    String getUsersByUserNameOrCatName(@RequestParam String searchTerm, Model model) {
         try {
-            List<User> users = userService.getAllByUserNameOrCatName(searchTerm);
+            List<User> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
             model.addAttribute("user", users);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -168,7 +168,7 @@ public class UserViewController {
     //Todo: PatchMapping is not supported? Look up update
     @PatchMapping("/users/update")
     String updateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-        userService.updateUser(user, user.getUserId());
+        userService.updateUser(user.getUserId(), user);
         redirectAttributes.addFlashAttribute("Success", true);
         redirectAttributes.addFlashAttribute("user", user);
         return "redirect:/users/update";
