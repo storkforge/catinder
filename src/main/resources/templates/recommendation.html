@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recommendations</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<h1>AI-Powered Recommendations</h1>
+
+<div th:if="${recommendations}">
+    <table>
+        <thead>
+        <tr>
+            <th>Category</th>
+            <th>Product</th>
+            <th>Description</th>
+            <th>Link</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rec : ${recommendations}">
+            <td th:text="${rec.recommendationCategory}">Category</td>
+            <td th:text="${rec.recommendationProductName}">Product</td>
+            <td th:text="${rec.recommendationProductDescription}">Description</td>
+            <td><a th:href="${rec.recommendationProductLink}" target="_blank">Link</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${#lists.isEmpty(recommendations)}">
+    <p>No recommendations available at the moment.</p>
+</div>
+</body>
+</html>
