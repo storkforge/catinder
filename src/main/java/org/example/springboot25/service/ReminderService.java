@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class ReminderService {
 
     private final ReminderRepository reminderRepository;
@@ -19,34 +20,29 @@ public class ReminderService {
         this.reminderRepository = reminderRepository;
     }
 
-    @Transactional
     public List<Reminder> getAllReminders() {
         return reminderRepository.findAll();
     }
 
-    @Transactional
     public Reminder getReminderById(Long id) {
         return reminderRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Påminnelse med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Reminder with id " + id + " not found"));
     }
 
-    @Transactional
     public Reminder createReminder(Reminder reminder) {
         return reminderRepository.save(reminder);
     }
 
-    @Transactional
     public void deleteReminder(Long id) {
         if (!reminderRepository.existsById(id)) {
-            throw new NotFoundException("Påminnelse med id " + id + " hittades inte");
+            throw new NotFoundException("Reminder with id " + id + " not found");
         }
         reminderRepository.deleteById(id);
     }
 
-    @Transactional
     public Reminder updateReminder(Long id, Reminder updated) {
         Reminder existing = reminderRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Påminnelse med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Reminder with id " + id + " not found"));
 
         if (updated.getReminderType() != null) {
             existing.setReminderType(updated.getReminderType());
@@ -64,10 +60,9 @@ public class ReminderService {
         return reminderRepository.save(existing);
     }
 
-    @Transactional
     public Reminder patchReminder(Long id, Map<String, Object> updates) {
         Reminder existing = reminderRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Påminnelse med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Reminder with id " + id + " not found"));
 
         if (updates.get("reminderType") instanceof String type) {
             existing.setReminderType(type);
