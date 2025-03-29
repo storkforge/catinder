@@ -12,47 +12,37 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class PostService {
 
     private final PostRepository postRepository;
 
-    // Konstruktor för dependency injection
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
-    // Hämta alla inlägg
-    @Transactional
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
 
-    // Hämta ett specifikt inlägg
-    @Transactional
     public Post getPostById(Long id) {
         return postRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Post with id " + id + " not found"));
     }
 
-    // Skapa ett nytt inlägg
-    @Transactional
     public Post createPost(Post post) {
         return postRepository.save(post);
     }
 
-    // Ta bort ett inlägg
-    @Transactional
     public void deletePost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Post with id " + id + " not found"));
         postRepository.delete(post);
     }
 
-    // Uppdatera ett inlägg
-    @Transactional
     public Post updatePost(Long id, Post updatedPost) {
         Post existing = postRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Post with id " + id + " not found"));
 
         existing.setPostText(updatedPost.getPostText());
         existing.setPostImageUrl(updatedPost.getPostImageUrl());
@@ -61,11 +51,9 @@ public class PostService {
         return postRepository.save(existing);
     }
 
-    // Uppdatera delar av ett inlägg
-    @Transactional
     public Post patchPost(Long id, Map<String, Object> updates) {
         Post existing = postRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Inlägg med id " + id + " hittades inte"));
+                .orElseThrow(() -> new NotFoundException("Post with id " + id + " not found"));
 
         if (updates.get("postText") instanceof String text) {
             existing.setPostText(text);
@@ -79,7 +67,7 @@ public class PostService {
             try {
                 existing.setPostCreatedAt(LocalDateTime.parse(dateTimeStr));
             } catch (DateTimeParseException e) {
-                throw new IllegalArgumentException("Ogiltigt datumformat för 'postCreatedAt'. Använd ISO 8601.");
+                throw new IllegalArgumentException("Invalid format for 'postCreatedAt'. Use ISO 8601 format.");
             }
         }
 
