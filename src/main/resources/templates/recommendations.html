@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rekommendationer</title>
+</head>
+<body>
+<h1>AI-baserade rekommendationer</h1>
+
+<div th:if="${recommendations}">
+    <table>
+        <thead>
+        <tr>
+            <th>Kategori</th>
+            <th>Produkt</th>
+            <th>Beskrivning</th>
+            <th>Länk</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rec : ${recommendations}">
+            <td th:text="${rec.recommendationCategory}">Kategori</td>
+            <td th:text="${rec.recommendationProductName}">Produkt</td>
+            <td th:text="${rec.recommendationProductDescription}">Beskrivning</td>
+            <td><a th:href="${rec.recommendationProductLink}" target="_blank">Länk</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${#lists.isEmpty(recommendations)}">
+    <p>Inga rekommendationer tillgängliga just nu.</p>
+</div>
+</body>
+</html>

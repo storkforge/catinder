@@ -11,11 +11,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/recommendations")
-public class RecommendationController {
+public class RecommendationRESTController {
 
     private final RecommendationService recommendationService;
 
-    public RecommendationController(RecommendationService recommendationService) {
+    public RecommendationRESTController(RecommendationService recommendationService) {
         this.recommendationService = recommendationService;
     }
 
