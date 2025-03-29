@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="sv">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Påminnelser</title>
+    <title>Reminders</title>
     <style>
         body {
             font-family: sans-serif;
@@ -26,10 +26,10 @@
     </style>
 </head>
 <body>
-<h1>Dina kommande påminnelser</h1>
+<h1>Your Upcoming Reminders</h1>
 
 <div th:if="${reminder.isEmpty()}">
-    <p>Inga påminnelser just nu.</p>
+    <p>No reminders at the moment.</p>
 </div>
 
 <div th:each="reminder : ${reminder}" class="reminder">
@@ -38,7 +38,7 @@
         <span th:text="${#temporals.format(reminder.reminderDate, 'yyyy-MM-dd HH:mm')}"></span>
     </p>
     <p class="info">
-        <strong th:text="${reminder.reminderType}">Typ</strong> –
+        <strong th:text="${reminder.reminderType}">Type</strong> –
         <span th:text="${reminder.reminderInfo}">Info</span>
     </p>
 </div>
