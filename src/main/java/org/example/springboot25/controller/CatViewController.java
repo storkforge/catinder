@@ -40,7 +40,7 @@ public class CatViewController {
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
         model.addAttribute("cat", new Cat());
-        return "cat/cat-form";
+        return "cat/creating-a-new-cat-form";
     }
 
     @PostMapping
@@ -50,11 +50,11 @@ public class CatViewController {
     }
 
     @GetMapping("/{catId}/edit")
-    public String showEditCatForm(@PathVariable Long catId, Model model) {
+    public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
         model.addAttribute("cat", cat);
-        return "cat/cat-form";
+        return "cat/existing-edit-cat-form";
     }
 
     @PostMapping("/{catId}")
