@@ -1,6 +1,7 @@
 package org.example.springboot25.controller;
 
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
+@RequestMapping("/users")
 public class UserViewController {
     private final UserService userService;
 
@@ -17,22 +19,32 @@ public class UserViewController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public String getUsers(Model model) {
-        try {
-            List<User> allUsers = userService.getAllUsers();
-            model.addAttribute("users", allUsers);
-        } catch (Exception e) {
-            model.addAttribute("users", "Unable to retrieve user list");
+        List<User> allUsers = userService.getAllUsers();
+        if (allUsers.isEmpty()) {
+            model.addAttribute("usersError", "Unable to retrieve user list");
         }
+        model.addAttribute("users", allUsers);
         return "user/user-list";
     }
 
-    //Todo: Check with group how we wish to handle error-page
-    @GetMapping
-    public String getUserById(@RequestParam Long userId, Model model) {
+    @GetMapping("/id/{userId}")
+    public String getUserById(@PathVariable() Long userId, Model model) {
         try {
             User user = userService.getUserById(userId);
+            model.addAttribute("user", user);
+            return "user/user-details";
+        } catch (NotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "error-page";
+        }
+    }
+
+    @GetMapping("/username/{userName}")
+    String getUserByUserName(@PathVariable String userName, Model model) {
+        try {
+            User user = userService.getUserByUserName(userName);
             model.addAttribute("user", user);
             return "user/user-details";
         } catch (Exception e) {
@@ -41,53 +53,42 @@ public class UserViewController {
         }
     }
 
-    @GetMapping
-    String getUserByUserName(@RequestParam String userName, Model model) {
-        try {
-            User user = userService.getUserByUserName(userName);
-            model.addAttribute("user", user);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
-        return "user/user-details";
-    }
-
-    //Todo: dont know if email string will work normally
-    @GetMapping
-    String getUserByUserEmail(@RequestParam String userEmail, Model model) {
+    @GetMapping("/by-email/{userEmail}")
+    String getUserByUserEmail(@PathVariable String userEmail, Model model) {
         try {
             User user = userService.getUserByEmail(userEmail);
             model.addAttribute("user", user);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
+            return "error-page";
         }
         return "user/user-details";
     }
 
-    @GetMapping("/by-username")
-    String getUsersByUserName(@RequestParam String userName, Model model) {
+    @GetMapping("/by-username/{userName}")
+    String getUsersByUserName(@PathVariable String userName, Model model) {
         List<User> users = userService.getAllUsersByUserName("%" + userName + "%");
-        model.addAttribute("user", users);
         if (users.isEmpty())
-            model.addAttribute("error", "No users found with username '" + userName + "'.");
-        return "user/user-list";
-    }
-
-    @GetMapping("/by-name")
-    String getUsersByFullName(@RequestParam String fullName, Model model) {
-        List<User> users = userService.getAllUsersByFullName("%" + fullName + "%");
+            model.addAttribute("message", "No users found with username '" + userName + "'.");
         model.addAttribute("users", users);
-        if (users.isEmpty())
-            model.addAttribute("error", "No users found for name '" + fullName + "'.");
         return "user/user-list";
     }
 
-    @GetMapping("/by-location")
-    String getUsersByUserLocation(@RequestParam String userLocation, Model model) {
-        List<User> users = userService.getAllUsersByLocation(userLocation);
-        model.addAttribute("user", users);
+    @GetMapping("/by-name/{userFullName}")
+    String getUsersByFullName(@PathVariable String userFullName, Model model) {
+        List<User> users = userService.getAllUsersByFullName("%" + userFullName + "%");
         if (users.isEmpty())
-            model.addAttribute("error", "No users found for location '" + userLocation + "'.");
+            model.addAttribute("message", "No users found for name '" + userFullName + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-location/{userLocation}")
+    String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
+        List<User> users = userService.getAllUsersByLocation(userLocation);
+        if (users.isEmpty())
+            model.addAttribute("message", "No users found for location '" + userLocation + "'.");
+        model.addAttribute("users", users);
 
         return "user/user-list";
     }
@@ -95,9 +96,9 @@ public class UserViewController {
     @GetMapping("/by-role")
     public String getUsersByUserRole(@RequestParam String userRole, Model model) {
         List<User> users = userService.getAllUsersByRole(userRole);
-        model.addAttribute("users", users);
         if (users.isEmpty()) {
             model.addAttribute("message", "No results found for role '" + userRole + "'.");
+        model.addAttribute("users", users);
         }
         return "user/user-list";
     }
@@ -105,38 +106,35 @@ public class UserViewController {
 
     @GetMapping("/by-role-location")
     String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
-        try {
-            List<User> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
-            model.addAttribute("user", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+        List<User> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
+        if (users.isEmpty()) {
+            model.addAttribute("message", "No results found for role '" + userRole + "' and location '" + userLocation + "'.");
+        model.addAttribute("users", users);
         }
         return "user/user-list";
     }
 
     @GetMapping("/by-cat")
     String getUsersByCatName(@RequestParam String catName, Model model) {
-        try {
-            List<User> users = userService.getAllUsersByCatName(catName);
-            model.addAttribute("user", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+        List<User> users = userService.getAllUsersByCatName(catName);
+        if (users.isEmpty()) {
+            model.addAttribute("message", "No results found for cat '" + catName + "'.");
+        model.addAttribute("users", users);
         }
         return "user/user-list";
     }
 
-    @GetMapping("/by-search-term")
-    String getUsersByUserNameOrCatName(@RequestParam String searchTerm, Model model) {
-        try {
-            List<User> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
-            model.addAttribute("user", users);
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+    @GetMapping("/by-search-term/{searchTerm}")
+    String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
+        List<User> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
+        if (users.isEmpty()) {
+            model.addAttribute("message", "No results found for search term '" + searchTerm + "'.");
+        model.addAttribute("users", users);
         }
         return "user/user-list";
     }
 
-    @GetMapping("/users/add")
+    @GetMapping("/add")
     String addUser(Model model) {
         if (model.containsAttribute("user")) {
             model.addAttribute("user", new User());
@@ -144,7 +142,7 @@ public class UserViewController {
         return "user/user-add";
     }
 
-    @PostMapping("/addUser")
+    @PostMapping("/add")
     String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         userService.addUser(user);
         redirectAttributes.addFlashAttribute("Success", true);
@@ -154,13 +152,12 @@ public class UserViewController {
 
     @GetMapping("/users/update")
     String updateUser(Model model) {
-        if (model.containsAttribute("user")) {
+        if (!model.containsAttribute("user")) {
             model.addAttribute("user", new User());
         }
         return "user/user-update";
     }
 
-    //Todo: PatchMapping is not supported? Look up update
     @PatchMapping("/users/update")
     String updateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         userService.updateUser(user.getUserId(), user);

@@ -22,37 +22,32 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // Returns all users (empty list if none found)
     public List<User> getAllUsers() {
         log.info("Fetching all users");
         return userRepository.findAll();
     }
 
-    // Single user lookup by ID: throw exception if not found
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
     }
 
-    // Single user lookup by username
     public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
                 .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
     }
 
-    // Single user lookup by email
     public User getUserByEmail(String userEmail) {
         return userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User with email " + userEmail + " not found"));
     }
 
-    // For collection queries, returning an empty list is a valid result
     public List<User> getAllUsersByUserName(String userName) {
         return userRepository.findAllByUserName(userName);
     }
 
     public List<User> getAllUsersByFullName(String fullName) {
-        return userRepository.findByUserFullName(fullName);
+        return userRepository.findAllByUserFullName(fullName);
     }
 
     public List<User> getAllUsersByLocation(String userLocation) {
