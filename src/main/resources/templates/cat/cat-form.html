@@ -1,10 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Cat Form</title>
+    </head>
 <body>
-
+<h1 th:text="${cat.catId != null} ? 'Edit Cat' : 'New Cat'"></h1>
+<form th:action="${cat.catId != null} ? @{/cats/{catId}(catId=${cat.catId})} : @{/cats}"
+      th:object="${cat}" method="post">
+    <div>
+        <label for="catName">Name:</label>
+        <input type="text" id="catName" th:field="*{catName}" required />
+    </div>
+    <div>
+        <label for="catBreed">Breed:</label>
+        <input type="text" id="catBreed" th:field="*{catBreed}" />
+    </div>
+    <div>
+        <label for="catGender">Gender:</label>
+        <input type="text" id="catGender" th:field="*{catGender}" />
+    </div>
+    <div>
+        <label for="catAge">Age:</label>
+        <input type="number" id="catAge" th:field="*{catAge}" min="0" />
+    </div>
+    <div>
+        <label for="catPersonality">Personality:</label>
+        <input type="text" id="catPersonality" th:field="*{catPersonality}" />
+    </div>
+    <!-- Add more fields as needed -->
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</form>
+<a href="/cats">Back to Cat List</a>
 </body>
 </html>

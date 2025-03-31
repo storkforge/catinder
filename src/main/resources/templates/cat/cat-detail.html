@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Cat Detail</title>
+    </head>
 <body>
-
+<h1>Cat Detail</h1>
+<div>
+    <p><strong>ID:</strong> <span th:text="${cat.catId}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${cat.catName}"></span></p>
+    <p><strong>Breed:</strong> <span th:text="${cat.catBreed}"></span></p>
+    <p><strong>Gender:</strong> <span th:text="${cat.catGender}"></span></p>
+    <p><strong>Age:</strong> <span th:text="${cat.catAge}"></span></p>
+    <p><strong>Personality:</strong> <span th:text="${cat.catPersonality}"></span></p>
+</div>
+<a href="/cats">Back to Cat List</a>
 </body>
 </html>
