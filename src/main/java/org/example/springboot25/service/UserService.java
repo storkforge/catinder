@@ -52,7 +52,7 @@ public class UserService {
     }
 
     public List<User> getAllUsersByFullName(String fullName) {
-        return userRepository.findByFullName(fullName);
+        return userRepository.findByUserFullName(fullName);
     }
 
     public List<User> getAllUsersByLocation(String userLocation) {
@@ -90,7 +90,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
         log.info("Updating user: {}", user.getUserName());
         oldUser.setUserName(user.getUserName());
-        oldUser.setFullName(user.getFullName());
+        oldUser.setUserFullName(user.getUserFullName());
         oldUser.setUserEmail(user.getUserEmail());
         oldUser.setUserLocation(user.getUserLocation());
         oldUser.setUserRole(user.getUserRole());
@@ -106,7 +106,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
         log.info("Partially updating user: {}", existingUser.getUserName());
         if (updates.containsKey("fullName")) {
-            existingUser.setFullName((String) updates.get("fullName"));
+            existingUser.setUserFullName((String) updates.get("fullName"));
         }
         if (updates.containsKey("userName")) {
             existingUser.setUserName((String) updates.get("userName"));

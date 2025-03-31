@@ -17,7 +17,7 @@ public class User {
     private Long userId;
 
     @NotBlank
-    private String fullName;
+    private String userFullName;
 
     @NotBlank
     @Column(unique = true)
@@ -54,12 +54,12 @@ public class User {
         return userId;
     }
 
-    public @NotBlank String getFullName() {
-        return fullName;
+    public @NotBlank String getUserFullName() {
+        return userFullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setUserFullName(String fullName) {
+        this.userFullName = fullName;
     }
 
     public String getUserName() {

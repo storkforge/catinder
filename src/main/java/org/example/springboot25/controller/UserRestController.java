@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/users")
 public class UserRestController {
 
     private final UserService userService;
@@ -19,69 +20,51 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @GetMapping("/api/users")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping
+    @GetMapping("/id/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public User getById(@RequestParam Long userId) {
+    public User getById(@PathVariable() Long userId) {
         return userService.getUserById(userId);
     }
 
-    @GetMapping
+    @GetMapping("/username/{userName}")
     @ResponseStatus(HttpStatus.OK)
-    public User getByUserName(@RequestParam String userName) {
+    public User getByUserName(@PathVariable() String userName) {
         return userService.getUserByUserName(userName);
     }
 
-    @GetMapping
+    @GetMapping("/by-username/{userName}")
     @ResponseStatus(HttpStatus.OK)
-    public User getByEmail(@RequestParam String email) {
-        return userService.getUserByEmail(email);
-    }
-
-    @GetMapping("/by-username")
-    @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByUserName(@RequestParam String userName){
+    public List<User> getAllByUserName(@PathVariable String userName){
         return userService.getAllUsersByUserName(userName);
     }
 
-    @GetMapping("/by-name")
+    @GetMapping("/by-name/{userFullName}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByFullName(@RequestParam String fullName) {
-        return userService.getAllUsersByFullName(fullName);
+    public List<User> getAllByFullName(@PathVariable String userFullName) {
+        return userService.getAllUsersByFullName(userFullName);
     }
 
-    @GetMapping("/by-location")
+    @GetMapping("/by-location/{userLocation}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByLocation(@RequestParam String userLocation) {
+    public List<User> getAllByLocation(@PathVariable String userLocation) {
         return userService.getAllUsersByLocation(userLocation);
     }
 
-    @GetMapping("/by-role")
+    @GetMapping("/by-role/{userRole}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByRole(@RequestParam String userRole) {
+    public List<User> getAllByRole(@PathVariable String userRole) {
         return userService.getAllUsersByRole(userRole);
     }
 
-    @GetMapping("/by-role-location")
+    @GetMapping("/by-search-term/{searchTerm}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation) {
-        return userService.getAllUsersByRoleAndLocation(userRole, userLocation);
-    }
-
-    @GetMapping("/by-cat")
-    @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByCatName(@RequestParam String catName) {
-        return userService.getAllUsersByCatName(catName);
-    }
-
-    @GetMapping("/by-search-term")
-    @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByUserNameOrCatName(@RequestParam String searchTerm) {
+    public List<User> getAllByUserNameOrCatName(@PathVariable String searchTerm) {
         return userService.getAllUsersByUserNameOrCatName(searchTerm);
     }
 
@@ -91,19 +74,18 @@ public class UserRestController {
         return userService.addUser(user);
     }
 
-    @PutMapping
+    @PutMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@RequestBody Long userId, @RequestBody @Valid User user) {
+    public User updateUser(@PathVariable Long userId, @RequestBody @Valid User user) {
         return userService.updateUser(userId, user);
     }
 
-    @PatchMapping
+    @PatchMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@RequestBody Long userId, @RequestBody Map<String, Object> updates) {
+    public User updateUser(@PathVariable Long userId, @RequestBody Map<String, Object> updates) {
         return userService.updateUser(userId, updates);
     }
 
-    //Delete user by id
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId) {
         userService.deleteUserById(userId);
