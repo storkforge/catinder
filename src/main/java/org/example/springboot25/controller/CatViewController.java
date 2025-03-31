@@ -4,7 +4,6 @@ import org.example.springboot25.entities.Cat;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,21 +26,21 @@ public class CatViewController {
     public String showAllCats(Model model) {
             List<Cat> cats = catService.getAllCats();
             model.addAttribute("cats", cats);
-            return "cats-list";
+            return "cat/cats-list";
         }
 
     @GetMapping("/{catId}")
     public String showCatDetail(@PathVariable Long catId, Model model) {
-        Cat cat = catService.getCatById(catID)
+        Cat cat = catService.getCatById(catId)
                 .orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
         model.addAttribute("cat", cat);
-        return "cat-detail";
+        return "cat/cat-detail";
     }
 
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
         model.addAttribute("cat", new Cat());
-        return "cat-form";
+        return "cat/cat-form";
     }
 
     @PostMapping
@@ -55,10 +54,10 @@ public class CatViewController {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
         model.addAttribute("cat", cat);
-        return "cat-form";
+        return "cat/cat-form";
     }
 
-    @PostMapping("/{catID}")
+    @PostMapping("/{catId}")
     public String updateCat(@PathVariable Long catId, @ModelAttribute("cat") Cat cat) {
         try {
             catService.updateCat(catId,cat);
@@ -68,7 +67,7 @@ public class CatViewController {
         return "redirect:/cats";
     }
 
-    @GetMapping("/{catID}/delete")
+    @GetMapping("/{catId}/delete")
     public String deleteCat(@PathVariable Long catId) {
         catService.deleteCat(catId);
         return "redirect:/cats";

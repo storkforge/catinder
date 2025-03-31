@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Cat Detail - Catinder</title>
+    <title>Catinder - Cats List</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Reuse the same styles as above */
+        /* Bakgrunden */
         html, body {
             margin: 0;
             padding: 0;
@@ -73,15 +73,25 @@
             background-color: rgba(148, 148, 148, 0.3);
             color: #fff;
         }
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: calc(100vh - 120px);
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            margin: 20px;
-            border-radius: 10px;
+        /* Sstyles list viewen */
+        .content {
+            margin: 2em;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #e79a6f;
+            color: white;
         }
         a {
             text-decoration: none;
@@ -105,17 +115,33 @@
     </div>
 </header>
 
-<div class="main-content">
-    <h2>Cat Detail</h2>
-    <div>
-        <p><strong>ID:</strong> <span th:text="${cat.catId}"></span></p>
-        <p><strong>Name:</strong> <span th:text="${cat.catName}"></span></p>
-        <p><strong>Breed:</strong> <span th:text="${cat.catBreed}"></span></p>
-        <p><strong>Gender:</strong> <span th:text="${cat.catGender}"></span></p>
-        <p><strong>Age:</strong> <span th:text="${cat.catAge}"></span></p>
-        <p><strong>Personality:</strong> <span th:text="${cat.catPersonality}"></span></p>
-    </div>
-    <a th:href="@{/cats}">Back to Cats List</a>
+<div class="content">
+    <h2>Cats List</h2>
+    <a th:href="@{/cats/new}">Add New Cat</a>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Breed</th>
+            <th>Age</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cat : ${cats}">
+            <td th:text="${cat.catId}">1</td>
+            <td th:text="${cat.catName}">Cat Name</td>
+            <td th:text="${cat.catBreed}">Breed</td>
+            <td th:text="${cat.catAge}">Age</td>
+            <td>
+                <a th:href="@{'/cats/' + ${cat.catId}}">View</a> |
+                <a th:href="@{'/cats/' + ${cat.catId} + '/edit'}">Edit</a> |
+                <a th:href="@{'/cats/' + ${cat.catId} + '/delete'}" onclick="return confirm('Are you sure?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
