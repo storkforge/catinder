@@ -30,11 +30,11 @@ public class EventParticipantRestController {
 
     @GetMapping("/user/{userId}")
     public List<EventParticipant> getByUserId(@PathVariable Long userId) {
-        return service.getEventByUserId(userId);
+        return service.getParticipantsByUserId(userId);
     }
 
     @GetMapping("/check")
-    public boolean isUserParticipating (@RequestParam Long userId, @RequestParam Long eventId) {
+    public boolean isUserParticipating(@RequestParam Long userId, @RequestParam Long eventId) {
         return service.isUserParticipating(userId, eventId);
     }
 

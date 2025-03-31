@@ -5,20 +5,44 @@
 </head>
 <body>
 <h1>Participants for Selected Event</h1>
-<table>
-    <thead>
-    <tr>
-        <th>Participation ID</th>
-        <th>User</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="p : ${participants}">
-        <td th:text="${p.eventParticipantId}"></td>
-        <td th:text="${p.user.userName}"></td>
-    </tr>
-    </tbody>
-</table>
+
+<nav>
+    <a th:href="@{/events}">Back to Events</a> |
+    <a th:href="@{/participants/add}">Add Participant</a>
+</nav>
+
+<!-- Visa meddelande om det saknas deltagare -->
+<div th:if="${#lists.isEmpty(participants)}" style="margin: 20px 0; color: #666;">
+    <p>This event has no participants.</p>
+</div>
+
+<!-- Visa deltagartabell om det finns deltagare -->
+<div th:unless="${#lists.isEmpty(participants)}">
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <thead>
+        <tr>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;">Participation ID</th>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;">User</th>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;">Email</th>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;">Registration Date</th>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${participants}" style="border-bottom: 1px solid #ddd;">
+            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${p.eventParticipantId}"></td>
+            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${p.user.userName}"></td>
+            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${p.user.userEmail}"></td>
+            <td style="border: 1px solid #ddd; padding: 8px;">
+                <a th:href="@{/participants/{id}/edit(id=${p.eventParticipantId})}" class="btn btn-edit">Edit</a>
+                <form th:action="@{/participants/{id}/delete(id=${p.eventParticipantId})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-delete"
+                            onclick="return confirm('Are you sure you want to remove this participant?')">Remove</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
-

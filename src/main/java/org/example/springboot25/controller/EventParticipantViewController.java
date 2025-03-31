@@ -33,7 +33,7 @@ public class EventParticipantViewController {
 
     @GetMapping("/user")
     public String viewByUser(@RequestParam Long userId, Model model) {
-        model.addAttribute("participants", service.getEventByUserId(userId));
+        model.addAttribute("participants", service.getParticipantsByUserId(userId));
         return "participants/user-event";
     }
 
@@ -41,8 +41,8 @@ public class EventParticipantViewController {
     public String showForm(Model model) {
         if (!model.containsAttribute("participant")) {
             EventParticipant participant = new EventParticipant();
-            participant.setUser(new User());       // 👈 viktigt!
-            participant.setEvent(new Event());     // 👈 viktigt!
+            participant.setUser(new User());
+            participant.setEvent(new Event());
             model.addAttribute("participant", participant);
         }
         return "participants/add";

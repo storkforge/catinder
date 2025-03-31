@@ -31,7 +31,7 @@ public class EventParticipantService {
         return eventParticipantRepository.findByEvent_EventId(eventId);
     }
 
-    public List<EventParticipant>getEventByUserId(Long userId) {
+    public List<EventParticipant>getParticipantsByUserId(Long userId) {
         requiredNotNull(userId, "User ID");
         return eventParticipantRepository.findByUser_UserId(userId);
     }

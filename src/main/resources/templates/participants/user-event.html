@@ -5,20 +5,35 @@
 </head>
 <body>
 <h1>Events the User is Registered For</h1>
-<table>
-    <thead>
-    <tr>
-        <th>Participation ID</th>
-        <th>Event</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="p : ${participations}">
-        <td th:text="${p.eventParticipantId}"></td>
-        <td th:text="${p.event.eventName}"></td>
-    </tr>
-    </tbody>
-</table>
+
+<nav>
+    <a th:href="@{/users}">Back to Users</a> |
+    <a th:href="@{/participants/add}">Register for Event</a>
+</nav>
+
+<div th:if="${#lists.isEmpty(participations)}" style="margin: 20px 0; color: #666;">
+    <p>This user is not registered for any events.</p>
+</div>
+
+<div th:unless="${#lists.isEmpty(participations)}">
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <thead>
+        <tr>
+            <th style="border: 1px solid #ddd; padding: 8px;">Participation ID</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Event</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Date & Time</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Location</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${participations}" style="border-bottom: 1px solid #ddd;">
+            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${p.eventParticipantId}"></td>
+            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${p.event.eventName}"></td>
+            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${#temporals.format(p.event.eventDateTime, 'dd MMM yyyy HH:mm')}"></td>
+            <td style="border: 1px solid #ddd; padding: 8px;" th:text="${p.event.eventLocation}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
-
