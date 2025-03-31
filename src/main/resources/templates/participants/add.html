@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Participant</title>
+</head>
+<body>
+<h1>Add a Participant</h1>
+
+<p th:if="${success}" th:text="${success}" style="color:green;"></p>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+<form th:action="@{/participants/add}" method="post">
+
+    <label for="userId">User ID:</label>
+    <input type="number" name="userId" id="userId" required />
+
+    <label for="eventId">Event ID:</label>
+    <input type="number" name="eventId" id="eventId" required />
+
+    <button type="submit">Add Participant</button>
+</form>
+</body>
+</html>
+
+

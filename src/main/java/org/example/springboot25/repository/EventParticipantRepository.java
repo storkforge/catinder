@@ -10,16 +10,20 @@ import java.util.Optional;
 
 public interface EventParticipantRepository extends JpaRepository<EventParticipant, Long> {
 
-    List<EventParticipant> findByEventParticipantEvent(Event event);
-    List<EventParticipant> findByEventParticipantEvent_EventId(Long eventId);
+    List<EventParticipant> findByEvent(Event event);
 
-    List<EventParticipant> findByEventParticipantUser(User user);
-    List<EventParticipant> findByEventParticipantUser_UserId(Long userId);
+    List<EventParticipant> findByEvent_EventId(Long eventId);
 
-    boolean existsByEventParticipantUserAndEventParticipantEvent(User user, Event event);
+    List<EventParticipant> findByUser(User user);
 
-    boolean existsByEventParticipantUser_UserIdAndEventParticipantEvent_EventId(Long userId, Long eventId);
+    List<EventParticipant> findByUser_UserId(Long userId);
 
+    boolean existsByUserAndEvent(User user, Event event);
+    boolean existsByUser_UserIdAndEvent_EventId(Long userId, Long eventId);
 
-    Optional<EventParticipant> findByEventParticipantUserAndEventParticipantEvent(User user, Event event);
+    Optional<EventParticipant> findByUserAndEvent(User user, Event event);
+    Optional<EventParticipant> findByUser_UserIdAndEvent_EventId(Long userId, Long eventId);
+
+    long countByEvent(Event event);
+
 }

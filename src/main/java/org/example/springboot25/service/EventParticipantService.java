@@ -1,15 +1,16 @@
 package org.example.springboot25.service;
 
-
 import jakarta.transaction.Transactional;
-import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.EventParticipant;
-import org.example.springboot25.entities.User;
+import org.example.springboot25.exception.BadRequestException;
+import org.example.springboot25.exception.ConflictException;
+import org.example.springboot25.exception.NotFoundException;
 import org.example.springboot25.repository.EventParticipantRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @Transactional
@@ -21,96 +22,64 @@ public class EventParticipantService {
         this.eventParticipantRepository = eventParticipantRepository;
     }
 
-    public List<EventParticipant> getParticipantsByEvent(Event event) {
-        if (event == null)
-            throw new IllegalArgumentException("Event must not be null");
-        return eventParticipantRepository.findByEventParticipantEvent(event);
+    public List<EventParticipant> getAllParticipants() {
+        return eventParticipantRepository.findAll();
     }
 
     public List<EventParticipant> getParticipantsByEventId(Long eventId) {
-        if(eventId == null)
-            throw new IllegalArgumentException("Event ID must not be null");
-        return eventParticipantRepository.findByEventParticipantEvent_EventId(eventId);
+        requiredNotNull(eventId, "Event ID");
+        return eventParticipantRepository.findByEvent_EventId(eventId);
     }
 
-    public List<EventParticipant> getEventsByUser(User user) {
-        if(user == null)
-            throw new IllegalArgumentException("User must not be null");
-        return eventParticipantRepository.findByEventParticipantUser(user);
-    }
-
-    public List<EventParticipant> getEventById(Long userId) {
-        if(userId == null)
-            throw new IllegalArgumentException("User ID must not be null");
-        return eventParticipantRepository.findByEventParticipantUser_UserId(userId);
-    }
-
-    public boolean isUserParticipating(Long userId, Long eventId) {
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID must not be null");
-        }
-        if (eventId == null) {
-            throw new IllegalArgumentException("Event ID must not be null");
-        }
-        return eventParticipantRepository.existsByEventParticipantUser_UserIdAndEventParticipantEvent_EventId(userId, eventId);
-    }
-
-    public Optional<EventParticipant> getParticipation(User user, Event event) {
-        if (user == null) {
-            throw new IllegalArgumentException("User must not be null");
-        }
-        if (event == null) {
-            throw new IllegalArgumentException("Event must not be null");
-        }
-        return eventParticipantRepository.findByEventParticipantUserAndEventParticipantEvent(user, event);
+    public List<EventParticipant>getEventByUserId(Long userId) {
+        requiredNotNull(userId, "User ID");
+        return eventParticipantRepository.findByUser_UserId(userId);
     }
 
     public EventParticipant addParticipant(EventParticipant participant) {
-        if (participant == null) {
-            throw new IllegalArgumentException("Participant must not be null");
-        }
+        requiredNotNull(participant, "Participant");
+        requiredNotNull(participant.getUser(), "User in Participant");
+        requiredNotNull(participant.getEvent(), "Event in Participant");
 
-        User user = participant.getUserEventParticipant();
-        Event event = participant.getEventParticipantEvent();
+        Long userId = participant.getUser().getUserId();
+        Long eventId = participant.getEvent().getEventId();
 
-        if (user == null) {
-            throw new IllegalArgumentException("Participant must have a User");
-        }
-        if (event == null) {
-            throw new IllegalArgumentException("Participant must have an Event");
-        }
+        requiredNotNull(userId, "User ID");
+        requiredNotNull(eventId, "Event ID");
 
-        Long userId = user.getUserId();
-        Long eventId = event.getEventId();
-
-        if (userId == null) {
-            throw new IllegalArgumentException("User ID must not be null");
-        }
-        if (eventId == null) {
-            throw new IllegalArgumentException("Event ID must not be null");
-        }
-
-        if (isUserParticipating(userId, eventId)) {
-            throw new IllegalStateException("User is already participating in this event");
+        if (eventParticipantRepository.existsByUser_UserIdAndEvent_EventId(userId, eventId)) {
+            throw new ConflictException("User is already participating in this event.");
         }
 
         return eventParticipantRepository.save(participant);
     }
 
-    public void deleteParticipant(Long eventParticipantId) {
-        if (eventParticipantId == null) {
-            throw new IllegalArgumentException("EventParticipant ID must not be null");
+    public void deleteParticipation(Long id) {
+        requiredNotNull(id, "EventParticipant ID");
+
+        if (!eventParticipantRepository.existsById(id)) {
+            throw new NotFoundException("No participant found with ID:" + id);
         }
 
-        if (!eventParticipantRepository.existsById(eventParticipantId)) {
-            throw new IllegalArgumentException("No participant found with ID: " + eventParticipantId);
-        }
-
-        eventParticipantRepository.deleteById(eventParticipantId);
+        eventParticipantRepository.deleteById(id);
     }
 
-    public List<EventParticipant> getAllParticipants() {
-        return eventParticipantRepository.findAll();
+    public boolean isUserParticipating(Long userId, Long eventId) {
+        requiredNotNull(userId, "User ID");
+        requiredNotNull(eventId, "Event ID");
+        return eventParticipantRepository.existsByUser_UserIdAndEvent_EventId(userId, eventId);
+    }
+
+    public Optional<EventParticipant> getParticipant(Long userId, Long eventId) {
+        requiredNotNull(userId, "User ID");
+        requiredNotNull(eventId, "Event ID");
+        return eventParticipantRepository.findByUser_UserIdAndEvent_EventId(userId, eventId);
+    }
+
+    private void requiredNotNull(Object value, String message) {
+        if (value == null) {
+            throw new BadRequestException(message + " must not be null");
+        }
     }
 
 }

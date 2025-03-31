@@ -1,5 +1,6 @@
 package org.example.springboot25.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -34,6 +35,7 @@ public class Event {
     @JoinColumn(name = "event_planner_user_id")
     private User userEventPlanner;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "eventParticipantEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventParticipant> eventParticipants = new ArrayList<>();
 

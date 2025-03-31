@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Participants for Event</title>
+</head>
+<body>
+<h1>Participants for Selected Event</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Participation ID</th>
+        <th>User</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p : ${participants}">
+        <td th:text="${p.eventParticipantId}"></td>
+        <td th:text="${p.user.userName}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
+

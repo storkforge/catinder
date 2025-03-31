@@ -13,32 +13,32 @@ public class EventParticipant {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "event_participant_user_id")
-    private User userEventParticipant;
+    private User user;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "event_participant_event_id")
-    private Event eventParticipantEvent;
+    private Event event;
 
 
     public Long getEventParticipantId() {
         return eventParticipantId;
     }
 
-    public User getUserEventParticipant() {
-        return userEventParticipant;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserEventParticipant(User userEventParticipant) {
-        this.userEventParticipant = userEventParticipant;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Event getEventParticipantEvent() {
-        return eventParticipantEvent;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setEventParticipantEvent(Event eventParticipantEvent) {
-        this.eventParticipantEvent = eventParticipantEvent;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
 }

@@ -1,5 +1,6 @@
 package org.example.springboot25.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,6 +39,7 @@ public class User {
     @OneToMany(mappedBy = "userEventPlanner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> userPlannedEvents = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "userEventParticipant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventParticipant> userEventParticipants = new ArrayList<>();
 
