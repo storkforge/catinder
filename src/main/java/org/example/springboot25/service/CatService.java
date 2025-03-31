@@ -31,6 +31,7 @@ public class CatService {
         return catRepository.save(cat);
     }
 
+    //Fixa throws
     public Cat updateCat(Long catId, Cat catDetails) throws Exception {
         return catRepository.findById(catId).map(cat -> {
             cat.setCatName(catDetails.getCatName());
