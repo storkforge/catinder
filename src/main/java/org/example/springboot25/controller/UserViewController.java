@@ -133,7 +133,7 @@ public class UserViewController {
 
     @GetMapping("/add")
     String addUser(Model model) {
-        if (model.containsAttribute("user")) {
+        if (!model.containsAttribute("user")) {
             model.addAttribute("user", new User());
         }
         return "user/user-add";
