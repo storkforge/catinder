@@ -3,6 +3,7 @@ package org.example.springboot25.controller;
 import jakarta.validation.Valid;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.exceptions.UserAlreadyExistsException;
 import org.example.springboot25.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +26,7 @@ public class UserViewController {
     public String getUsers(Model model) {
         List<User> allUsers = userService.getAllUsers();
         if (allUsers.isEmpty()) {
-            model.addAttribute("usersError", "Unable to retrieve user list");
+            model.addAttribute("usersError", "No users found.");
         }
         model.addAttribute("users", allUsers);
         return "user/user-list";
@@ -139,10 +140,18 @@ public class UserViewController {
     }
 
     @PostMapping("/add")
-    String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-        userService.addUser(user);
-        redirectAttributes.addFlashAttribute("success", true);
-        redirectAttributes.addFlashAttribute("user", user);
+    String addUser(@Valid @ModelAttribute User user, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "user/user-add";
+        }
+        try {
+            userService.addUser(user);
+            redirectAttributes.addFlashAttribute("success", true);
+            redirectAttributes.addFlashAttribute("user", user);
+        } catch (UserAlreadyExistsException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "user/user-add";
+        }
         return "redirect:/users/add";
     }
 

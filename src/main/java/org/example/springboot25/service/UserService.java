@@ -3,6 +3,7 @@ package org.example.springboot25.service;
 import jakarta.transaction.Transactional;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.exceptions.UserAlreadyExistsException;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,10 @@ public class UserService {
     }
 
     public User addUser(User user) {
+        if (userRepository.existsByUserEmail(user.getUserEmail()))
+            throw new UserAlreadyExistsException("Account with given email already exists.");
+        if (userRepository.existsByUserName(user.getUserName()))
+            throw new UserAlreadyExistsException("Username is taken.");
         log.info("Creating new user: {}", user.getUserName());
         return userRepository.save(user);
     }
@@ -81,7 +86,7 @@ public class UserService {
      */
     public User updateUser(Long userId, User user) {
         User oldUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
         log.info("Updating user: {}", user.getUserName());
         oldUser.setUserName(user.getUserName());
         oldUser.setUserFullName(user.getUserFullName());
@@ -97,10 +102,10 @@ public class UserService {
      */
     public User updateUser(Long userId, Map<String, Object> updates) {
         User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
         log.info("Partially updating user: {}", existingUser.getUserName());
-        if (updates.containsKey("fullName")) {
-            existingUser.setUserFullName((String) updates.get("fullName"));
+        if (updates.containsKey("userFullName")) {
+            existingUser.setUserFullName((String) updates.get("userFullName"));
         }
         if (updates.containsKey("userName")) {
             existingUser.setUserName((String) updates.get("userName"));
@@ -121,7 +126,7 @@ public class UserService {
     }
 
     public void deleteUserById(Long userId) {
-        log.info("Deleting user with id: {}", userId);
+        log.info("Deleting user with id: {}", userId + ".");
         userRepository.deleteById(userId);
     }
 }

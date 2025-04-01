@@ -24,7 +24,7 @@
         </div>
         <div class="form-row">
             <label for="userEmail">Email:</label>
-            <input type="text" id="userEmail" th:field="*{userEmail}"/>
+            <input type="email" id="userEmail" th:field="*{userEmail}"/>
         </div>
         <div class="form-row">
             <label for="userLocation">Location:</label>
@@ -45,6 +45,9 @@
 </div>
 <div th:if="${success}" class="success-message">
     User added successfully!
+</div>
+<div th:if="${error}" th:text="${error}">
+    There was an error.
 </div>
 </body>
 </html>
