@@ -47,7 +47,7 @@ public class UserViewController {
             User user = userService.getUserByUserName(userName);
             model.addAttribute("user", user);
             return "user/user-details";
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
             return "error-page";
         }
@@ -58,7 +58,7 @@ public class UserViewController {
         try {
             User user = userService.getUserByEmail(userEmail);
             model.addAttribute("user", user);
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
             return "error-page";
         }
@@ -96,10 +96,9 @@ public class UserViewController {
     @GetMapping("/by-role")
     public String getUsersByUserRole(@RequestParam String userRole, Model model) {
         List<User> users = userService.getAllUsersByRole(userRole);
-        if (users.isEmpty()) {
+        if (users.isEmpty())
             model.addAttribute("message", "No results found for role '" + userRole + "'.");
         model.addAttribute("users", users);
-        }
         return "user/user-list";
     }
 
@@ -107,30 +106,28 @@ public class UserViewController {
     @GetMapping("/by-role-location")
     String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
         List<User> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
-        if (users.isEmpty()) {
+        if (users.isEmpty())
             model.addAttribute("message", "No results found for role '" + userRole + "' and location '" + userLocation + "'.");
         model.addAttribute("users", users);
-        }
         return "user/user-list";
     }
 
     @GetMapping("/by-cat")
     String getUsersByCatName(@RequestParam String catName, Model model) {
         List<User> users = userService.getAllUsersByCatName(catName);
-        if (users.isEmpty()) {
+        if (users.isEmpty())
             model.addAttribute("message", "No results found for cat '" + catName + "'.");
+
         model.addAttribute("users", users);
-        }
         return "user/user-list";
     }
 
     @GetMapping("/by-search-term/{searchTerm}")
     String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
         List<User> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
-        if (users.isEmpty()) {
+        if (users.isEmpty())
             model.addAttribute("message", "No results found for search term '" + searchTerm + "'.");
         model.addAttribute("users", users);
-        }
         return "user/user-list";
     }
 
