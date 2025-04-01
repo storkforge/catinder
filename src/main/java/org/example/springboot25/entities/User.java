@@ -16,20 +16,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @NotBlank
+//    @NotBlank
     private String userName;
 
     @Email
-    @NotBlank
+//    @NotBlank
     private String userEmail;
 
-    @NotBlank
+//    @NotBlank
     private String userLocation;
 
-    @NotNull
+//    @NotNull
     private String userRole;
 
-    @NotBlank
+//    @NotBlank
     private String userAuthProvider;
 
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
