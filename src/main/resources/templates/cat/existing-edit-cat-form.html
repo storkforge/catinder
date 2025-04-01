@@ -136,7 +136,8 @@
   <form th:if="${cat.catId != null}"
         th:action="@{/cats/{catId}(catId=${cat.catId})}"
         th:object="${cat}" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<!--  kolla om vi behöverlägga till detta för PATCH request <input type="hidden" name="_method" value="PATCH" />-->
+<!--   sätt på denna när spring security är inlagd <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
 
 
     <label for="catName">Name:</label>
