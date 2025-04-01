@@ -1,5 +1,6 @@
 package org.example.springboot25.service;
 
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.CatRepository;
 import org.example.springboot25.entities.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class CatService {
     }
 
     //Fixa throws
-    public Cat updateCat(Long catId, Cat catDetails) throws Exception {
+    public Cat updateCat(Long catId, Cat catDetails) throws NotFoundException {
         return catRepository.findById(catId).map(cat -> {
             cat.setCatName(catDetails.getCatName());
             cat.setCatProfilePicture(catDetails.getCatProfilePicture());
@@ -42,7 +43,7 @@ public class CatService {
             cat.setCatPersonality(catDetails.getCatPersonality());
             cat.setUserCatOwner(catDetails.getUserCatOwner());
             return catRepository.save(cat);
-        }).orElseThrow(()-> new Exception("Cat not found with id " + catId));
+        }).orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
     }
 
     public void deleteCat(Long catId) {
