@@ -1,10 +1,12 @@
 package org.example.springboot25.controller;
 
+import jakarta.validation.Valid;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -58,11 +60,11 @@ public class UserViewController {
         try {
             User user = userService.getUserByEmail(userEmail);
             model.addAttribute("user", user);
+            return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
             return "error-page";
         }
-        return "user/user-details";
     }
 
     @GetMapping("/by-username/{userName}")
@@ -89,19 +91,17 @@ public class UserViewController {
         if (users.isEmpty())
             model.addAttribute("message", "No users found for location '" + userLocation + "'.");
         model.addAttribute("users", users);
-
         return "user/user-list";
     }
 
-    @GetMapping("/by-role")
-    public String getUsersByUserRole(@RequestParam String userRole, Model model) {
+    @GetMapping("/by-role/{userRole}")
+    public String getUsersByUserRole(@PathVariable String userRole, Model model) {
         List<User> users = userService.getAllUsersByRole(userRole);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for role '" + userRole + "'.");
         model.addAttribute("users", users);
         return "user/user-list";
     }
-
 
     @GetMapping("/by-role-location")
     String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
@@ -117,7 +117,6 @@ public class UserViewController {
         List<User> users = userService.getAllUsersByCatName(catName);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for cat '" + catName + "'.");
-
         model.addAttribute("users", users);
         return "user/user-list";
     }
@@ -142,7 +141,7 @@ public class UserViewController {
     @PostMapping("/add")
     String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         userService.addUser(user);
-        redirectAttributes.addFlashAttribute("Success", true);
+        redirectAttributes.addFlashAttribute("success", true);
         redirectAttributes.addFlashAttribute("user", user);
         return "redirect:/users/add";
     }
@@ -156,11 +155,19 @@ public class UserViewController {
     }
 
     @PatchMapping("/update")
-    String updateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-        userService.updateUser(user.getUserId(), user);
-        redirectAttributes.addFlashAttribute("Success", true);
-        redirectAttributes.addFlashAttribute("user", user);
-        return "redirect:/users/update";
+    String updateUser(@Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "user/user-update";
+        }
+        try {
+            userService.updateUser(user.getUserId(), user);
+            redirectAttributes.addFlashAttribute("Success", true);
+            redirectAttributes.addFlashAttribute("user", user);
+            return "redirect:/users/update";
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/users/update";
+        }
     }
 
     @GetMapping("/delete/{userId}")
@@ -168,5 +175,4 @@ public class UserViewController {
         userService.deleteUserById(userId);
         return "redirect:/";
     }
-
 }

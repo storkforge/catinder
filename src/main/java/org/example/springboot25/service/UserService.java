@@ -70,7 +70,6 @@ public class UserService {
         return userRepository.findUsersByUsernameOrCatName(searchTerm);
     }
 
-    // Add a new user
     public User addUser(User user) {
         log.info("Creating new user: {}", user.getUserName());
         return userRepository.save(user);

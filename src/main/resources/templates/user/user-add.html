@@ -8,10 +8,43 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
-<h2>New user:</h2>
-<!-- Add form for user details here-->
-<div>
-    <p>(Add form here)</p>
+<div class="form-container">
+    <h2>New user:</h2>
+    <form th:if="${user.userId == null}"
+          th:action="@{/users/add}"
+          th:object="${user}" method="post">
+
+        <div class="form-row">
+            <label for="userName">Username:</label>
+            <input type="text" id="userName" th:field="*{userName}" required/>
+        </div>
+        <div class="form-row">
+            <label for="userFullName">Full name:</label>
+            <input type="text" id="userFullName" th:field="*{userFullName}"/>
+        </div>
+        <div class="form-row">
+            <label for="userEmail">Email:</label>
+            <input type="text" id="userEmail" th:field="*{userEmail}"/>
+        </div>
+        <div class="form-row">
+            <label for="userLocation">Location:</label>
+            <input type="text" id="userLocation" th:field="*{userLocation}"/>
+        </div>
+        <div class="form-row">
+            <label for="userRole">Authority:</label>
+            <input type="text" id="userRole" th:field="*{userRole}"/>
+        </div>
+        <div class="form-row">
+            <label for="userAuthProvider">Social login:</label>
+            <input type="text" id="userAuthProvider" th:field="*{userAuthProvider}" />
+        </div>
+        <div class="form-row">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+<div th:if="${success}" class="success-message">
+    User added successfully!
 </div>
 </body>
 </html>

@@ -8,9 +8,19 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
-<h2>Update user:</h2>
-<!-- Add form for updating user/user fields here -->
-<div>
+<!-- If there is an error (e.g., no user found), display it -->
+<div th:if="${error}">
+    <p th:text="${error}"></p>
+</div>
+
+<div th:if="${user}">
+    <h2>Update user:</h2>
+    <p><strong>User ID:</strong> <span th:text="${user.userId}"></span></p>
+    <p><strong>User Name:</strong> <span th:text="${user.userName}"></span></p>
+    <p><strong>Full Name:</strong> <span th:text="${user.userFullName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.userEmail}"></span></p>
+    <p><strong>Location:</strong> <span th:text="${user.userLocation}"></span></p>
+    <!-- Add form for updating user/user fields here -->
     <p>(Add update form here)</p>
 </div>
 </body>
