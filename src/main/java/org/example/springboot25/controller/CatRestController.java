@@ -1,11 +1,14 @@
 package org.example.springboot25.controller;
 
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.entities.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -38,22 +41,33 @@ public class CatRestController {
     @PostMapping
     public ResponseEntity<Cat> createCat(@RequestBody Cat cat) {
         Cat createdCat = catService.createCat(cat);
-        return ResponseEntity.ok(createdCat);
+        return ResponseEntity
+                .created(URI.create("/api/cats/" + createdCat.getCatId()))
+                .body(createdCat);
     }
+
 
     @PutMapping("/{catId}")
     public ResponseEntity<Cat> updateCat(@PathVariable Long catId, @RequestBody Cat catDetails) {
         try {
             Cat updatedCat = catService.updateCat(catId, catDetails);
             return ResponseEntity.ok(updatedCat);
-        } catch (Exception e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @DeleteMapping("/{catId}")
     public ResponseEntity<Void> deleteCat(@PathVariable Long catId) {
-        catService.deleteCat(catId);
-        return ResponseEntity.noContent().build();
+        try {
+            catService.deleteCat(catId);
+            return ResponseEntity.noContent().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

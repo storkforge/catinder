@@ -60,17 +60,24 @@ public class CatViewController {
     @PostMapping("/{catId}")
     public String updateCat(@PathVariable Long catId, @ModelAttribute("cat") Cat cat) {
         try {
-            catService.updateCat(catId,cat);
-        }catch (Exception e) {
-            throw new NotFoundException("Update failed for cat with id " + catId);
+            catService.updateCat(catId, cat);
+        } catch (NotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Update failed for cat with id " + catId, e);
         }
         return "redirect:/cats";
     }
 
+    //Uppdatera till viewexception senare
     @GetMapping("/{catId}/delete")
     public String deleteCat(@PathVariable Long catId) {
-        catService.deleteCat(catId);
-        return "redirect:/cats";
+        try {
+            catService.deleteCat(catId);
+            return "redirect:/cats";
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete cat with id " + catId, e);
+        }
     }
 
 }
