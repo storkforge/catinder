@@ -150,7 +150,7 @@ public class UserViewController {
         return "redirect:/users/add";
     }
 
-    @GetMapping("/users/update")
+    @GetMapping("/update")
     String updateUser(Model model) {
         if (!model.containsAttribute("user")) {
             model.addAttribute("user", new User());
@@ -158,7 +158,7 @@ public class UserViewController {
         return "user/user-update";
     }
 
-    @PatchMapping("/users/update")
+    @PatchMapping("/update")
     String updateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         userService.updateUser(user.getUserId(), user);
         redirectAttributes.addFlashAttribute("Success", true);
@@ -166,7 +166,7 @@ public class UserViewController {
         return "redirect:/users/update";
     }
 
-    @GetMapping("/users/delete/{userId}")
+    @GetMapping("/delete/{userId}")
     String deleteUser(@PathVariable Long userId) {
         userService.deleteUserById(userId);
         return "redirect:/";
