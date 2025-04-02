@@ -184,7 +184,47 @@ a:active {
     padding: 8px 16px;
 }
 
+.delete-button {
+    display: inline-block;  /* Size to content */
+    margin-top: 20px;       /* Adds space above the button */
+    background-color: #dc2424;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-button:active {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    background-color: #f35151;
+    color: #000;
+}
+
+.button-row {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 .success-message {
-    color: #276900;
-    margin-top: 15px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    text-align: center;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    color: #17c41a;
+}
+
+.error-message {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    font-size: smaller;
+    text-align: center;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    color: #c41717;
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -32,7 +33,7 @@ public class UserViewController {
         return "user/user-list";
     }
 
-    @GetMapping("/id/{userId}")
+    @GetMapping("/profile/id/{userId}")
     public String getUserById(@PathVariable() Long userId, Model model) {
         try {
             User user = userService.getUserById(userId);
@@ -44,7 +45,7 @@ public class UserViewController {
         }
     }
 
-    @GetMapping("/username/{userName}")
+    @GetMapping("/profile/{userName}")
     String getUserByUserName(@PathVariable String userName, Model model) {
         try {
             User user = userService.getUserByUserName(userName);
@@ -132,7 +133,7 @@ public class UserViewController {
     }
 
     @GetMapping("/add")
-    String addUser(Model model) {
+    String addUserForm(Model model) {
         if (!model.containsAttribute("user")) {
             model.addAttribute("user", new User());
         }
@@ -140,48 +141,68 @@ public class UserViewController {
     }
 
     @PostMapping("/add")
-    String addUser(@Valid @ModelAttribute User user, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    String addUserForm(@Valid @ModelAttribute User user, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/user-add";
         }
         try {
             userService.addUser(user);
-            redirectAttributes.addFlashAttribute("success", true);
-            redirectAttributes.addFlashAttribute("user", user);
+            redirectAttributes.addFlashAttribute("success", "Account created!");
         } catch (UserAlreadyExistsException ex) {
             model.addAttribute("error", ex.getMessage());
             return "user/user-add";
         }
-        return "redirect:/users/add";
+        return "redirect:/users/profile/id/" + user.getUserId();
     }
 
-    @GetMapping("/update")
-    String updateUser(Model model) {
-        if (!model.containsAttribute("user")) {
-            model.addAttribute("user", new User());
+    @GetMapping("/{userId}/edit")
+    public String showUpdateForm(@PathVariable Long userId, Model model) {
+        try {
+            User user = userService.getUserById(userId);
+            model.addAttribute("user", user);
+            return "user/user-update";
+        } catch (NotFoundException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "error-page";
         }
-        return "user/user-update";
     }
 
-    @PatchMapping("/update")
-    String updateUser(@Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    @PutMapping("/{userId}")
+    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/user-update";
         }
         try {
-            userService.updateUser(user.getUserId(), user);
-            redirectAttributes.addFlashAttribute("Success", true);
-            redirectAttributes.addFlashAttribute("user", user);
-            return "redirect:/users/update";
-        } catch (NotFoundException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/users/update";
+            userService.updateUser(userId, user);
+            redirectAttributes.addFlashAttribute("update_success", "Details saved!");
+        } catch (UserAlreadyExistsException ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/users/" + userId + "/edit";
         }
+        return "redirect:/users/" + userId + "/edit";
     }
 
-    @GetMapping("/delete/{userId}")
-    String deleteUser(@PathVariable Long userId) {
-        userService.deleteUserById(userId);
-        return "redirect:/";
+    @PatchMapping("/{userId}")
+    public String updateUser(@PathVariable Long userId, @RequestParam Map<String, Object> updates, RedirectAttributes redirectAttributes, Model model) {
+        try {
+            User updatedUser = userService.updateUser(userId, updates);
+            redirectAttributes.addFlashAttribute("update_success", "Details saved!");
+        } catch (UserAlreadyExistsException | NotFoundException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "error-page";
+        }
+        return "redirect:/users/" + userId + "/edit";
+    }
+
+    @DeleteMapping("/{userId}")
+    String deleteUser(@PathVariable Long userId, RedirectAttributes redirectAttributes, Model model) {
+        try {
+            userService.deleteUserById(userId);
+            redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
+        } catch (NotFoundException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "error-page";
+        }
+            return "redirect:/";
     }
 }

@@ -39,15 +39,13 @@
             <input type="text" id="userAuthProvider" th:field="*{userAuthProvider}" />
         </div>
         <div class="form-row">
-            <button type="submit">Submit</button>
+            <button type="submit">Create Account</button>
         </div>
     </form>
 </div>
-<div th:if="${success}" class="success-message">
-    User added successfully!
-</div>
+<div class="success-message" th:if="${success}" th:text="${success}"></div>
 <div th:if="${error}" th:text="${error}">
-    There was an error.
+    There was an error while trying to create your account.
 </div>
 </body>
 </html>

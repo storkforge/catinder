@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -87,6 +88,17 @@ public class UserService {
     public User updateUser(Long userId, User user) {
         User oldUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
+        // Check if the email belongs to a different user.
+        Optional<User> userByEmail = userRepository.findByUserEmail(user.getUserEmail());
+        if (userByEmail.isPresent() && !userByEmail.get().getUserId().equals(userId)) {
+            throw new UserAlreadyExistsException("Account with given email already exists.");
+        }
+
+        // Check if the username belongs to a different user.
+        Optional<User> userByName = userRepository.findByUserName(user.getUserName());
+        if (userByName.isPresent() && !userByName.get().getUserId().equals(userId)) {
+            throw new UserAlreadyExistsException("Username is taken.");
+        }
         log.info("Updating user: {}", user.getUserName());
         oldUser.setUserName(user.getUserName());
         oldUser.setUserFullName(user.getUserFullName());
@@ -103,6 +115,23 @@ public class UserService {
     public User updateUser(Long userId, Map<String, Object> updates) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
+
+        if (updates.containsKey("userEmail")) {
+            String newEmail = updates.get("userEmail").toString();
+            Optional<User> userByEmail = userRepository.findByUserEmail(newEmail);
+            if (userByEmail.isPresent() && !userByEmail.get().getUserId().equals(userId)) {
+                throw new UserAlreadyExistsException("Account with given email already exists.");
+            }
+        }
+
+        if (updates.containsKey("userName")) {
+            String newUserName = updates.get("userName").toString();
+            Optional<User> userByName = userRepository.findByUserName(newUserName);
+            if (userByName.isPresent() && !userByName.get().getUserId().equals(userId)) {
+                throw new UserAlreadyExistsException("Username is taken.");
+            }
+        }
+
         log.info("Partially updating user: {}", existingUser.getUserName());
         if (updates.containsKey("userFullName")) {
             existingUser.setUserFullName((String) updates.get("userFullName"));
@@ -124,6 +153,7 @@ public class UserService {
         }
         return userRepository.save(existingUser);
     }
+
 
     public void deleteUserById(Long userId) {
         log.info("Deleting user with id: {}", userId + ".");
