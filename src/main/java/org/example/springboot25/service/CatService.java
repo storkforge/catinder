@@ -54,7 +54,7 @@ public class CatService {
             return catRepository.save(cat);
         }).orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
     }
-
+//TODO KOLLA IGENOM PARTIAL UPDATE
 //    public Cat partialUpdateCat(Long catId, Map<String, Object> updates) throws NotFoundException {
 //        Cat cat = catRepository.findById(catId)
 //                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));

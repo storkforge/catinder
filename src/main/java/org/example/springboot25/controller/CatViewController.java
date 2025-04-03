@@ -4,6 +4,7 @@ import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
+import org.example.springboot25.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,10 +19,13 @@ import java.util.List;
 public class CatViewController {
 
     private final CatService catService;
+    private final UserService userService;
 
     @Autowired
-    public CatViewController(CatService catService) {
-            this.catService = catService;
+    public CatViewController(CatService catService, UserService userService) {
+
+        this.catService = catService;
+        this.userService = userService;
         }
 
     @GetMapping
@@ -48,7 +52,7 @@ public class CatViewController {
     //Get UserService and add it later. Injected Principal for currently logged in user via security context.
     @PostMapping
     public String processCreateNewCatForm(@ModelAttribute("cat") Cat cat, Principal principal) {
-//        User user = userService.getUserById(principal.getName());
+        User user = userService.getUserByUserName(principal.getName());
         catService.createCat(cat);
         return "redirect:/cats";
     }

@@ -18,7 +18,7 @@ CREATE TABLE cat
     cat_personality     VARCHAR(255),
     cat_name            VARCHAR(255) NOT NULL,
     cat_age             INTEGER NOT NULL,
-    cat_owner_user_id   BIGINT,
+    cat_owner_user_id   BIGINT NOT NULL,
 
     CONSTRAINT pk_cat PRIMARY KEY (cat_id),
     CONSTRAINT fk_cat_owner FOREIGN KEY (cat_owner_user_id)

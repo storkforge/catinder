@@ -29,7 +29,7 @@ public class Cat {
 
     private String catPersonality;
 
-//    @NotNull
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "cat_owner_user_id")
     private User userCatOwner;
