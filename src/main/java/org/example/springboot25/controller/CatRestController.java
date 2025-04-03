@@ -59,18 +59,18 @@ public class CatRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-//    @PatchMapping("/{catId}")
-//    public ResponseEntity<Cat> partialUpdateCat(@PathVariable Long catId, @RequestBody Map<String, Object> updates) {
-//        try {
-//            Cat updatedCat = catService.partialUpdateCat(catId, updates);
-//            return ResponseEntity.ok(updatedCat);
-//        }catch (NotFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
+//PARTIAL
+    @PatchMapping("/{catId}")
+    public ResponseEntity<Cat> partialUpdateCat(@PathVariable Long catId, @RequestBody Map<String, Object> updates) {
+        try {
+            Cat updatedCat = catService.partialUpdateCat(catId, updates);
+            return ResponseEntity.ok(updatedCat);
+        }catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @DeleteMapping("/{catId}")
     public ResponseEntity<Void> deleteCat(@PathVariable Long catId) {
