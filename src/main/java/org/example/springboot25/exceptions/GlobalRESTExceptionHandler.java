@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalRESTExceptionHandler {
 
     // 404 – Generell
     @ExceptionHandler(NotFoundException.class)
