@@ -8,6 +8,7 @@ import org.example.springboot25.exceptions.ConflictException;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.EventParticipantRepository;
 import org.example.springboot25.repository.EventRepository;
+import org.example.springboot25.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
