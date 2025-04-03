@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalRESTExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(org.example.springboot25.exceptions.GlobalExceptionHandler.class);
 
