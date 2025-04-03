@@ -2,8 +2,7 @@ package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
 import org.example.springboot25.entities.CatPhoto;
-import org.example.springboot25.services.CatPhotoService;
-import org.springframework.data.domain.PageRequest;
+import org.example.springboot25.service.CatPhotoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

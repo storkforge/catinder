@@ -1,11 +1,9 @@
-package org.example.springboot25.services;
+package org.example.springboot25.service;
 
 import org.example.springboot25.entities.CatPhoto;
-import org.example.springboot25.repositories.CatPhotoRepository;
-import org.hibernate.query.Page;
+import org.example.springboot25.repository.CatPhotoRepository;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 

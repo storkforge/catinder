@@ -1,7 +1,7 @@
 package org.example.springboot25.controller;
 
 import org.example.springboot25.entities.CatPhoto;
-import org.example.springboot25.services.CatPhotoService;
+import org.example.springboot25.service.CatPhotoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
