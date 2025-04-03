@@ -52,6 +52,7 @@ public class CatViewController {
     //Get UserService and add it later. Injected Principal for currently logged in user via security context.
     @PostMapping
     public String processCreateNewCatForm(@ModelAttribute("cat") Cat cat, Principal principal) {
+
         User user = userService.getUserByUserName(principal.getName());
         catService.createCat(cat);
         return "redirect:/cats";
