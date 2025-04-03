@@ -45,7 +45,7 @@ public class CatPhoto {
         return catPhotoId;
     }
 
-    public void setCatPhotoId(Long catPhotoId) {
+    public void CatPhotoId(Long catPhotoId) {
         this.catPhotoId = catPhotoId;
     }
 

@@ -1,4 +1,4 @@
-package org.example.springboot25.services;
+package org.example.springboot25.service;
 
 import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.repositories.CatPhotoRepository;
@@ -16,32 +16,31 @@ public class CatPhotoService {
         this.catPhotoRepository = catPhotoRepository;
     }
 
-    // 🔹 Hämta alla bilder
+    // 🔹 Get all Photos
     public List<CatPhoto> getAllCatPhotos() {
         return catPhotoRepository.findAll();
     }
 
-    // 🔹 Hämta en bild baserat på ID
+    // 🔹 Get all Photos based on ID
     public Optional<CatPhoto> getCatPhotoById(Long id) {
         return catPhotoRepository.findById(id);
     }
 
-    // 🔹 Spara en ny bild
+    // 🔹 Save a new Photo
     public CatPhoto saveCatPhoto(CatPhoto catPhoto) {
         return catPhotoRepository.save(catPhoto);
     }
 
-    // 🔹 Uppdatera en bild baserat på ID
+    // 🔹 Update a Photo based on ID
     public Optional<CatPhoto> updateCatPhoto(Long id, CatPhoto updatedCatPhoto) {
         return catPhotoRepository.findById(id).map(existingCatPhoto -> {
             existingCatPhoto.setCatPhotoUrl(updatedCatPhoto.getCatPhotoUrl());
             existingCatPhoto.setCatPhotoCaption(updatedCatPhoto.getCatPhotoCaption());
-            existingCatPhoto.setCatPhotoCreatedAt(updatedCatPhoto.getCatPhotoCreatedAt());
             return catPhotoRepository.save(existingCatPhoto);
         });
     }
 
-    // 🔹 Ta bort en bild baserat på ID
+    // 🔹 Remove a Photo based on ID
     public boolean deleteCatPhoto(Long id) {
         if (catPhotoRepository.existsById(id)) {
             catPhotoRepository.deleteById(id);
