@@ -1,4 +1,4 @@
-package org.example.springboot25.exception;
+package org.example.springboot25.exceptions;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

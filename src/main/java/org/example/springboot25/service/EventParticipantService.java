@@ -1,85 +1,84 @@
 package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
+import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.EventParticipant;
-import org.example.springboot25.exception.BadRequestException;
-import org.example.springboot25.exception.ConflictException;
-import org.example.springboot25.exception.NotFoundException;
+import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.ConflictException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.EventParticipantRepository;
+import org.example.springboot25.repository.EventRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
 @Transactional
 public class EventParticipantService {
 
-    EventParticipantRepository eventParticipantRepository;
+    private final EventParticipantRepository eventParticipantRepository;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
-    public EventParticipantService(EventParticipantRepository eventParticipantRepository) {
+    public EventParticipantService(EventParticipantRepository eventParticipantRepository,
+                                   UserRepository userRepository,
+                                   EventRepository eventRepository) {
         this.eventParticipantRepository = eventParticipantRepository;
+        this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
     }
 
     public List<EventParticipant> getAllParticipants() {
         return eventParticipantRepository.findAll();
     }
 
-    public List<EventParticipant> getParticipantsByEventId(Long eventId) {
-        requiredNotNull(eventId, "Event ID");
-        return eventParticipantRepository.findByEvent_EventId(eventId);
+    public List<EventParticipant> getParticipantsByUserName(String userName) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User not found: " + userName));
+        return eventParticipantRepository.findByUser(user);
     }
 
-    public List<EventParticipant>getParticipantsByUserId(Long userId) {
-        requiredNotNull(userId, "User ID");
-        return eventParticipantRepository.findByUser_UserId(userId);
+    public List<EventParticipant> getParticipantsByEventName(String eventName) {
+        Event event = eventRepository.findByEventName(eventName)
+                .orElseThrow(() -> new NotFoundException("Event not found: " + eventName));
+        return eventParticipantRepository.findByEvent(event);
     }
 
-    public EventParticipant addParticipant(EventParticipant participant) {
-        requiredNotNull(participant, "Participant");
-        requiredNotNull(participant.getUser(), "User in Participant");
-        requiredNotNull(participant.getEvent(), "Event in Participant");
+    public EventParticipant getParticipant(String userName, String eventName) {
+        return eventParticipantRepository.findByUser_UserNameAndEvent_EventName(userName, eventName)
+                .orElseThrow(() -> new NotFoundException("Participant not found"));
+    }
 
-        Long userId = participant.getUser().getUserId();
-        Long eventId = participant.getEvent().getEventId();
+    public EventParticipant addParticipant(String userName, String eventName) {
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User not found: " + userName));
+        Event event = eventRepository.findByEventName(eventName)
+                .orElseThrow(() -> new NotFoundException("Event not found: " + eventName));
 
-        requiredNotNull(userId, "User ID");
-        requiredNotNull(eventId, "Event ID");
-
-        if (eventParticipantRepository.existsByUser_UserIdAndEvent_EventId(userId, eventId)) {
+        if (eventParticipantRepository.existsByUserAndEvent(user, event)) {
             throw new ConflictException("User is already participating in this event.");
         }
 
+        return eventParticipantRepository.save(new EventParticipant(user, event));
+    }
+
+    public EventParticipant patchEventForParticipant(String userName, String newUserName, String eventName, String newEventName) {
+        EventParticipant participant = getParticipant(userName, eventName);
+
+        User newUser = userRepository.findByUserName(newUserName)
+                .orElseThrow(() -> new NotFoundException("New username not found: " + newUserName));
+
+        Event newEvent = eventRepository.findByEventName(newEventName)
+                .orElseThrow(() -> new NotFoundException("New eventname not found: " + newEventName));
+
+        participant.setEvent(newEvent);
         return eventParticipantRepository.save(participant);
     }
 
-    public void deleteParticipation(Long id) {
-        requiredNotNull(id, "EventParticipant ID");
-
-        if (!eventParticipantRepository.existsById(id)) {
-            throw new NotFoundException("No participant found with ID:" + id);
-        }
-
-        eventParticipantRepository.deleteById(id);
+    public void deleteParticipant(String userName, String eventName) {
+        EventParticipant participant = getParticipant(userName, eventName);
+        eventParticipantRepository.delete(participant);
     }
-
-    public boolean isUserParticipating(Long userId, Long eventId) {
-        requiredNotNull(userId, "User ID");
-        requiredNotNull(eventId, "Event ID");
-        return eventParticipantRepository.existsByUser_UserIdAndEvent_EventId(userId, eventId);
-    }
-
-    public Optional<EventParticipant> getParticipant(Long userId, Long eventId) {
-        requiredNotNull(userId, "User ID");
-        requiredNotNull(eventId, "Event ID");
-        return eventParticipantRepository.findByUser_UserIdAndEvent_EventId(userId, eventId);
-    }
-
-    private void requiredNotNull(Object value, String message) {
-        if (value == null) {
-            throw new BadRequestException(message + " must not be null");
-        }
-    }
-
 }
+

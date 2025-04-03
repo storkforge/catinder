@@ -20,41 +20,95 @@ public class EventParticipantViewController {
     }
 
     @GetMapping
+    public String participantsHome() {
+        return "participants/participants";
+    }
+
+    @GetMapping("/list")
     public String viewAll(Model model) {
         model.addAttribute("participants", service.getAllParticipants());
-        return "participants/list";
+        return "participants/participants-list";
     }
 
-    @GetMapping("/event")
-    public String viewByEvent(@RequestParam Long eventId, Model model) {
-        model.addAttribute("participants", service.getParticipantsByEventId(eventId));
-        return "participants/event-participant";
+    @GetMapping("/by-event")
+    public String showEventSearchForm() {
+        return "participants/participants-by-event";
     }
 
-    @GetMapping("/user")
-    public String viewByUser(@RequestParam Long userId, Model model) {
-        model.addAttribute("participants", service.getParticipantsByUserId(userId));
-        return "participants/user-event";
+    @GetMapping("/by-event/search")
+    public String viewByEventName(@RequestParam String eventName, Model model) {
+        model.addAttribute("participants", service.getParticipantsByEventName(eventName));
+        return "participants/participants-by-event";
+    }
+
+    @GetMapping("/by-user")
+    public String showUserSearchForm() {
+        return "participants/participants-by-user";
+    }
+
+    @GetMapping("/by-user/search")
+    public String viewByUserName(@RequestParam String userName, Model model) {
+        model.addAttribute("participants", service.getParticipantsByUserName(userName));
+        return "participants/participants-by-user";
     }
 
     @GetMapping("/add")
-    public String showForm(Model model) {
+    public String showAddForm(Model model) {
         if (!model.containsAttribute("participant")) {
-            EventParticipant participant = new EventParticipant();
-            participant.setUser(new User());
-            participant.setEvent(new Event());
-            model.addAttribute("participant", participant);
+            model.addAttribute("participant", new EventParticipant(new User(), new Event()));
         }
-        return "participants/add";
+        return "participants/participants-add";
     }
 
-
     @PostMapping("/add")
-    public String addParticipant(@ModelAttribute EventParticipant participant,
+    public String addParticipant(@RequestParam String userName,
+                                 @RequestParam String eventName,
                                  RedirectAttributes redirectAttributes) {
-        service.addParticipant(participant);
-        redirectAttributes.addFlashAttribute("success", "Deltagaren har lagts till!");
+        try {
+            service.addParticipant(userName, eventName);
+            redirectAttributes.addFlashAttribute("success", "Deltagaren har lagts till!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/participants/add";
+    }
+
+    @GetMapping("/delete")
+    public String showDeleteForm() {
+        return "participants/participants-delete";
+    }
+
+    @PostMapping("/delete")
+    public String deleteParticipant(@RequestParam String userName,
+                                    @RequestParam String eventName,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            service.deleteParticipant(userName, eventName);
+            redirectAttributes.addFlashAttribute("success", "Deltagaren har tagits bort!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/participants/delete";
+    }
+
+    @GetMapping("/update")
+    public String showPatchForm() {
+        return "participants/participants-update";
+    }
+
+    @PostMapping("/update")
+    public String patchParticipant(@RequestParam String userName,
+                                   @RequestParam String newUserName,
+                                   @RequestParam String eventName,
+                                   @RequestParam String newEventName,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            service.patchEventForParticipant(userName, newUserName, eventName, newEventName);
+            redirectAttributes.addFlashAttribute("success", "The participant has been successfully updated.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
+        }
+        return "redirect:/participants/update";
     }
 
 }

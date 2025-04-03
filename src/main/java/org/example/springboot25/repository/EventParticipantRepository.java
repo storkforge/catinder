@@ -23,6 +23,7 @@ public interface EventParticipantRepository extends JpaRepository<EventParticipa
 
     Optional<EventParticipant> findByUserAndEvent(User user, Event event);
     Optional<EventParticipant> findByUser_UserIdAndEvent_EventId(Long userId, Long eventId);
+    Optional<EventParticipant> findByUser_UserNameAndEvent_EventName(String userName, String eventName);
 
     long countByEvent(Event event);
 

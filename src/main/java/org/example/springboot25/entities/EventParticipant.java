@@ -26,6 +26,13 @@ public class EventParticipant {
     @Version
     private int version;
 
+    public EventParticipant() {}
+
+    public EventParticipant(User user, Event event) {
+        this.user = user;
+        this.event = event;
+    }
+
     public Long getEventParticipantId() {
         return eventParticipantId;
     }

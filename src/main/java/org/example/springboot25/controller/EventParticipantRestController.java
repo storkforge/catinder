@@ -19,35 +19,43 @@ public class EventParticipantRestController {
     }
 
     @GetMapping
-    public List<EventParticipant> getAll() {
+    public List<EventParticipant> getAllParticipants() {
         return service.getAllParticipants();
     }
 
-    @GetMapping("/event/{eventId}")
-    public List<EventParticipant> getByEventId(@PathVariable Long eventId) {
-        return service.getParticipantsByEventId(eventId);
+    @GetMapping("/user")
+    public List<EventParticipant> getParticipantsByUserName(@RequestParam String userName) {
+        return service.getParticipantsByUserName(userName);
     }
 
-    @GetMapping("/user/{userId}")
-    public List<EventParticipant> getByUserId(@PathVariable Long userId) {
-        return service.getParticipantsByUserId(userId);
+    @GetMapping("/event")
+    public List<EventParticipant> getParticipantsByEventName(@RequestParam String eventName) {
+        return service.getParticipantsByEventName(eventName);
     }
 
-    @GetMapping("/check")
-    public boolean isUserParticipating(@RequestParam Long userId, @RequestParam Long eventId) {
-        return service.isUserParticipating(userId, eventId);
+    @GetMapping("/specific")
+    public EventParticipant getParticipant(@RequestParam String userName,
+                                           @RequestParam String eventName) {
+        return service.getParticipant(userName, eventName);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventParticipant add(@RequestBody EventParticipant participant) {
-        return service.addParticipant(participant);
+    public EventParticipant addParticipant(@RequestParam String userName, @RequestParam String eventName) {
+        return service.addParticipant(userName, eventName);
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping
+    public EventParticipant patchEventForParticipant(@RequestParam String userName, @RequestParam String newUserName, @RequestParam String eventName, @RequestParam String newEventName) {
+        return service.patchEventForParticipant(userName, newUserName, eventName, newEventName);
+    }
+
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        service.deleteParticipation(id);
+    public void deleteParticipant(@RequestParam String userName, @RequestParam String eventName) {
+        service.deleteParticipant(userName, eventName);
     }
-
 }
+
+
+
