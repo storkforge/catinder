@@ -1,7 +1,9 @@
 package org.example.springboot25.controller;
 
+import jakarta.validation.Valid;
 import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.services.CatPhotoService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,11 @@ public class CatPhotoController {
     public List<CatPhoto> getAllCatPhotos() {
         return catPhotoService.getAllCatPhotos();
     }
+    /*public Page<CatPhoto> getAllCatPhotos(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return catPhotoService.getAllCatPhotos(pageable);
+    }*/
 
     // 🔹 Hämta en bild baserat på ID
     @GetMapping("/{id}")
@@ -34,13 +41,14 @@ public class CatPhotoController {
 
     // 🔹 Skapa en ny CatPhoto
     @PostMapping
-    public CatPhoto createCatPhoto(@RequestBody CatPhoto catPhoto) {
-        return catPhotoService.saveCatPhoto(catPhoto);
+    public ResponseEntity<CatPhoto> createCatPhoto(@Valid @RequestBody CatPhoto catPhoto) {
+        CatPhoto savedPhoto = catPhotoService.saveCatPhoto(catPhoto);
+        return ResponseEntity.status(201).body(savedPhoto);
     }
 
     // 🔹 Uppdatera en befintlig CatPhoto
     @PutMapping("/{id}")
-    public ResponseEntity<CatPhoto> updateCatPhoto(@PathVariable Long id, @RequestBody CatPhoto updatedCatPhoto) {
+    public ResponseEntity<CatPhoto> updateCatPhoto(@PathVariable Long id, @Valid @RequestBody CatPhoto updatedCatPhoto) {
         Optional<CatPhoto> updated = catPhotoService.updateCatPhoto(id, updatedCatPhoto);
         return updated.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }

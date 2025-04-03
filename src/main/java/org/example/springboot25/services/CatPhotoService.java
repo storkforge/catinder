@@ -2,8 +2,10 @@ package org.example.springboot25.services;
 
 import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.repositories.CatPhotoRepository;
+import org.hibernate.query.Page;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +38,8 @@ public class CatPhotoService {
         return catPhotoRepository.findById(id).map(existingCatPhoto -> {
             existingCatPhoto.setCatPhotoUrl(updatedCatPhoto.getCatPhotoUrl());
             existingCatPhoto.setCatPhotoCaption(updatedCatPhoto.getCatPhotoCaption());
-            existingCatPhoto.setCatPhotoCreatedAt(updatedCatPhoto.getCatPhotoCreatedAt());
+            //existingCatPhoto.setCatPhotoCreatedAt(updatedCatPhoto.getCatPhotoCreatedAt());
+            existingCatPhoto.setCatPhotoCat(updatedCatPhoto.getCatPhotoCat());
             return catPhotoRepository.save(existingCatPhoto);
         });
     }
