@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cat Detail - Catinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reuse the same styles as above */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #fad9c4, rgb(227, 162, 156)) no-repeat fixed;
+            background-size: cover;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(10, 10, 10, 0.9);
+            padding: 1.5em 1em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        h1 {
+            text-align: left;
+            font-size: 45px;
+            margin: 0 10px 0 20px;
+            color: #e79a6f;
+            text-shadow: 0 1px 2px rgba(255, 0, 0, 0.7),
+            0 3px 6px rgba(255, 104, 15, 0.5),
+            0 10px 20px rgba(255, 255, 255, 0.1);
+            cursor: default;
+        }
+        .cat-emoji {
+            font-size: 1em;
+            text-shadow: none;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        .about-link {
+            font-size: 18px;
+            text-decoration: none;
+            color: #e79a6f;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+        .about-link:hover {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .header-right {
+            margin-right: 20px;
+        }
+        .lang-button {
+            background-color: transparent;
+            border: none;
+            outline: none;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 16px;
+            color: #fffaef;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .lang-button:hover {
+            background-color: rgba(148, 148, 148, 0.3);
+            color: #fff;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: calc(100vh - 120px);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            margin: 20px;
+            border-radius: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #505050;
+            font-weight: 600;
+        }
+        a:hover {
+            color: #555;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-left">
+        <h1><span class="cat-emoji">🐱</span>Catinder</h1>
+        <a class="about-link" th:href="@{/about}">About</a>
+    </div>
+    <div class="header-right">
+        <button class="lang-button" aria-label="Change language" title="Change language">&#127760; Language</button>
+    </div>
+</header>
+
+<div class="main-content">
+    <h2>Cat Detail</h2>
+    <div>
+        <p><strong>ID:</strong> <span th:text="${cat.catId}"></span></p>
+        <p><strong>Name:</strong> <span th:text="${cat.catName}"></span></p>
+        <p><strong>Breed:</strong> <span th:text="${cat.catBreed}"></span></p>
+        <p><strong>Gender:</strong> <span th:text="${cat.catGender}"></span></p>
+        <p><strong>Age:</strong> <span th:text="${cat.catAge}"></span></p>
+        <p><strong>Personality:</strong> <span th:text="${cat.catPersonality}"></span></p>
+    </div>
+    <a th:href="@{/cats}">Back to Cats List</a>
+</div>
+</body>
+</html>
