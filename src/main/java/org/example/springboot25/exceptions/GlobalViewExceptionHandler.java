@@ -6,15 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
 public class GlobalViewExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(org.example.springboot25.exceptions.GlobalViewExceptionHandler.class);
-
 
     @ExceptionHandler(BadRequestException.class)
     public String handleBadRequest(BadRequestException ex, Model model) {
