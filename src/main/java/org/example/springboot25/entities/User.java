@@ -16,20 +16,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-//    @NotBlank
+    @NotBlank
+    private String userFullName;
+
+    @NotBlank
+    @Column(unique = true)
     private String userName;
 
     @Email
-//    @NotBlank
+    @NotBlank
+    @Column(unique = true)
     private String userEmail;
 
-//    @NotBlank
+    @NotBlank
     private String userLocation;
 
-//    @NotNull
+    @NotNull
     private String userRole;
 
-//    @NotBlank
+    @NotBlank
     private String userAuthProvider;
 
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -47,6 +52,14 @@ public class User {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public @NotBlank String getUserFullName() {
+        return userFullName;
+    }
+
+    public void setUserFullName(String fullName) {
+        this.userFullName = fullName;
     }
 
     public String getUserName() {

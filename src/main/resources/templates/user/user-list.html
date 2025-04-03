@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Users</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header"></div>
+<h2>Users:</h2>
+<!-- If there is a message (e.g., no users found), display it -->
+<div th:if="${message}">
+    <p th:text="${message}"></p>
+</div>
+
+<!-- Otherwise, display the list of users -->
+<div th:if="${users}">
+    <ul>
+        <li th:each="user : ${users}"
+            th:text="|${user.userName} - ${user.userFullName}|"></li>
+    </ul>
+</div>
+
+</body>
+</html>
