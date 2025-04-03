@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Participants</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div th:replace="fragments/header"></div>
+
+<h2 style="text-align: center; margin-top: 40px;">Participants Section</h2>
+
+<div class="form-container" style="text-align: center;">
+    <ul style="list-style: none; padding: 0;">
+        <li style="margin: 15px;"><a th:href="@{/participants/list}">View All Participants</a></li>
+        <li style="margin: 15px;"><a th:href="@{/participants/by-user}">View by User</a></li>
+        <li style="margin: 15px;"><a th:href="@{/participants/by-event}">View by Event</a></li>
+        <li style="margin: 15px;"><a th:href="@{/participants/add}">Add Participant</a></li>
+        <li style="margin: 15px;"><a th:href="@{/participants/delete}">Delete Participant</a></li>
+        <li style="margin: 15px;"><a th:href="@{/participants/update}">Update Participant</a></li>
+    </ul>
+</div>
+
+</body>
+</html>
