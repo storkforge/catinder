@@ -31,9 +31,7 @@ public class CatPhoto {
     @JoinColumn(name = "cat_photo_cat_id", nullable = false)
     private Cat catPhotoCat;
 
-
     public CatPhoto() {}
-
 
     public CatPhoto(String url, String caption, Cat cat) {
         this.catPhotoUrl = url;
@@ -45,7 +43,7 @@ public class CatPhoto {
         return catPhotoId;
     }
 
-    public void CatPhotoId(Long catPhotoId) {
+    public void setCatPhotoId(Long catPhotoId) {
         this.catPhotoId = catPhotoId;
     }
 
@@ -67,10 +65,6 @@ public class CatPhoto {
 
     public LocalDateTime getCatPhotoCreatedAt() {
         return catPhotoCreatedAt;
-    }
-
-    public void setCatPhotoCreatedAt(LocalDateTime catPhotoCreatedAt) {
-        this.catPhotoCreatedAt = catPhotoCreatedAt;
     }
 
     public Cat getCatPhotoCat() {
