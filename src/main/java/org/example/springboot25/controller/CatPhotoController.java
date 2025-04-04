@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.service.CatPhotoService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
