@@ -1,28 +1,23 @@
 package org.example.springboot25.config;
 
-import org.example.springboot25.security.CustomUserDetails;
+import lombok.RequiredArgsConstructor;
 import org.example.springboot25.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-
-    public SecurityConfig(CustomUserDetailsService userDetailsService, CustomUserDetailsService customUserDetailsService) {
-        this.customUserDetailsService = customUserDetailsService;
-        this.userDetailsService;
-    }
-
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
-        this.customUserDetailsService = customUserDetailsService;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,7 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").hasAnyRole("BASIC", "PREMIUM")
                         .anyRequest().authenticated()
                 )
-                .userDetailsService(userDetailsService)
+                .userDetailsService(customUserDetailsService)
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
@@ -42,12 +37,24 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/?logout")
                         .permitAll()
                 )
-                .oauth2Login(OAuth2LoginConfigurer::defaultSuccessUrl); // för google/facebook
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/")
+                );
 
         return http.build();
     }
+
     @Bean
-    public UserDetailsService userDetailsService() {
-        return userDetailsService;
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        builder
+                .userDetailsService(customUserDetailsService)
+                .passwordEncoder(passwordEncoder());
+        return builder.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
