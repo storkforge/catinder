@@ -39,6 +39,9 @@ public class User {
     @NotBlank
     private String userAuthProvider;
 
+    @NotBlank
+    private String password;
+
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cat> userCats = new ArrayList<>();
 
@@ -137,4 +140,12 @@ public class User {
         this.userPost = userPost;
     }
 
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
