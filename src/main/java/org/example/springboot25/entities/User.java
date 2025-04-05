@@ -33,8 +33,9 @@ public class User {
     @NotBlank
     private String userLocation;
 
+    @Enumerated(EnumType.STRING)
     @NotNull
-    private String userRole;
+    private userRoles userRole;
 
     @NotBlank
     private String userAuthProvider;
@@ -92,11 +93,11 @@ public class User {
         this.userLocation = userLocation;
     }
 
-    public String getUserRole() {
+    public userRoles getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(String userRole) {
+    public void setUserRole(userRoles userRole) {
         this.userRole = userRole;
     }
 
