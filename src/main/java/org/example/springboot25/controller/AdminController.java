@@ -45,7 +45,7 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    // ⚙Systeminställningar – placeholder för framtida grejer
+    // Systeminställningar – placeholder för framtida grejer
     @GetMapping("/settings")
     public String settingsPage() {
         return "admin/settings"; // t.ex. templates/admin/settings.html
