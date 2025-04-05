@@ -19,6 +19,6 @@ public class PostViewController {
     @GetMapping
     public String showAllPosts(Model model) {
         model.addAttribute("posts", postService.getAllPosts());
-        return "post";
+        return "post/post";
     }
 }
