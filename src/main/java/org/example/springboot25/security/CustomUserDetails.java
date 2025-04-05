@@ -11,7 +11,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name())); //Kommer fixa sig när enum kommer in i main
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name()));
     }
 
     @Override
