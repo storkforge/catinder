@@ -2,6 +2,7 @@ package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.entities.userRoles;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.UserAlreadyExistsException;
 import org.example.springboot25.repository.UserRepository;
@@ -146,7 +147,12 @@ public class UserService {
             existingUser.setUserLocation((String) updates.get("userLocation"));
         }
         if (updates.containsKey("userRole")) {
-            existingUser.setUserRole((String) updates.get("userRole"));
+            Object roleObj = updates.get("userRole");
+            if (roleObj instanceof String roleStr) {
+                existingUser.setUserRole(userRoles.valueOf(roleStr));
+            } else if (roleObj instanceof userRoles roleEnum) {
+                existingUser.setUserRole(roleEnum);
+            }
         }
         if (updates.containsKey("userAuthProvider")) {
             existingUser.setUserAuthProvider((String) updates.get("userAuthProvider"));
