@@ -1,13 +1,16 @@
 package org.example.springboot25.filters;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Collections;
 
 public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
     private final String apiKey;
 
     public ApiKeyAuthenticationToken(String apiKey) {
-        super(null); //No authorities initially
+        super(Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_BASIC"))); //No authorities initially
         this.apiKey = apiKey;
         setAuthenticated(true);
     }

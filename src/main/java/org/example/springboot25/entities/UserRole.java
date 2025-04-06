@@ -1,6 +1,6 @@
 package org.example.springboot25.entities;
 
-public enum userRoles {
+public enum UserRole {
     BASIC,
     PREMIUM,
     ADMIN,

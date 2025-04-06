@@ -1,9 +1,11 @@
 ALTER TABLE app_user
-    ADD user_full_name VARCHAR(255);
+    ADD IF NOT EXISTS user_full_name VARCHAR(255);
 
+ALTER TABLE app_user DROP CONSTRAINT IF EXISTS uc_app_user_useremail;
 ALTER TABLE app_user
     ADD CONSTRAINT uc_app_user_useremail UNIQUE (user_email);
 
+ALTER TABLE app_user DROP CONSTRAINT IF EXISTS uc_app_user_username;
 ALTER TABLE app_user
     ADD CONSTRAINT uc_app_user_username UNIQUE (user_name);
 

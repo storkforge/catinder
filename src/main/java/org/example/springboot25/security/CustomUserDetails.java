@@ -16,7 +16,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword(); // om du har lösenord (annars null)
+        return user.getUserPassword(); // om du har lösenord (annars null)
     }
 
     @Override

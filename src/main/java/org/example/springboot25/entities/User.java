@@ -1,6 +1,5 @@
 package org.example.springboot25.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -22,6 +21,7 @@ public class User {
     private Long userId;
 
     @Setter
+    @Getter
     @NotBlank
     private String userFullName;
 
@@ -45,9 +45,9 @@ public class User {
 
     @Setter
     @Getter
-    @Enumerated(EnumType.STRING)
     @NotNull
-    private userRoles userRole;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     @Setter
     @Getter
@@ -57,7 +57,7 @@ public class User {
     @Setter
     @Getter
     @NotBlank
-    private String password;
+    private String userPassword;
 
     @Setter
     @Getter
@@ -81,9 +81,11 @@ public class User {
     private List<Post> userPost = new ArrayList<>();
 
 
+    public Long getUserId() {
+        return userId;
+    }
+
     public @NotBlank String getUserFullName() {
         return userFullName;
     }
-
-
 }

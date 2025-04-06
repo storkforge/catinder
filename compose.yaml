@@ -8,3 +8,10 @@ services:
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432:5432'
+  app:
+    image: 'catinder:latest'
+    environment:
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    ports:
+      - "8080:8080"
