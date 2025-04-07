@@ -1,6 +1,5 @@
 package org.example.springboot25.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.service.PostService;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin")
-@RequiredArgsConstructor
 public class AdminController {
 
     private final PostService postService;
