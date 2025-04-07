@@ -1,7 +1,5 @@
 package org.example.springboot25.controller;
 
-import org.example.springboot25.entities.Post;
-import org.example.springboot25.entities.User;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
