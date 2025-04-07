@@ -33,7 +33,7 @@ public class Event {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "event_planner_user_id")
-    private User userEventPlanner;
+    private User user;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -76,12 +76,12 @@ public class Event {
         this.eventDateTime = eventDateTime;
     }
 
-    public User getUserEventPlanner() {
-        return userEventPlanner;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserEventPlanner(User userEventPlanner) {
-        this.userEventPlanner = userEventPlanner;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<EventParticipant> getEventParticipants() {
