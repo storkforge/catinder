@@ -4,6 +4,7 @@ import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class AdminController {
     }
 
     // Visa alla inlägg (för moderering)
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/posts")
     public String showAllPosts(Model model) {
         model.addAttribute("posts", postService.getAllPosts());
@@ -28,6 +30,7 @@ public class AdminController {
     }
 
     // Ta bort ett inlägg
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/posts/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
@@ -35,6 +38,7 @@ public class AdminController {
     }
 
     // Visa alla användare
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public String showAllUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
@@ -42,6 +46,7 @@ public class AdminController {
     }
 
     // Ta bort en användare
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users/delete/{userId}")
     public String deleteUser(@PathVariable Long userId) {
         userService.deleteUserById(userId);
@@ -49,6 +54,7 @@ public class AdminController {
     }
 
     // Systeminställningar – placeholder för framtida grejer
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/settings")
     public String settingsPage() {
         return "admin/settings"; // t.ex. templates/admin/settings.html
