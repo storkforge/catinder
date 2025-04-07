@@ -18,22 +18,22 @@ public class CatPhotoService {
         this.catPhotoRepository = catPhotoRepository;
     }
 
-    // 🔹 Hämta alla bilder
+    // 🔹 Get all photos
     public List<CatPhoto> getAllCatPhotos() {
         return catPhotoRepository.findAll();
     }
 
-    // 🔹 Hämta en bild baserat på ID
+    // 🔹 Get a photo based on ID
     public Optional<CatPhoto> getCatPhotoById(Long id) {
         return catPhotoRepository.findById(id);
     }
 
-    // 🔹 Spara en ny bild
+    // 🔹 Save a new photo
     public CatPhoto saveCatPhoto(CatPhoto catPhoto) {
         return catPhotoRepository.save(catPhoto);
     }
 
-    // 🔹 Uppdatera en bild baserat på ID
+    // 🔹 Update a photo based on ID
     public Optional<CatPhoto> updateCatPhoto(Long id, CatPhoto updatedCatPhoto) {
         return catPhotoRepository.findById(id).map(existingCatPhoto -> {
             existingCatPhoto.setCatPhotoUrl(updatedCatPhoto.getCatPhotoUrl());
@@ -44,7 +44,7 @@ public class CatPhotoService {
         });
     }
 
-    // 🔹 Ta bort en bild baserat på ID
+    // 🔹 Remove a photo based on ID
     public boolean deleteCatPhoto(Long id) {
         if (catPhotoRepository.existsById(id)) {
             catPhotoRepository.deleteById(id);

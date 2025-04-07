@@ -49,10 +49,6 @@ public class CatPhoto {
         return catPhotoId;
     }
 
-    /*public void setCatPhotoId(Long catPhotoId) {
-        this.catPhotoId = catPhotoId;
-    }*/
-
     public String getCatPhotoUrl() {
         return catPhotoUrl;
     }
@@ -72,10 +68,6 @@ public class CatPhoto {
     public LocalDateTime getCatPhotoCreatedAt() {
         return catPhotoCreatedAt;
     }
-
-    /*public void setCatPhotoCreatedAt(LocalDateTime catPhotoCreatedAt) {
-        this.catPhotoCreatedAt = catPhotoCreatedAt;
-    }*/
 
     public Cat getCatPhotoCat() {
         return catPhotoCat;

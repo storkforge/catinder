@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@Controller  // 🔹 Detta gör att Spring vet att den ska hantera HTML-sidor
+@Controller
 public class CatPhotoViewController {
 
     private final CatPhotoService catPhotoService;
@@ -22,7 +22,7 @@ public class CatPhotoViewController {
     public String showCatPhotos(Model model) {
         List<CatPhoto> catPhotos = catPhotoService.getAllCatPhotos();
         model.addAttribute("catPhotos", catPhotos);
-        return "catphotos";  // 🔹 Returnerar en HTML-sida som heter "catphotos.html"
+        return "catphotos";  // 🔹 Returns an HTML-site named "catphotos.html"
     }
 }
 
