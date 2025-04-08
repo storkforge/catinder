@@ -30,7 +30,7 @@ public class Event {
     @FutureOrPresent
     private LocalDateTime eventDateTime;
 
-    @NotNull
+    //@NotNull Todo: Take back NotNull when security is implemented
     @ManyToOne
     @JoinColumn(name = "event_planner_user_id")
     private User userEventPlanner;
