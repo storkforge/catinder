@@ -26,9 +26,13 @@ public class Reminder {
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "reminder_user_id")
+    private User user;
+
+    @NotNull
+    @ManyToOne
     @JoinColumn(name = "reminder_cat_id")
     private Cat catReminderCat;
-
 
     public Long getReminderId() {
         return reminderId;
@@ -56,6 +60,14 @@ public class Reminder {
 
     public void setReminderDate(LocalDateTime reminderDate) {
         this.reminderDate = reminderDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Cat getCatReminderCat() {
