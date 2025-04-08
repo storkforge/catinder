@@ -108,7 +108,7 @@ public class PostViewController {
     }
 
     @DeleteMapping("/{postId}")
-    String deleteUser(@PathVariable Long postId, RedirectAttributes redirectAttributes, Model model) {
+    String deletePost(@PathVariable Long postId, RedirectAttributes redirectAttributes, Model model) {
         try {
             postService.deletePost(postId);
             redirectAttributes.addFlashAttribute("delete_success", "Post deleted!");

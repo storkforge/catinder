@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Create Event</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header"></div>
+<div class="form-container">
+    <h2>Create event</h2>
+    <form th:action="@{/events/add}"
+          th:object="${event}"
+          th:method="post">
+        <!-- CSRF token -->
+        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+
+        <div class="form-row">
+            <label for="eventName">Event Name:</label>
+            <input type="text" id="eventName" name="eventName" placeholder="Enter event name" required class="form-control"/>
+        </div>
+        <div class="form-row">
+            <label for="eventDescription">Event Description:</label>
+            <textarea id="eventDescription" name="eventDescription" rows="4" placeholder="Enter event description" required class="form-control"></textarea>
+        </div>
+        <div class="form-row">
+            <label for="eventLocation">Event Location:</label>
+            <input type="text" id="eventLocation" name="eventLocation" placeholder="Enter event location" required class="form-control"/>
+        </div>
+        <div class="form-row">
+            <label for="eventDateTime">Event Date and Time:</label>
+            <input type="datetime-local" id="eventDateTime" name="eventDateTime" th:value="${formattedEventDateTime}"/>
+        </div>
+        <div class="form-row">
+            <button type="submit" >Create Event</button>
+        </div>
+    </form>
+</div>
+<div class="success-message" th:if="${success}" th:text="${success}"></div>
+<div th:if="${error}" th:text="${error}">
+    There was an error while trying to create your event.
+</div>
+</body>
+</html>
