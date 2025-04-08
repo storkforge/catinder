@@ -9,7 +9,7 @@
 <body>
 <div th:replace="fragments/header"></div>
 <div class="form-container">
-    <h2>New user:</h2>
+    <h2>Create user</h2>
     <form th:if="${user.userId == null}"
           th:action="@{/users/add}"
           th:object="${user}" method="post">
