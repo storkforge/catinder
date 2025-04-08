@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Catinder - Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="fragments/header"></div>
 
-<h1>Upcoming Cat Events</h1>
+<h2>Upcoming Cat Events</h2>
 
 <!-- If the list is empty -->
 <div th:if="${#lists.isEmpty(events)}">
