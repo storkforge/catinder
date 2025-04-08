@@ -103,6 +103,14 @@ public class Cat {
         this.userCatOwner = userCatOwner;
     }
 
+    public void setUser(User user) {
+        this.userCatOwner = user;
+    }
+
+    public User getUser() {
+        return this.userCatOwner;
+    }
+
     public List<CatPhoto> getCatPhotos() {
         return catPhotos;
     }

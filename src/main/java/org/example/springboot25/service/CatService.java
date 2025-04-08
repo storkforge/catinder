@@ -31,6 +31,9 @@ public class CatService {
     public List<Cat> getAllCats() {
         return catRepository.findAll();
     }
+    public List<Cat> getAllCatsByUser(User user) {
+        return catRepository.findAllByUserCatOwner(user);
+    }
     public Optional<Cat> getCatById(Long catId) {
         return catRepository.findById(catId);
     }
