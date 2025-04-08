@@ -1,10 +1,12 @@
 package org.example.springboot25.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class User {
     private String userAuthProvider;
 
     @NotBlank
+    @JsonIgnore
     private String userPassword;
 
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -113,7 +116,7 @@ public class User {
     }
 
     public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
+        this.userPassword = new BCryptPasswordEncoder().encode(userPassword);
     }
 
     public List<Cat> getUserCats() {
