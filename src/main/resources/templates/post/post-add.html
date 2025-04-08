@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Create post</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header"></div>
+<div class="form-container">
+    <h2>Create post</h2>
+    <form th:action="@{/posts/add}"
+          th:object="${post}">
+        <!-- CSRF token -->
+        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+        <div class="form-row">
+            <label for="postText">Post Text:</label>
+            <textarea id="postText" name="postText" rows="5" cols="40" placeholder="Write your post here..."
+                      required></textarea>
+        </div>
+        <div class="form-row">
+            <label for="postImageUrl">Image URL (optional):</label>
+            <input type="text" id="postImageUrl" name="postImageUrl" placeholder="http://example.com/image.jpg"/>
+        </div>
+        <div class="form-row">
+            <button type="submit">Create Post</button>
+        </div>
+
+    </form>
+</div>
+<div class="success-message" th:if="${success}" th:text="${success}"></div>
+<div th:if="${error}" th:text="${error}">
+    There was an error while trying to create your post.
+</div>
+</body>
+</html>
