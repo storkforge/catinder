@@ -9,12 +9,16 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<h2>Cat Posts</h2>
+<div class="header-nav">
+    <a class="submit create-button" th:href="@{/posts/add}">
+        <span>Create New Post</span>
+    </a>
+</div>
 
+<h2>Cat Posts</h2>
 <div th:if="${#lists.isEmpty(posts)}">
     <p>No posts have been added yet.</p>
 </div>
-
 <div th:if="${!#lists.isEmpty(posts)}">
     <ul>
         <li th:each="post : ${posts}">

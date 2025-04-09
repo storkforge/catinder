@@ -150,10 +150,6 @@ a:hover {
     cursor: pointer;
 }
 
-a:active {
-    text-shadow: 0 1px 2px rgba(255, 0, 0, 0.3);
-}
-
 .form-container {
     max-width: 600px;
     margin: 30px auto;
@@ -349,4 +345,28 @@ a:active {
 
 .about-dropdown .dropdown-menu .dropdown-item:hover {
     color: #de7a3b;
+}
+
+.create-button {
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 8px;
+    outline: rgba(0,0,0,0.3);
+    margin: 20px    ;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-button:hover {
+    background-color: rgb(246, 200, 97);
+    color: white;
+    transition: background-color 0.15s, color 0.15s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.create-button:active {
+    border: none;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
