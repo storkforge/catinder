@@ -116,16 +116,16 @@
 </header>
 
 <div class="content">
-    <h2>Cats List</h2>
-    <a th:href="@{/cats/new}">Add New Cat</a>
+    <h2 th:text="#{cat.list}" >Cats List</h2>
+    <a th:text="#{add.new.cat} "th:href="@{/cats/new}">Add New Cat</a>
     <table>
         <thead>
         <tr>
             <th>ID</th>
-            <th>Name</th>
-            <th>Breed</th>
-            <th>Age</th>
-            <th>Actions</th>
+            <th th:text="#{cat.name}">Name</th>
+            <th th:text="#{cat.breed}">Breed</th>
+            <th th:text="#{cat.age}">Age</th>
+            <th th:text="#{cat.actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -135,9 +135,9 @@
             <td th:text="${cat.catBreed}">Breed</td>
             <td th:text="${cat.catAge}">Age</td>
             <td>
-                <a th:href="@{'/cats/' + ${cat.catId}}">View</a> |
-                <a th:href="@{'/cats/' + ${cat.catId} + '/edit'}">Edit</a> |
-                <a th:href="@{'/cats/' + ${cat.catId} + '/delete'}" onclick="return confirm('Are you sure?');">Delete</a>
+                <a th:text="#{view}" th:href="@{'/cats/' + ${cat.catId}}">View</a> |
+                <a th:text="#{edit}" th:href="@{'/cats/' + ${cat.catId} + '/edit'}">Edit</a> |
+                <a th:text="#{delete}" th:href="@{'/cats/' + ${cat.catId} + '/delete'}" onclick="return confirm('Are you sure?');">Delete</a>
             </td>
         </tr>
         </tbody>
