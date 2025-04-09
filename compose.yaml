@@ -12,6 +12,8 @@ services:
     depends_on:
       - postgres
     image: 'catinder:latest'
+    env_file:
+      - .env
     environment:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}

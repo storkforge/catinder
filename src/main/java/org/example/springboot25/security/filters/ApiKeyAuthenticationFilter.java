@@ -13,7 +13,7 @@ import java.io.IOException;
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String apiKey = request.getParameter("apiKey");
+        String apiKey = request.getHeader("X-API-KEY");
 
         // Only process if API key is provided
         if (apiKey != null && !apiKey.isEmpty()) {
@@ -30,6 +30,8 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isValidApiKey(String apiKey) {
-        return "apiKey".equals(apiKey);
+        // Use environment variables, configuration properties, or a secure storage service
+        String validApiKey = System.getenv("API_KEY"); // or inject through Spring's @Value
+        return validApiKey != null && validApiKey.equals(apiKey);
     }
 }
