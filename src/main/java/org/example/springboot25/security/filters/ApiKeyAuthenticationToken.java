@@ -1,4 +1,4 @@
-package org.example.springboot25.filters;
+package org.example.springboot25.security.filters;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

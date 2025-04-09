@@ -1,4 +1,4 @@
-package org.example.springboot25.filters;
+package org.example.springboot25.security.filters;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
