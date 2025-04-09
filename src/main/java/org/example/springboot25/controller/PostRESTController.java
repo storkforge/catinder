@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ public class PostRESTController {
     /**
      * Helper method to check if current user is owner or admin
      */
+
     private boolean isNotOwnerOrAdmin(Post post, User currentUser) {
         boolean isOwner = post.getUser().getUserName().equals(currentUser.getUserName());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
@@ -58,7 +60,13 @@ public class PostRESTController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Post createPost(@RequestBody @Valid Post post, Authentication auth) {
-        User currentUser = userService.getUserByUserName(auth.getName());
+        String username = auth.getName();
+        User currentUser = userService.getUserByUserName(username);
+
+        if (currentUser == null) {
+            throw new NotFoundException("Authenticated user not found: " + username);
+        }
+
         post.setUser(currentUser);
         post.setPostCreatedAt(LocalDateTime.now());
         return postService.createPost(post);
