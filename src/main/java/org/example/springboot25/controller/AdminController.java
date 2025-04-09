@@ -23,6 +23,7 @@ public class AdminController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users/role")
     public String changeUserRole(@RequestParam Long userId, @RequestParam String newRole) {
         try {
