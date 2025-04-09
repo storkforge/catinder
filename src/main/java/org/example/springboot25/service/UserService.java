@@ -160,9 +160,11 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-
     public void deleteUserById(Long userId) {
         log.info("Deleting user with id: {}", userId + ".");
         userRepository.deleteById(userId);
+    }
+
+    public void changeUserRole(Long userId, String newRole) {
     }
 }

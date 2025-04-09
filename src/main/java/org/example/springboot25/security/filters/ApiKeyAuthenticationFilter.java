@@ -15,12 +15,18 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String apiKey = request.getParameter("apiKey");
 
-        if (isValidApiKey(apiKey)) {
-            Authentication auth = new ApiKeyAuthenticationToken(apiKey);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        // Only process if API key is provided
+        if (apiKey != null && !apiKey.isEmpty()) {
+            if (isValidApiKey(apiKey)) {
+                Authentication auth = new ApiKeyAuthenticationToken(apiKey);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                logger.debug("API key authentication successful");
+            } else {
+                // Log failed authentication attempt
+                logger.warn("Invalid API key provided");
+            }
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private boolean isValidApiKey(String apiKey) {

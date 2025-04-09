@@ -1,22 +1,26 @@
 package org.example.springboot25.security.filters;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
 import java.util.Collections;
 
 public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
     private final String apiKey;
 
     public ApiKeyAuthenticationToken(String apiKey) {
-        super(Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_BASIC"))); //No authorities initially
+        super(Collections.emptyList());
         this.apiKey = apiKey;
-        setAuthenticated(true);
+        super.setAuthenticated(false);
     }
 
-    public String getApiKey() {
-            return apiKey;
+    // Add a constructor for successful authentication with authorities
+    public ApiKeyAuthenticationToken(String apiKey, Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
+        this.apiKey = apiKey;
+        super.setAuthenticated(true);
     }
 
     @Override
@@ -24,10 +28,22 @@ public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
         return null;
     }
 
-    //Method that fetches user data like username, user role, etc.
-    //Set with getContext inside ApiKeyAuthenticationFilter
     @Override
     public Object getPrincipal() {
-        return apiKey;
+        return new ApiKeyPrincipal(apiKey);
+    }
+
+    private static class ApiKeyPrincipal {
+        private final String apiKey;
+
+        public ApiKeyPrincipal(String apiKey) {
+            this.apiKey = apiKey;
+        }
+
+        @Override
+        public String toString() {
+            return "API Client: " + apiKey.substring(0, 4) + "...";
+        }
     }
 }
+

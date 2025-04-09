@@ -19,6 +19,17 @@ public class AdminController {
         this.userService = userService;
     }
 
+    @PostMapping("/users/role")
+    public String changeUserRole(@RequestParam Long userId, @RequestParam String newRole) {
+        try {
+            userService.changeUserRole(userId, newRole);
+            return "redirect:/admin/settings?success=role-changed";
+        } catch (Exception e) {
+            // Log the error
+            return "redirect:/admin/settings?error=role-change-failed";
+        }
+    }
+
     // Visa alla inlägg (för moderering)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/posts")
