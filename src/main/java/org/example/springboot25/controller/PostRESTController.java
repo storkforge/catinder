@@ -89,14 +89,16 @@ public class PostRESTController {
     // Only post owner or ADMIN can fully update (PUT)
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Post updatePost(@PathVariable Long id,@RequestBody @Valid Post updatedPost, Authentication auth) {
-        Post post = postService.getPostById(id);
+    public Post updatePost(@PathVariable Long id, @RequestBody @Valid Post updatedPost, Authentication auth) {
+        Post existingPost = postService.getPostById(id);
         User currentUser = userService.getUserByUserName(auth.getName());
 
-        if (isNotOwnerOrAdmin(post, currentUser)) {
+        if (isNotOwnerOrAdmin(existingPost, currentUser)) {
             throw new AccessDeniedException("You can only update your own post");
         }
+
+        // Se till att användaren inte kan byta ut ägaren
+        updatedPost.setUser(existingPost.getUser());
         return postService.updatePost(id, updatedPost);
     }
 
