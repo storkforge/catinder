@@ -44,6 +44,21 @@ h1 {
     cursor: default;
 }
 
+h1 a,
+h1 a:visited,
+h1 a:hover,
+h1 a:active {
+    color: #e79a6f !important;
+    text-shadow: 0 1px 2px rgba(255, 0, 0, 0.7),
+    0 3px 6px rgba(255, 104, 15, 0.5),
+    0 10px 20px rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.logo:hover {
+    color: inherit;
+}
+
 .cat-emoji {
     font-size: 1em;
     text-shadow: none;

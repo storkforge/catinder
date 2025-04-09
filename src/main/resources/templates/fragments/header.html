@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="header">
-    <!-- Left: Logo -->
     <div class="header-left">
-        <h1><span class="cat-emoji">🐱</span>Catinder</h1>
+        <h1 class="logo">
+            <a th:href="@{/}" title="Home">
+                <span class="cat-emoji">🐱</span>Catinder
+            </a>
+        </h1>
     </div>
 
-    <!-- Center: Navigation Buttons -->
     <nav class="header-nav">
         <a class="nav-button" aria-label="Cats" th:href="@{/cats}" title="Cats">
             <img class="header-choice" th:src="@{/images/paw_white.png}" alt="Cats" />
