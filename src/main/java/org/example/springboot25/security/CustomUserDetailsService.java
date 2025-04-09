@@ -7,9 +7,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
     private final UserRepository userRepository;
 
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -18,8 +22,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-        return new CustomUserDetails(user);
+        return userRepository.findByUserName(username)
+                .map(CustomUserDetails::new) // CustomUserDetails implements UserDetails
+                .orElseThrow(() -> {
+                    logger.warn("Login attempt with unknown username: {}", username);
+                    return new UsernameNotFoundException("No user found with username: " + username);
+                });
     }
 }

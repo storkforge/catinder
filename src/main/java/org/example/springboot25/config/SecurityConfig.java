@@ -31,7 +31,6 @@ public class SecurityConfig {
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
-
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String googleClientSecret;
 
@@ -76,8 +75,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public ClientRegistrationRepository clientRegistrationRepository(
-    ) {
+    public ClientRegistrationRepository clientRegistrationRepository() {
         ClientRegistration google = ClientRegistration.withRegistrationId("google")
                 .clientId(googleClientId)
                 .clientSecret(googleClientSecret)

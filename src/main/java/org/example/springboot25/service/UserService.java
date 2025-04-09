@@ -76,7 +76,7 @@ public class UserService {
     public User addUser(User user) {
         if (userRepository.existsByUserEmail(user.getUserEmail()))
             throw new UserAlreadyExistsException("Account with given email already exists.");
-        if (userRepository.existsByUserName(user.getUserName()))
+        if (userRepository.existsByUsername(user.getUserName()))
             throw new UserAlreadyExistsException("Username is taken.");
         log.info("Creating new user: {}", user.getUserName());
         return userRepository.save(user);
