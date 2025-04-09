@@ -8,17 +8,17 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
-<div id="successMessage" class="success-message" th:if="${delete_success}" th:text="${delete_success}"></div>
-<p class="select-text">Select a section to explore:</p>
+<div id="successMessage" class="success-message" th:if="${delete_success}" th:text="${delete_success}" th:text="${DeleteSuccessTranslated}"></div>
+<p class="select-text" th:text="#{SectionSelection}">Select a section to explore:</p>
 <nav class="link-box">
     <ul role="menu">
-        <li><a th:href="@{/users}">Users</a></li>
-        <li><a th:href="@{/cats}">Cats</a></li>
-        <li><a th:href="@{/events}">Events</a></li>
-        <li><a th:href="@{/participants}">Participants</a></li>
-        <li><a th:href="@{/posts}">Posts</a></li>
-        <li><a th:href="@{/reminders}">Reminders</a></li>
-        <li><a th:href="@{/recommendations}">Recommendations</a></li>
+        <li><a th:href="@{/users}" th:text="#{Users}">Users</a></li>
+        <li><a th:href="@{/cats}"th:text="#{Cats}">Cats</a></li>
+        <li><a th:href="@{/events}" th:text="#{Events}">Events</a></li>
+        <li><a th:href="@{/participants}" th:text="#{Participants}">Participants</a></li>
+        <li><a th:href="@{/posts}" th:text="#{Posts}">Posts</a></li>
+        <li><a th:href="@{/reminders}" th:text="#{Reminders}">Reminders</a></li>
+        <li><a th:href="@{/recommendations}" th:text="#{Recommendations}">Recommendations</a></li>
     </ul>
 </nav>
 </body>
