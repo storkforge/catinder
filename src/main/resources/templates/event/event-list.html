@@ -8,7 +8,11 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
-
+<div class="header-nav">
+    <a class="submit create-button" th:href="@{/events/add}">
+        <span>Create New Event</span>
+    </a>
+</div>
 <h2>Upcoming Cat Events</h2>
 
 <!-- If the list is empty -->
