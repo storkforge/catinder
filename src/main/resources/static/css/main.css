@@ -11,7 +11,6 @@ body {
     background-size: cover;
 }
 
-
 header {
     display: flex;
     justify-content: space-between;
@@ -24,6 +23,13 @@ header {
 .header-left {
     display: flex;
     align-items: center;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 20px;
 }
 
 h1 {
@@ -55,10 +61,6 @@ h1 {
 
 .about-link:hover {
     color: rgba(255, 255, 255, 0.3);
-}
-
-.header-right {
-    margin-right: 20px;
 }
 
 .lang-button {
@@ -185,8 +187,8 @@ a:active {
 }
 
 .delete-button {
-    display: inline-block;  /* Size to content */
-    margin-top: 20px;       /* Adds space above the button */
+    display: inline-block;
+    margin-top: 20px;
     background-color: #dc2424;
     color: #fff;
     border: none;
@@ -227,4 +229,105 @@ a:active {
     text-align: center;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
     color: #c41717;
+}
+
+.header-nav {
+    flex: 1;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 0 1rem;
+}
+
+.nav-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+    text-decoration: none;
+    color: inherit;
+    padding: 0.5rem;
+    max-width: 100px;
+}
+
+.nav-button img.header-choice {
+    width: 40px;
+    height: auto;
+    margin-bottom: 0.2rem;
+}
+
+.nav-button span {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.about-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    background-color: transparent;
+    border: none;
+    padding: 5px 15px;
+    font-size: 16px;
+    color: #fffaef;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.dropdown-toggle:hover {
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: transparent;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 4px;
+}
+
+.about-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: rgba(10, 10, 10, 0.9);
+    min-width: 160px;
+    padding: 0.5rem 0;
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+.about-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.about-dropdown .dropdown-menu .dropdown-item {
+    color: #fffaef;
+    font-size: 16px;
+    padding: 0.5rem 1rem;
+    text-decoration: underline;
+    display: block;
+}
+
+.about-dropdown .dropdown-menu .dropdown-item:hover {
+    text-decoration: underline;
+}
+
+.about-content {
+    max-width: 800px;
+    width: 90%;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    line-height: 1.6;
 }
