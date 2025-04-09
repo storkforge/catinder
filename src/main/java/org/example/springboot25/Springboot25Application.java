@@ -9,7 +9,7 @@ import java.util.Locale;
 public class Springboot25Application {
 
     public static void main(String[] args) {
-        Locale.setDefault(Locale.ENGLISH);
+        //Locale.setDefault(Locale.ENGLISH);
         SpringApplication.run(Springboot25Application.class, args);
     }
 
