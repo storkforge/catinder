@@ -32,6 +32,10 @@ public class CatRestController {
     }
 
     private boolean isNotOwnerOrAdmin(Cat cat, User currentUser) {
+        if (cat.getUserCatOwner() == null) {
+            return true; // Om ägare saknas, neka åtkomst
+        }
+
         boolean isOwner = cat.getUserCatOwner().getUserId().equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
