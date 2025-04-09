@@ -40,8 +40,12 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 <div class="content">
-    <h2 th:text="#{cat.list}" >Cats List</h2>
-    <a th:text="#{add.new.cat}" th:href="@{/cats/new}">Add New Cat</a>
+    <h2 th:text="#{cat.list}">Cats List</h2>
+    <div class="header-nav">
+        <a class="submit create-button" th:href="@{/cats/new}">
+            <span th:text="#{add.new.cat}">Add New Cat</span>
+        </a>
+    </div>
     <table>
         <thead>
         <tr>
