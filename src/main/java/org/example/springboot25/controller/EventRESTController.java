@@ -33,7 +33,7 @@ public class EventRESTController {
      */
 
     private boolean isNotOwnerOrAdmin(Event event, User currentUser) {
-        boolean isOwner = event.getUser().getUserName().equals(currentUser.getUserName());
+        boolean isOwner = event.getUserEventPlanner().getUserName().equals(currentUser.getUserName());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
     }
@@ -60,7 +60,7 @@ public class EventRESTController {
     @ResponseStatus(HttpStatus.CREATED)
     public Event createEvent(@RequestBody @Valid Event event, Authentication auth) {
         User currentUser = userService.getUserByUserName(auth.getName());
-        event.setUser(currentUser);
+        event.setUserEventPlanner(currentUser);
         event.setEventDateTime(LocalDateTime.now());
         return eventService.createEvent(event);
     }

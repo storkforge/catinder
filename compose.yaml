@@ -9,6 +9,8 @@ services:
     ports:
       - '5432:5432'
   app:
+    depends_on:
+      - postgres
     image: 'catinder:latest'
     environment:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
