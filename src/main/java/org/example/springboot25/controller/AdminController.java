@@ -7,10 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
+    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
     private final PostService postService;
     private final UserService userService;
 
@@ -58,8 +62,14 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users/delete/{userId}")
     public String deleteUser(@PathVariable Long userId) {
-        userService.deleteUserById(userId);
-        return "redirect:/admin/users";
+        try {
+            userService.deleteUserById(userId);
+            return "redirect:/admin/users";
+        } catch (Exception e) {
+            // Log the error (you can also log e.getMessage() for specifics)
+            log.warn("Failed to delete user with id {}: {}", userId, e.getMessage());
+            return "redirect:/admin/users?error=delete-failed";
+        }
     }
 
     // Systeminställningar – placeholder för framtida grejer
