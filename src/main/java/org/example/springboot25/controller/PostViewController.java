@@ -5,7 +5,6 @@ import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.exceptions.UserAlreadyExistsException;
 import org.example.springboot25.repository.UserRepository;
 import org.example.springboot25.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,6 +11,9 @@
 <div class="form-container">
     <h2 th:text="#{update.user}">Update user (userId: <span th:text="${user.userId}"></span>)</h2>
     <form th:action="@{/users/{userId}(userId=${user.userId})}" th:method="put" th:object="${user}">
+        <!-- CSRF token -->
+        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+
         <div class="form-row">
             <label th:text="#{username}" for="userName">Username:</label>
             <input type="text" id="userName" th:field="*{userName}" required/>

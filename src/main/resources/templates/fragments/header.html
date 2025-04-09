@@ -1,11 +1,43 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <header th:fragment="header">
+    <!-- Left: Logo -->
     <div class="header-left">
         <h1><span class="cat-emoji">🐱</span>Catinder</h1>
-        <a class="about-link" th:href="@{/about}" th:text="#{about}">About</a>
     </div>
+
+    <!-- Center: Navigation Buttons -->
+    <nav class="header-nav">
+        <a class="nav-button" aria-label="Cats" th:href="@{/cats}" title="Cats">
+            <img class="header-choice" th:src="@{/images/paw_white.png}" alt="Cats" />
+            <span>Cats</span>
+        </a>
+        <a class="nav-button" aria-label="Posts" th:href="@{/posts}" title="Posts">
+            <img class="header-choice" th:src="@{/images/post_white.png}" alt="Posts" />
+            <span>Posts</span>
+        </a>
+        <a class="nav-button" aria-label="Events" th:href="@{/events}" title="Events">
+            <img class="header-choice" th:src="@{/images/event_white.png}" alt="Events" />
+            <span>Events</span>
+        </a>
+        <a class="nav-button" aria-label="Recommendations" th:href="@{/recommendations}" title="Recommendations">
+            <img class="header-choice" th:src="@{/images/recommendation_white.png}" alt="Recommendations" />
+            <span>Recommendations</span>
+        </a>
+    </nav>
+
+    <!-- Right: About Dropdown and Language Button -->
     <div class="header-right">
+        <div class="dropdown about-dropdown">
+            <button class="dropdown-toggle" title="Menu">Menu</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/about}">About Us</a>
+                <a class="dropdown-item" th:href="@{/contact}">Contact</a>
+                <a class="dropdown-item" th:href="@{/faq}">FAQ</a>
+            </div>
+        </div>
+        <button class="lang-button" aria-label="Change language" title="Change language">
+            &#127760; Language
         <div sec:authorize="!isAuthenticated()">
                 <a class="header-button login-button" th:href="@{/oauth2/authorization/google}" title="Login">Login</a>
         </div>
