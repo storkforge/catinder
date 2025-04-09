@@ -8,6 +8,8 @@ import org.example.springboot25.exceptions.UserAlreadyExistsException;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +22,12 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> getAllUsers() {
@@ -76,9 +81,15 @@ public class UserService {
     public User addUser(User user) {
         if (userRepository.existsByUserEmail(user.getUserEmail()))
             throw new UserAlreadyExistsException("Account with given email already exists.");
-        if (userRepository.existsByUsername(user.getUserName()))
+        if (userRepository.existsByUserName(user.getUserName()))
             throw new UserAlreadyExistsException("Username is taken.");
+
         log.info("Creating new user: {}", user.getUserName());
+
+        // 🔒 Hash password before saving
+        String hashedPassword = passwordEncoder.encode(user.getUserPassword());
+        user.setUserPassword(hashedPassword);
+
         return userRepository.save(user);
     }
 

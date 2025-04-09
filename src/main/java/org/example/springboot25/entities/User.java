@@ -58,7 +58,6 @@ public class User {
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
-
     public Long getUserId() {
         return userId;
     }
