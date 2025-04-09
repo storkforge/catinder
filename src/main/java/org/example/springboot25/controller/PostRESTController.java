@@ -105,7 +105,6 @@ public class PostRESTController {
     // Only post owner or ADMIN can partially update (PATCH)
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PatchMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public Post patchPost(@PathVariable Long id, @RequestBody Map<String, Object> updates, Authentication auth) {
         Post existing = postService.getPostById(id);
         User currentUser = userService.getUserByUserName(auth.getName());
@@ -113,6 +112,11 @@ public class PostRESTController {
         if (isNotOwnerOrAdmin(existing, currentUser)) {
             throw new AccessDeniedException("You can only update your own post");
         }
+
+        // Ta bort fält som inte ska kunna ändras
+        updates.remove("user");
+        updates.remove("postCreatedAt");
+
         return postService.patchPost(id, updates);
     }
 }
