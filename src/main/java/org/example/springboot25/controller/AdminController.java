@@ -46,6 +46,7 @@ public class AdminController {
             model.addAttribute("error", "Failed to retrieve posts");
             return "admin/error"; // Create this view if not exists
         }
+    }
 
         // Ta bort ett inlägg
         @PreAuthorize("hasRole('ADMIN')")
