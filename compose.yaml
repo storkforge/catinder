@@ -13,7 +13,7 @@ services:
       - postgres
     image: 'catinder:latest'
     env_file:
-      - .env
+      - .env_eva
     environment:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
