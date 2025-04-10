@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/css/");
     }
 
-    @Bean(name = "myLocaleResolver")
+    @Bean(name = "localeResolver")
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
         localeResolver.setDefaultLocale(Locale.ENGLISH);
