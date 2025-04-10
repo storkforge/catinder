@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.Optional;
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -38,7 +40,14 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .rememberMe(remember -> remember
-                        .key(System.getenv("REMEMBER_ME_KEY"))
+                        .key(Optional.ofNullable(System.getenv("REMEMBER_ME_KEY"))
+                                .filter(key -> !key.isBlank())
+                                .orElseGet(() -> {
+                                    // generate a secure fallback or log an error
+                                    return new java.security.SecureRandom().ints(32, 0, 62)
+                                            .mapToObj(i -> String.valueOf("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".charAt(i)))
+                                            .collect(java.util.stream.Collectors.joining());
+                                }))
                         .tokenValiditySeconds(7 * 24 * 60 * 60) // 1 vecka
                 )
                 .logout(logout -> logout

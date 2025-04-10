@@ -74,7 +74,7 @@ public class EventRESTController {
         User currentUser = userService.getUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(event, currentUser)) {
-            throw new AccessDeniedException("You can only update your own events");
+            throw new AccessDeniedException("You can only delete your own events");
         }
         eventService.deleteEvent(id);
     }
