@@ -1,5 +1,6 @@
 package org.example.springboot25.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -11,12 +12,10 @@ import java.util.Locale;
 @Controller
 public class LanguageController {
 
-    @GetMapping("/change_language")
-    public String changeLanguage(@RequestParam ("lang") String lang,
-                                 HttpServletResponse request) {
-
+    @GetMapping("/change-language")
+    public String changeLanguage(@RequestParam("lang") String lang,
+                                 HttpServletRequest request) {
         LocaleContextHolder.setLocale(new Locale(lang));
-
         String referer = request.getHeader("Referer");
         return "redirect:" + (referer != null ? referer : "/"); //för att komma till hemsidan som man va på
 //        return "redirect:/"; //Redirect vart?
