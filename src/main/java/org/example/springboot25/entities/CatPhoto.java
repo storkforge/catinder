@@ -34,6 +34,12 @@ public class CatPhoto {
     public CatPhoto() {}
 
     public CatPhoto(String url, String caption, Cat cat) {
+        if (url == null || url.isBlank()){
+            throw new IllegalArgumentException("URL cannot be null or blank");
+        }
+        if (cat == null){
+            throw new IllegalArgumentException("Cat cannot be null");
+        }
         this.catPhotoUrl = url;
         this.catPhotoCaption = caption;
         this.catPhotoCat = cat;
@@ -43,9 +49,9 @@ public class CatPhoto {
         return catPhotoId;
     }
 
-    public void setCatPhotoId(Long catPhotoId) {
+    /*public void setCatPhotoId(Long catPhotoId) {
         this.catPhotoId = catPhotoId;
-    }
+    }*/
 
     public String getCatPhotoUrl() {
         return catPhotoUrl;
@@ -66,6 +72,10 @@ public class CatPhoto {
     public LocalDateTime getCatPhotoCreatedAt() {
         return catPhotoCreatedAt;
     }
+
+    /*public void setCatPhotoCreatedAt(LocalDateTime catPhotoCreatedAt) {
+        this.catPhotoCreatedAt = catPhotoCreatedAt;
+    }*/
 
     public Cat getCatPhotoCat() {
         return catPhotoCat;

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Photos</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .photo { margin: 10px; }
+        img { max-width: 300px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Kattbilder</h1>
+
+<div>
+    <ul>
+        <!-- Thymeleaf loopar igenom alla bilder -->
+        <li th:each="catPhoto : ${catPhotos}" class="photo">
+            <img th:src="${catPhoto.catPhotoUrl}" alt="Kattbild">
+            <p th:text="${catPhoto.catPhotoCaption}"></p>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

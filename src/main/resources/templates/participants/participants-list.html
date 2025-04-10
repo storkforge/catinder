@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Event Participations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div th:replace="fragments/header"></div>
+
+<h2 style="text-align: center; margin-top: 40px;">All Event Participations</h2>
+
+<div class="form-container" style="text-align: center; margin-top: 20px;">
+
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div th:if="${participants}">
+        <table class="table" style="margin: 0 auto; width: 100%; max-width: 800px; border-collapse: collapse;">
+            <thead>
+            <tr style="background-color: #f0f0f0;">
+                <th style="padding: 10px;">Participation ID</th>
+                <th style="padding: 10px;">Username</th>
+                <th style="padding: 10px;">User Email</th>
+                <th style="padding: 10px;">Event Name</th>
+                <th style="padding: 10px;">Event Location</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${participants}">
+                <td th:text="${p.eventParticipantId}" style="padding: 10px;"></td>
+                <td th:text="${p.user.userName}" style="padding: 10px;"></td>
+                <td th:text="${p.user.userEmail}" style="padding: 10px;"></td>
+                <td th:text="${p.event.eventName}" style="padding: 10px;"></td>
+                <td th:text="${p.event.eventLocation}" style="padding: 10px;"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
+
+

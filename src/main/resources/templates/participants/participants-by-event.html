@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Participants by Event</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div th:replace="fragments/header"></div>
+
+<h2 style="text-align: center; margin-top: 40px;">Find Participants for an Event</h2>
+
+<div class="form-container" style="text-align: center;">
+    <p>Enter the event name to see which users are participating in it.</p>
+
+    <form th:action="@{/eventSearch}" method="get">
+        <div class="form-row" style="margin: 15px;">
+            <label for="eventName">Event name:</label><br>
+            <input type="text" id="eventName" name="eventName" placeholder="e.g. CatMeeting" required/>
+        </div>
+        <div class="form-row" style="margin: 15px;">
+            <button type="submit">Search</button>
+        </div>
+    </form>
+</div>
+
+<div th:if="${participants != null}" style="text-align: center; margin-top: 30px;">
+    <h3>Participants for Selected Event</h3>
+
+    <div th:if="${#lists.isEmpty(participants)}">
+        <p>No participants found for this event.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(participants)}">
+        <ul style="list-style: none; padding: 0;">
+            <li th:each="p : ${participants}" th:text="|${p.user.userName} (${p.user.userEmail})|"
+                style="margin: 10px 0;"></li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
+

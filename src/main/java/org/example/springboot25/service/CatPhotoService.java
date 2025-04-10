@@ -1,14 +1,12 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.CatPhoto;
-import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.CatPhotoRepository;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
-@Configuration
 @Service
 public class CatPhotoService {
 
@@ -18,40 +16,33 @@ public class CatPhotoService {
         this.catPhotoRepository = catPhotoRepository;
     }
 
-    // 🔹 Get all Photos
+    // 🔹 Hämta alla bilder
     public List<CatPhoto> getAllCatPhotos() {
         return catPhotoRepository.findAll();
     }
 
-    // 🔹 Get all Photos based on ID
-    public CatPhoto getCatPhotoById(Long id) {
-        return catPhotoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("CatPhoto with id " + id + " not found"));
+    // 🔹 Hämta en bild baserat på ID
+    public Optional<CatPhoto> getCatPhotoById(Long id) {
+        return catPhotoRepository.findById(id);
     }
 
-    // 🔹 Save a new Photo
+    // 🔹 Spara en ny bild
     public CatPhoto saveCatPhoto(CatPhoto catPhoto) {
         return catPhotoRepository.save(catPhoto);
     }
 
-    // 🔹 Update a Photo based on ID
-    public CatPhoto updateCatPhoto(Long id, CatPhoto updatedCatPhoto) {
-        // Try to find the existing CatPhoto by id, throw NotFoundException if not found
-        CatPhoto existingCatPhoto = catPhotoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("CatPhoto with id " + id + " not found"));
-
-        // Update the existing photo fields
-        existingCatPhoto.setCatPhotoUrl(updatedCatPhoto.getCatPhotoUrl());
-        existingCatPhoto.setCatPhotoCaption(updatedCatPhoto.getCatPhotoCaption());
-        // Note: We don't update catPhotoCat relationship here
-        // Note: catPhotoCreatedAt is managed by @CreationTimestamp
-
-        // Save the updated CatPhoto and return it
-        return catPhotoRepository.save(existingCatPhoto);
+    // 🔹 Uppdatera en bild baserat på ID
+    public Optional<CatPhoto> updateCatPhoto(Long id, CatPhoto updatedCatPhoto) {
+        return catPhotoRepository.findById(id).map(existingCatPhoto -> {
+            existingCatPhoto.setCatPhotoUrl(updatedCatPhoto.getCatPhotoUrl());
+            existingCatPhoto.setCatPhotoCaption(updatedCatPhoto.getCatPhotoCaption());
+            //existingCatPhoto.setCatPhotoCreatedAt(updatedCatPhoto.getCatPhotoCreatedAt());
+            existingCatPhoto.setCatPhotoCat(updatedCatPhoto.getCatPhotoCat());
+            return catPhotoRepository.save(existingCatPhoto);
+        });
     }
 
-
-    // 🔹 Remove a Photo based on ID
+    // 🔹 Ta bort en bild baserat på ID
     public boolean deleteCatPhoto(Long id) {
         if (catPhotoRepository.existsById(id)) {
             catPhotoRepository.deleteById(id);

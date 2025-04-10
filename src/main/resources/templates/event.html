@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Events</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<h1>Upcoming Cat Events</h1>
+
+<!-- If the list is empty -->
+<div th:if="${#lists.isEmpty(events)}">
+    <p>No events available at the moment.</p>
+</div>
+
+<!-- If events exist -->
+<div th:if="${!#lists.isEmpty(events)}">
+    <ul>
+        <li th:each="event : ${events}">
+            <div>
+                <p><strong>Name:</strong> <span th:text="${event.eventName}">Event Name</span></p>
+                <p><strong>Description:</strong> <span th:text="${event.eventDescription}">Description</span></p>
+                <p><strong>Location:</strong> <span th:text="${event.eventLocation}">Location</span></p>
+                <p><strong>Date:</strong>
+                    <span th:text="${#temporals.format(event.eventDateTime, 'yyyy-MM-dd HH:mm')}">Date</span>
+                </p>
+                <hr/>
+            </div>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

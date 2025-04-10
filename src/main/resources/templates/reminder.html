@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reminders</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #fefefe;
+            margin: 2rem;
+        }
+        h1 {
+            color: #444;
+        }
+        .reminder {
+            border-bottom: 1px solid #ddd;
+            padding: 1rem 0;
+        }
+        .date {
+            color: #888;
+            font-size: 0.9em;
+        }
+        .info {
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<h1>Your Upcoming Reminders</h1>
+
+<div th:if="${reminder.isEmpty()}">
+    <p>No reminders at the moment.</p>
+</div>
+
+<div th:each="reminder : ${reminder}" class="reminder">
+    <p class="date">
+        🗓️
+        <span th:text="${#temporals.format(reminder.reminderDate, 'yyyy-MM-dd HH:mm')}"></span>
+    </p>
+    <p class="info">
+        <strong th:text="${reminder.reminderType}">Type</strong> –
+        <span th:text="${reminder.reminderInfo}">Info</span>
+    </p>
+</div>
+
+</body>
+</html>

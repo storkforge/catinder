@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - User</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header"></div>
+<h2>User Details:</h2>
+<div>
+    <p><strong>User ID:</strong> <span th:text="${user.userId}"></span></p>
+    <p><strong>User Name:</strong> <span th:text="${user.userName}"></span></p>
+    <p><strong>Full Name:</strong> <span th:text="${user.userFullName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.userEmail}"></span></p>
+    <p><strong>Location:</strong> <span th:text="${user.userLocation}"></span></p>
+    <!-- Cats -->
+    <p><strong>Household:</strong> <span th:text="${user.userCats}"></span></p>
+
+</div>
+</body>
+</html>
