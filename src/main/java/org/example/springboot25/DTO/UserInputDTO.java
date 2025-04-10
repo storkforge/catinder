@@ -1,9 +1,7 @@
 package org.example.springboot25.DTO;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public class UserInputDTO {
 
