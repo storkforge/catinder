@@ -29,7 +29,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        HttpSecurity httpSecurity = http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/premium/**").hasRole("PREMIUM")
@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .rememberMe(remember -> remember
-                        .key("uniqueAndSecretKey")
+                        .key(System.getenv("REMEMBER_ME_KEY"))
                         .tokenValiditySeconds(7 * 24 * 60 * 60) // 1 vecka
                 )
                 .logout(logout -> logout
