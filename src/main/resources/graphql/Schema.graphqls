@@ -1,0 +1,11 @@
+type Query {
+    getAllUsers: [UserOutputDTO]
+    getUserById(userId: ID!): UserOutputDTO
+    getUserByUserName(username: String!): UserOutputDTO
+}
+
+type Mutation {
+    createUser(input: UserInput!): UserOutputDTO
+    updateUser(userId: ID!, input: UserUpdate): UserOutputDTO
+    deleteUser(userId: ID!): Boolean
+}

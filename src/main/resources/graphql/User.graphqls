@@ -1,0 +1,28 @@
+input UserInput {
+    userFullName: String!
+    userName: String!
+    userEmail: String!
+    userLocation: String!
+    userRole: String!
+    userAuthProvider: String!
+}
+
+input UserUpdate {
+    userFullName: String
+    userName: String
+    userEmail: String
+    userLocation: String
+    userRole: String
+    userAuthProvider: String
+}
+
+type UserOutputDTO {
+    userId: ID
+    userFullName: String
+    userName: String
+    userEmail: String
+    userLocation: String
+    userRole: String
+    userAuthProvider: String
+
+}
