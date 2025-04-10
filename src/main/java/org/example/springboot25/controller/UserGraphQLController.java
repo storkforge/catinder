@@ -1,5 +1,6 @@
 package org.example.springboot25.controller;
 
+import jakarta.validation.Valid;
 import org.example.springboot25.DTO.UserInputDTO;
 import org.example.springboot25.DTO.UserOutputDTO;
 import org.example.springboot25.DTO.UserUpdateDTO;
@@ -49,7 +50,7 @@ public class UserGraphQLController {
     }
 
     @MutationMapping
-    public UserOutputDTO createUser(@Argument("input") UserInputDTO input) {
+    public UserOutputDTO createUser(@Argument("input") @Valid UserInputDTO input) {
         validateUserInput(input);
         User user = userMapper.toUser(input);
         return userMapper.toDto(userService.addUser(user));
