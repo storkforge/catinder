@@ -1,5 +1,5 @@
 type Query {
-    getAllUsers(first: Int, after: String): UserConnection
+    getAllUsers: [UserOutputDTO]
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
 }

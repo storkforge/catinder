@@ -25,19 +25,3 @@ type UserOutputDTO {
     userRole: String
     userAuthProvider: String
 }
-
-
-type UserConnection {
-    edges: [UserEdge]
-    pageInfo: PageInfo!
-}
-
-type UserEdge {
-    cursor: String!
-    node: UserOutputDTO
-}
-
-type PageInfo {
-    hasNextPage: Boolean!
-    endCursor: String
-}
