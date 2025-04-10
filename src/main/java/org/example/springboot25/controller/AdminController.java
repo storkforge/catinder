@@ -49,40 +49,51 @@ public class AdminController {
         }
     }
 
-        // Ta bort ett inlägg
-        @PreAuthorize("hasRole('ADMIN')")
-        @PostMapping("/posts/delete/{postId}")
-        public String deletePost (@PathVariable Long postId){
+    // Ta bort ett inlägg
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/posts/delete/{postId}")
+    public String deletePost(@PathVariable Long postId) {
+        try {
             postService.deletePost(postId);
             return "redirect:/admin/posts";
-        }
-
-        // Visa alla användare
-        @PreAuthorize("hasRole('ADMIN')")
-        @GetMapping("/users")
-        public String showAllUsers (Model model){
-            model.addAttribute("users", userService.getAllUsers());
-            return "admin/users"; // t.ex. templates/admin/users.html
-        }
-
-        // Ta bort en användare
-        @PreAuthorize("hasRole('ADMIN')")
-        @PostMapping("/users/delete/{userId}")
-        public String deleteUser (@PathVariable Long userId){
-            try {
-                userService.deleteUserById(userId);
-                return "redirect:/admin/users";
-            } catch (Exception e) {
-                // Log the error (you can also log e.getMessage() for specifics)
-                log.warn("Failed to delete user with id {}: {}", userId, e.getMessage());
-                return "redirect:/admin/users?error=delete-failed";
-            }
-        }
-
-        // Systeminställningar – placeholder för framtida grejer
-        @PreAuthorize("hasRole('ADMIN')")
-        @GetMapping("/settings")
-        public String settingsPage () {
-            return "admin/settings"; // t.ex. templates/admin/settings.html
+        } catch (Exception e) {
+            log.warn("Failed to delete post with id {}: {}", postId, e.getMessage());
+            return "redirect:/admin/posts?error=delete-failed";
         }
     }
+
+    // Visa alla användare
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users")
+    public String showAllUsers(Model model) {
+        try {
+            model.addAttribute("users", userService.getAllUsers());
+            return "admin/users";
+        } catch (Exception e) {
+            log.warn("Failed to retrieve users: {}", e.getMessage());
+            model.addAttribute("error", "Failed to retrieve users");
+            return "admin/error";
+        }
+    }
+
+    // Ta bort en användare
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/users/delete/{userId}")
+    public String deleteUser(@PathVariable Long userId) {
+        try {
+            userService.deleteUserById(userId);
+            return "redirect:/admin/users";
+        } catch (Exception e) {
+            // Log the error (you can also log e.getMessage() for specifics)
+            log.warn("Failed to delete user with id {}: {}", userId, e.getMessage());
+            return "redirect:/admin/users?error=delete-failed";
+        }
+    }
+
+    // Systeminställningar – placeholder för framtida grejer
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/settings")
+    public String settingsPage() {
+        return "admin/settings"; // t.ex. templates/admin/settings.html
+    }
+}
