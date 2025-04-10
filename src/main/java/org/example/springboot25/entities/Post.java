@@ -22,7 +22,7 @@ public class Post {
     @PastOrPresent
     private LocalDateTime postCreatedAt;
 
-    @NotNull
+    //@NotNull Todo: Take back NotNull when security is implemented
     @ManyToOne
     @JoinColumn(name = "post_author_user_id")
     private User userPostAuthor;

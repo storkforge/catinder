@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Recommendations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
-
-<h1>AI-Powered Recommendations</h1>
-
+<h2>AI-Powered Recommendations</h2>
 <div th:if="${recommendations}">
     <table>
         <thead>
