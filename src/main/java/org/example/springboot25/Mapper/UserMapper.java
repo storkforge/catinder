@@ -10,6 +10,13 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     public User toUser(UserInputDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("UserInputDTO cannot be null");
+        }
+        if (!isValidEmail(dto.getUserEmail())) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+
         User user = new User();
         user.setUserFullName(dto.getUserFullName());
         user.setUserName(dto.getUserName());
@@ -21,12 +28,18 @@ public class UserMapper {
     }
 
     public void updateUserFromDto(UserUpdateDTO dto, User user) {
-        if (dto.getUserFullName() != null) user.setUserFullName(dto.getUserFullName());
-        if (dto.getUserName() != null) user.setUserName(dto.getUserName());
-        if (dto.getUserEmail() != null) user.setUserEmail(dto.getUserEmail());
-        if (dto.getUserLocation() != null) user.setUserLocation(dto.getUserLocation());
-        if (dto.getUserRole() != null) user.setUserRole(dto.getUserRole());
-        if (dto.getUserAuthProvider() != null) user.setUserAuthProvider(dto.getUserAuthProvider());
+        if (dto.getUserFullName() != null) {
+            user.setUserFullName(dto.getUserFullName()); }
+        if (dto.getUserName() != null) {
+            user.setUserName(dto.getUserName()); }
+        if (dto.getUserEmail() != null) {
+            user.setUserEmail(dto.getUserEmail()); }
+        if (dto.getUserLocation() != null) {
+            user.setUserLocation(dto.getUserLocation()); }
+        if (dto.getUserRole() != null) {
+            user.setUserRole(dto.getUserRole()); }
+        if (dto.getUserAuthProvider() != null) {
+            user.setUserAuthProvider(dto.getUserAuthProvider()); }
     }
 
     public UserOutputDTO toDto(User user) {
@@ -40,4 +53,9 @@ public class UserMapper {
         dto.setUserAuthProvider(user.getUserAuthProvider());
         return dto;
     }
+
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }
+
 }
