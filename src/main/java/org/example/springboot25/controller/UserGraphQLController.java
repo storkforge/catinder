@@ -5,6 +5,7 @@ import org.example.springboot25.DTO.UserOutputDTO;
 import org.example.springboot25.DTO.UserUpdateDTO;
 import org.example.springboot25.Mapper.UserMapper;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.UserNotFoundException;
 import org.example.springboot25.service.UserService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -33,7 +34,7 @@ public class UserGraphQLController {
     public UserOutputDTO getUserById(@Argument Long userId) {
         User user = userService.getUserById(userId);
         if(user == null) {
-            throw new RuntimeException("User with id " + userId + " not found");
+            throw new UserNotFoundException("User with id " + userId + " not found");
         }
         return userMapper.toDto(user);
     }
@@ -42,7 +43,7 @@ public class UserGraphQLController {
     public UserOutputDTO getUserByUserName(@Argument String userName) {
         User user = userService.getUserByUserName(userName);
         if (user == null) {
-            throw new RuntimeException("User with name " + userName + " not found");
+            throw new UserNotFoundException("User with name " + userName + " not found");
         }
         return userMapper.toDto(user);
     }
@@ -61,7 +62,7 @@ public class UserGraphQLController {
         }
         User userToUpdate = userService.getUserById(userId);
         if(userToUpdate == null) {
-            throw new IllegalArgumentException("User with id " + userId + " not found");
+            throw new UserNotFoundException("User with id " + userId + " not found");
         }
         userMapper.updateUserFromDto(input, userToUpdate);
         return userMapper.toDto(userService.updateUser(userId, userToUpdate));
@@ -82,12 +83,25 @@ public class UserGraphQLController {
        if (input == null) {
            throw new IllegalArgumentException("User input cannot be null");
        }
+       if (input.getUserFullName() == null || input.getUserFullName().trim().isEmpty()) {
+           throw new IllegalArgumentException("User full name cannot be null or empty");
+       }
        if (input.getUserName() == null || input.getUserName().trim().isEmpty()) {
            throw new IllegalArgumentException("Username is required");
        }
        if (input.getUserEmail() == null || input.getUserEmail().trim().isEmpty()) {
            throw new IllegalArgumentException("Email is required");
        }
+       if(input.getUserLocation() == null || input.getUserLocation().trim().isEmpty()) {
+           throw new IllegalArgumentException("Location is required");
+       }
+       if(input.getUserRole() == null || input.getUserRole().trim().isEmpty()) {
+           throw new IllegalArgumentException("Role is required");
+       }
+       if(input.getUserAuthProvider() == null || input.getUserAuthProvider().trim().isEmpty()) {
+           throw new IllegalArgumentException("Auth provider is required");
+       }
      }
+
 
 }
