@@ -22,11 +22,11 @@ public class LanguageController {
     public String changeLanguage(@RequestParam("lang") String lang,
                                  HttpServletRequest request,
                                  HttpServletResponse response) {
-        System.out.println("Switching locale to: " + lang);
         Locale newLocale = new Locale(lang);
         localeResolver.setLocale(request, response, newLocale);
 
         String referer = request.getHeader("Referer");
         return "redirect:" + (referer != null ? referer : "/");
     }
+
 }
