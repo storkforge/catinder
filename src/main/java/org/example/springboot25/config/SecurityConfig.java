@@ -27,11 +27,6 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String googleClientId;
-    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
-    private String googleClientSecret;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -42,17 +37,29 @@ public class SecurityConfig {
                         .requestMatchers("/register", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .rememberMe(remember -> remember
+                        .key("uniqueAndSecretKey")
+                        .tokenValiditySeconds(7 * 24 * 60 * 60) // 1 vecka
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
                 .userDetailsService(customUserDetailsService)
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
                 )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/?logout")
-                        .permitAll()
-                )
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/")
+                        .successHandler((request, response, authentication) -> {
+                            // Kolla roll t.ex.
+                            boolean isAdmin = authentication.getAuthorities().stream()
+                                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                            response.sendRedirect(isAdmin ? "/admin/dashboard" : "/dashboard");
+                        })
                 );
 
         return http.build();
@@ -70,24 +77,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        ClientRegistration google = ClientRegistration.withRegistrationId("google")
-                .clientId(googleClientId)
-                .clientSecret(googleClientSecret)
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-                .scope("email", "profile")
-                .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
-                .tokenUri("https://oauth2.googleapis.com/token")
-                .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
-                .userNameAttributeName("sub")
-                .clientName("Google")
-                .build();
-
-        return new InMemoryClientRegistrationRepository(google);
     }
 }
