@@ -1,4 +1,4 @@
-package org.example.springboot25.Mapper;
+package org.example.springboot25.mapper;
 
 import org.example.springboot25.DTO.UserInputDTO;
 import org.example.springboot25.DTO.UserOutputDTO;
