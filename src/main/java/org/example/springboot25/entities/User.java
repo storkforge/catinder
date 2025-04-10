@@ -130,7 +130,6 @@ public class User {
 
     public boolean checkPassword(String rawPassword) {
         return ENCODER.matches(rawPassword, this.userPassword);
-
     }
 
     public List<Cat> getUserCats() {
