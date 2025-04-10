@@ -35,9 +35,11 @@ public class UserGraphQLController {
     }
 
     @QueryMapping
-    public UserOutputDTO getUserByUsername(@Argument String userName) {
+    public UserOutputDTO getUserByUserName(@Argument String userName) {
         return userMapper.toDto(userService.getUserByUserName(userName));
     }
+
+
 
     @MutationMapping
     public UserOutputDTO createUser(@Argument("input") UserInputDTO input) {

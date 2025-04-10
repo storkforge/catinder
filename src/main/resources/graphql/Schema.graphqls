@@ -1,7 +1,7 @@
 type Query {
     getAllUsers: [UserOutputDTO]
     getUserById(userId: ID!): UserOutputDTO
-    getUserByUserName(username: String!): UserOutputDTO
+    getUserByUserName(userName: String!): UserOutputDTO
 }
 
 type Mutation {
