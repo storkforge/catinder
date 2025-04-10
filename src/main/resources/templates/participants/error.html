@@ -10,14 +10,15 @@
 
 <div th:replace="fragments/header"></div>
 
-<h2>Oops! Something went wrong.</h2>
+<h2 th:text="#{oops.something.went.wrong}">Oops! Something went wrong.</h2>
 
-<div class="error-message">
+<!--Kolla om jag kan replace unexpected error med översättningen-->
+<div th:text="#{unexpected.error}" class="error-message">
     <p th:text="${error}">An unexpected error occurred. Please try again later.</p>
 </div>
 
 <div style="margin-top: 20px;">
-    <a th:href="@{/'/'}" class="btn btn-primary">Back to Homepage</a>
+    <a th:text="#{back.to.homepage}" th:href="@{/'/'}" class="btn btn-primary">Back to Homepage</a>
 </div>
 
 </body>
@@ -27,7 +28,7 @@ event-participation: <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Catinder - Participants for Event</title>
+    <title th:text="#{title.participants.for.event}" >Catinder - Participants for Event</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
@@ -35,10 +36,10 @@ event-participation: <!DOCTYPE html>
 
 <div th:replace="fragments/header"></div>
 
-<h2>Participants for Selected Event</h2>
+<h2 th:text="#{participants.for.selected.event}" >Participants for Selected Event</h2>
 
 <div th:if="${#lists.isEmpty(participants)}">
-    <p>This event has no participants.</p>
+    <p th:text="#{event.no.participants}" >This event has no participants.</p>
 </div>
 
 <div th:unless="${#lists.isEmpty(participants)}">
