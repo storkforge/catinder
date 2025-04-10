@@ -15,6 +15,8 @@ import java.util.List;
 @Table(name = "app_user")
 public class User {
 
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -115,7 +117,8 @@ public class User {
     }
 
     public void setUserPassword(String userPassword) {
-        this.userPassword = new BCryptPasswordEncoder().encode(userPassword);
+        // Using a static encoder instance for consistency
+        this.userPassword = ENCODER.encode(userPassword);
     }
 
     public List<Cat> getUserCats() {
