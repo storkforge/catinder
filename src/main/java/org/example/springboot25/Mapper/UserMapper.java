@@ -28,6 +28,9 @@ public class UserMapper {
     }
 
     public void updateUserFromDto(UserUpdateDTO dto, User user) {
+        if(dto.getUserEmail() != null &&  !isValidEmail(dto.getUserEmail())) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
         if (dto.getUserFullName() != null) {
             user.setUserFullName(dto.getUserFullName()); }
         if (dto.getUserName() != null) {
