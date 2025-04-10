@@ -32,6 +32,15 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
                     .build();
             return Mono.just(List.of(error));
         }
+
+        else if (throwable instanceof UserNotFoundException) {
+            GraphQLError error = GraphqlErrorBuilder.newError(datafetch)
+                    .message(throwable.getMessage())
+                    .extensions(Map.of("code", "NOT_FOUND"))
+                    .build();
+            return Mono.just(List.of(error));
+            }
+
         else if (throwable instanceof ValidationException) {
             GraphQLError error = GraphqlErrorBuilder.newError(datafetch)
                     .message("Validation error: " + throwable.getMessage())
