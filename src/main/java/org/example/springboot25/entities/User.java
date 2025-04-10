@@ -113,12 +113,24 @@ public class User {
     }
 
     public String getUserPassword() {
-        return userPassword;
+        return null; // To not expose even the hashed password
     }
 
     public void setUserPassword(String userPassword) {
         // Using a static encoder instance for consistency
         this.userPassword = ENCODER.encode(userPassword);
+    }
+
+    /**
+     * Verifies if the provided raw password matches the stored hashed password
+     *
+     * @param rawPassword the password to check
+     * @return true if the password matches, false otherwise
+     */
+
+    public boolean checkPassword(String rawPassword) {
+        return ENCODER.matches(rawPassword, this.userPassword);
+
     }
 
     public List<Cat> getUserCats() {
