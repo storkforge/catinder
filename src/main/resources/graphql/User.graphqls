@@ -17,12 +17,27 @@ input UserUpdate {
 }
 
 type UserOutputDTO {
-    userId: ID
+    userId: ID!
     userFullName: String
-    userName: String
-    userEmail: String
+    userName: String!
+    userEmail: String!
     userLocation: String
     userRole: String
     userAuthProvider: String
+}
 
+
+type UserConnection {
+    edges: [UserEdge]
+    pageInfo: PageInfo!
+}
+
+type UserEdge {
+    cursor: String!
+    node: UserOutputDTO
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    endCursor: String
 }
