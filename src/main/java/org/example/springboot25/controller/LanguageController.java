@@ -18,7 +18,6 @@ public class LanguageController {
         LocaleContextHolder.setLocale(new Locale(lang));
         String referer = request.getHeader("Referer");
         return "redirect:" + (referer != null ? referer : "/"); //för att komma till hemsidan som man va på
-//        return "redirect:/"; //Redirect vart?
     }
 
 }
