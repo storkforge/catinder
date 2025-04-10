@@ -34,6 +34,9 @@ public class PostRESTController {
      */
 
     private boolean isNotOwnerOrAdmin(Post post, User currentUser) {
+        if (post.getUser() == null) {
+            return true; // If post has no owner, only admin should access
+        }
         boolean isOwner = post.getUser().getUserName().equals(currentUser.getUserName());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
