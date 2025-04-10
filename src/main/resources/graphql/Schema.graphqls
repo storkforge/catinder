@@ -1,11 +1,13 @@
 type Query {
-    getAllUsers: [UserOutputDTO]
+    getAllUsers(first: Int, after: String): UserConnection
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
 }
 
 type Mutation {
     createUser(input: UserInput!): UserOutputDTO
-    updateUser(userId: ID!, input: UserUpdate): UserOutputDTO
+    updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
     deleteUser(userId: ID!): Boolean
 }
+
+scalar DateTime
