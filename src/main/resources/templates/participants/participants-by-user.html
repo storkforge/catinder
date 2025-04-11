@@ -10,27 +10,31 @@
 
 <div th:replace="fragments/header"></div>
 
-<h2 style="text-align: center; margin-top: 40px;">Find Events for a User</h2>
+<h2 th:text="#{find.events.for.user}" style="text-align: center; margin-top: 40px;">Find Events for a User</h2>
 
 <div class="form-container" style="text-align: center;">
-    <p>Enter a user name to see which events they are participating in.</p>
+    <p th:text="#{enter.user.name.to.see.events}" >Enter a user name to see which events they are participating in.</p>
 
     <form th:action="@{/by-user/search}" method="get">
         <div class="form-row" style="margin: 15px;">
-            <label for="userName">User name:</label><br>
-            <input type="text" id="userName" name="userName" placeholder="e.g. LoveALlCats" required>
+            <label th:text="#{user.name.with.colon}" for="userName">User name:</label><br>
+<<<<<<< HEAD
+            <input th:placeholder="#{eg.love.cats}" type="text" id="userName" name="userName" placeholder="e.g. LoveALlCats" required>
+=======
+            <input th:text="#{eg.love.cats}" type="text" id="userName" name="userName" placeholder="e.g. LoveALlCats" required>
+>>>>>>> 2395503 (Updated translations for participants and error, cat htmls)
         </div>
         <div class="form-row" style="margin: 15px;">
-            <button type="submit">Search</button>
+            <button th:text="#{search}" type="submit">Search</button>
         </div>
     </form>
 </div>
 
 <div th:if="${participants != null}" style="text-align: center; margin-top: 30px;">
-    <h3>Events for Selected User</h3>
+    <h3 th:text="#{events.for.selected.user}" >Events for Selected User</h3>
 
     <div th:if="${#lists.isEmpty(participants)}">
-        <p>This user is not participating in any events.</p>
+        <p th:text="#{no.events.for.user}" >This user is not participating in any events.</p>
     </div>
 
     <div th:unless="${#lists.isEmpty(participants)}">
