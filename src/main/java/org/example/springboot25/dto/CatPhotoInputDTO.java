@@ -11,6 +11,7 @@ public class CatPhotoInputDTO {
     @NotBlank
     private String catPhotoUrl;
 
+    @NotBlank
     private String catPhotoCaption;
 
     public String getCatPhotoUrl() {
