@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class Event {
         return eventDateTime;
     }
 
-    public void setEventDateTime(LocalDateTime eventDateTime) {
+    public void setEventDateTime(OffsetDateTime eventDateTime) {
         this.eventDateTime = eventDateTime;
     }
 
