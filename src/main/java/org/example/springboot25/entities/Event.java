@@ -81,8 +81,8 @@ public class Event {
         return userEventPlanner;
     }
 
-    public void setUserEventPlanner(User userEventPlanner) {
-        this.userEventPlanner = userEventPlanner;
+    public void setUserEventPlanner(User user) {
+        this.userEventPlanner = user;
     }
 
     public List<EventParticipant> getEventParticipants() {

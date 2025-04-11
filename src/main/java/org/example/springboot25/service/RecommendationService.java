@@ -1,6 +1,7 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Recommendation;
+import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.RecommendationRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class RecommendationService {
     public List<Recommendation> getAllRecommendations() {
         return recommendationRepository.findAll();
     }
+    public List<Recommendation> getRecommendationsByUser(User user) {
+        return recommendationRepository.findAllByUser(user);
+    }
+
 
     public Recommendation getRecommendationById(Long id) {
         return recommendationRepository.findById(id)

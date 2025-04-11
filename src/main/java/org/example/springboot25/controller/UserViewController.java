@@ -3,7 +3,7 @@ package org.example.springboot25.controller;
 import jakarta.validation.Valid;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.exceptions.UserAlreadyExistsException;
+import org.example.springboot25.exceptions.AlreadyExistsException;
 import org.example.springboot25.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -148,7 +148,7 @@ public class UserViewController {
         try {
             userService.addUser(user);
             redirectAttributes.addFlashAttribute("success", "Account created!");
-        } catch (UserAlreadyExistsException ex) {
+        } catch (AlreadyExistsException ex) {
             model.addAttribute("error", ex.getMessage());
             return "user/user-add";
         }
@@ -175,7 +175,7 @@ public class UserViewController {
         try {
             userService.updateUser(userId, user);
             redirectAttributes.addFlashAttribute("update_success", "Details saved!");
-        } catch (UserAlreadyExistsException ex) {
+        } catch (AlreadyExistsException ex) {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
             return "redirect:/users/" + userId + "/edit";
         }
@@ -187,7 +187,7 @@ public class UserViewController {
         try {
             User updatedUser = userService.updateUser(userId, updates);
             redirectAttributes.addFlashAttribute("update_success", "Details saved!");
-        } catch (UserAlreadyExistsException | NotFoundException ex) {
+        } catch (AlreadyExistsException | NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
             return "error-page";
         }

@@ -8,3 +8,14 @@ services:
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432:5432'
+  app:
+    depends_on:
+      - postgres
+    image: 'catinder:latest'
+    env_file:
+      - .env
+    environment:
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    ports:
+      - "8080:8080"

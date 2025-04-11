@@ -23,11 +23,14 @@ public class Recommendation {
     @NotBlank
     private String recommendationProductLink;
 
+    @ManyToOne
+    @JoinColumn(name = "recommendation_user_id", nullable = false)
+    private User user;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "recommendation_cat_id")
     private Cat catRecommendationCat;
-
 
     public Long getRecommendationId() {
         return recommendationId;
@@ -63,6 +66,14 @@ public class Recommendation {
 
     public void setRecommendationProductLink(String recommendationProductLink) {
         this.recommendationProductLink = recommendationProductLink;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Cat getCatRecommendationCat() {

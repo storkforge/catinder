@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – Manage Posts</title>
+  <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<h2>All Posts</h2>
+
+<div th:if="${#lists.isEmpty(posts)}">
+  <p>No posts available.</p>
+</div>
+
+<div th:if="${!#lists.isEmpty(posts)}">
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Text</th>
+      <th>Created</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${posts}">
+      <td th:text="${post.postId}">1</td>
+      <td th:text="${post.postText}">Post text</td>
+      <td th:text="${#temporals.format(post.postCreatedAt, 'yyyy-MM-dd HH:mm')}"></td>
+      <td>
+        <form th:action="@{'/admin/posts/delete/' + ${post.postId}}" method="post">
+          <button type="submit">🗑️ Delete</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

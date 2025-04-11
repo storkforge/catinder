@@ -2,8 +2,14 @@ package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
 import org.example.springboot25.entities.Reminder;
+import org.example.springboot25.entities.User;
+import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.service.ReminderService;
+import org.example.springboot25.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,51 +21,94 @@ import java.util.Set;
 public class ReminderRESTController {
 
     private final ReminderService reminderService;
+    private final UserService userService;
 
-    public ReminderRESTController(ReminderService reminderService) {
+    public ReminderRESTController(ReminderService reminderService, UserService userService) {
         this.reminderService = reminderService;
+        this.userService = userService;
     }
 
+    // Helper: check if current user owns the reminder or is admin
+    private boolean isNotOwnerOrAdmin(Reminder reminder, User currentUser) {
+        boolean isOwner = reminder.getUser().getUserId().equals(currentUser.getUserId());
+        boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
+        return !(isOwner || isAdmin);
+    }
+
+    // Only authenticated users can view their own reminders
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Reminder> getAllReminders() {
-        return reminderService.getAllReminders();
+    public List<Reminder> getAllReminders(Authentication auth) {
+        User current = userService.getUserByUserName(auth.getName());
+        return reminderService.getRemindersByUser(current);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Reminder getReminderById(@PathVariable Long id) {
-        return reminderService.getReminderById(id);
+    public Reminder getReminderById(@PathVariable Long id, Authentication auth) {
+        Reminder reminder = reminderService.getReminderById(id);
+        User current = userService.getUserByUserName(auth.getName());
+
+        if (isNotOwnerOrAdmin(reminder, current)) {
+            throw new AccessDeniedException("You can only view your own reminders.");
+        }
+
+        return reminder;
     }
 
+    @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Reminder createReminder(@RequestBody @Valid Reminder reminder) {
+    public Reminder createReminder(@RequestBody @Valid Reminder reminder, Authentication auth) {
+        User current = userService.getUserByUserName(auth.getName());
+        reminder.setUser(current);
         return reminderService.createReminder(reminder);
     }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteReminder(@PathVariable Long id) {
-        reminderService.deleteReminder(id);
-    }
-
+    @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Reminder updateReminder(@PathVariable Long id, @RequestBody @Valid Reminder reminder) {
-        reminder.setReminderId(id); // 💡 viktigt!
-        return reminderService.updateReminder(id, reminder);
+    public Reminder updateReminder(@PathVariable Long id,
+                                   @RequestBody @Valid Reminder updatedReminder,
+                                   Authentication auth) {
+        Reminder existing = reminderService.getReminderById(id);
+        User current = userService.getUserByUserName(auth.getName());
+
+        if (isNotOwnerOrAdmin(existing, current)) {
+            throw new AccessDeniedException("You can only update your own reminders.");
+        }
+
+        return reminderService.updateReminder(id, updatedReminder);
     }
 
+    @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Reminder patchReminder(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
-        Set<String> allowedFields = Set.of("reminderType", "reminderInfo", "reminderDate");
-        for (String key : updates.keySet()) {
-            if (!allowedFields.contains(key)) {
-                throw new IllegalArgumentException("Otillåtet fältnamn: " + key);
-            }
+    public Reminder patchReminder(@PathVariable Long id,
+                                  @RequestBody Map<String, Object> updates,
+                                  Authentication auth) {
+        Reminder existing = reminderService.getReminderById(id);
+        User current = userService.getUserByUserName(auth.getName());
+
+        if (isNotOwnerOrAdmin(existing, current)) {
+            throw new AccessDeniedException("You can only update your own reminders.");
         }
+
         return reminderService.patchReminder(id, updates);
+    }
+
+    @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteReminder(@PathVariable Long id, Authentication auth) {
+        Reminder reminder = reminderService.getReminderById(id);
+        User current = userService.getUserByUserName(auth.getName());
+
+        if (isNotOwnerOrAdmin(reminder, current)) {
+            throw new AccessDeniedException("You can only delete your own reminders.");
+        }
+
+        reminderService.deleteReminder(id);
     }
 }
