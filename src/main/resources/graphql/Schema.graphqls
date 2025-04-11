@@ -2,12 +2,19 @@ type Query {
     getAllUsers: [UserOutputDTO]
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
+
+    getAllReminders: [Reminder]
+    getReminderById(id: ID!): Reminder
 }
 
 type Mutation {
     createUser(input: UserInput!): UserOutputDTO
     updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
     deleteUser(userId: ID!): Boolean
+
+    createReminder(input: ReminderInput!): Reminder
+    updateReminder(id: ID!, input: ReminderUpdate!): Reminder
+    deleteReminder(id: ID!): Boolean!
 }
 
 scalar DateTime
