@@ -4,8 +4,7 @@ type EventOutputDTO {
     eventDescription: String
     eventLocation: String
     eventDateTime: DateTime
-    # userEventPlanner: UserOutputDTO
-
+    userEventPlanner: UserOutputDTO
 }
 
 input EventInput {
