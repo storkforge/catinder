@@ -43,6 +43,11 @@ public class LanguageController {
         }
 
         String referer = request.getHeader("Referer");
-        return "redirect:" + (referer != null ? referer : "/");
+        // Validate that the referer is from our application to prevent open redirect - codetabbit
+               if (referer != null && (referer.startsWith(request.getScheme() + "://" + request.getServerName())
+                           || referer.startsWith("/"))) {
+                       return "redirect:" + referer;
+                   }
+               return "redirect:/";
     }
 }
