@@ -1,8 +1,8 @@
 package org.example.springboot25.mapper;
 
-import org.example.springboot25.DTO.CatInputDTO;
-import org.example.springboot25.DTO.CatOutputDTO;
-import org.example.springboot25.DTO.CatUpdateDTO;
+import org.example.springboot25.dto.CatInputDTO;
+import org.example.springboot25.dto.CatOutputDTO;
+import org.example.springboot25.dto.CatUpdateDTO;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.repository.UserRepository;

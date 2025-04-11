@@ -1,4 +1,4 @@
-package org.example.springboot25.DTO;
+package org.example.springboot25.dto;
 
 public class CatOutputDTO {
     private Long catId;
