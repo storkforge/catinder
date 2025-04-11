@@ -1,5 +1,6 @@
 package org.example.springboot25.controller;
 
+import org.example.springboot25.entities.User;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -21,6 +24,52 @@ public class AdminController {
     public AdminController(PostService postService, UserService userService) {
         this.postService = postService;
         this.userService = userService;
+    }
+
+    // Admin Dashboard
+    @GetMapping("/dashboard")
+    public String adminDashboard() {
+        return "admin/dashboard";
+    }
+
+    // User List
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users")
+    public String adminUserList(Model model) {
+        try {
+            model.addAttribute("users", userService.getAllUsers());
+            return "admin/users";
+        } catch (Exception e) {
+            log.warn("Failed to retrieve users: {}", e.getMessage());
+            model.addAttribute("error", "Failed to retrieve users");
+            return "admin/error";
+        }
+    }
+
+    // Edit user form
+    @GetMapping("/users/edit/{id}")
+    public String editUserForm(@PathVariable Long id, Model model) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "admin/user-edit";
+    }
+
+    // Update user
+    @PostMapping("/users/update")
+    public String updateUser(@ModelAttribute("user") User user) {
+        userService.updateUser(user.getUserId(), user);
+        return "redirect:/admin/users";
+    }
+
+    // View Logs
+    @GetMapping("/logs")
+    public String viewLogs(Model model) {
+        model.addAttribute("logs", List.of(
+                "User eva logged in",
+                "User admin created a post",
+                "User catlover updated profile"
+        ));
+        return "admin/logs";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -59,20 +108,6 @@ public class AdminController {
         } catch (Exception e) {
             log.warn("Failed to delete post with id {}: {}", postId, e.getMessage());
             return "redirect:/admin/posts?error=delete-failed";
-        }
-    }
-
-    // Visa alla användare
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/users")
-    public String showAllUsers(Model model) {
-        try {
-            model.addAttribute("users", userService.getAllUsers());
-            return "admin/users";
-        } catch (Exception e) {
-            log.warn("Failed to retrieve users: {}", e.getMessage());
-            model.addAttribute("error", "Failed to retrieve users");
-            return "admin/error";
         }
     }
 
