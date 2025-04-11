@@ -10,12 +10,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.web.SecurityFilterChain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -24,14 +21,18 @@ import java.util.Optional;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    @Value("${remember.me.key:myLongTermRememberMeKey}")
+    private String rememberMeKey;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        HttpSecurity httpSecurity = http
+        return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/premium/**").hasRole("PREMIUM")
@@ -40,14 +41,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .rememberMe(remember -> remember
-                        .key(Optional.ofNullable(System.getenv("REMEMBER_ME_KEY"))
-                                .filter(key -> !key.isBlank())
-                                .orElseGet(() -> {
-                                    // generate a secure fallback or log an error
-                                    return new java.security.SecureRandom().ints(32, 0, 62)
-                                            .mapToObj(i -> String.valueOf("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".charAt(i)))
-                                            .collect(java.util.stream.Collectors.joining());
-                                }))
+                        .key(rememberMeKey)
                         .tokenValiditySeconds(7 * 24 * 60 * 60) // 1 vecka
                 )
                 .logout(logout -> logout
@@ -63,15 +57,13 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, authentication) -> {
-                            // Kolla roll t.ex.
-                            boolean isAdmin = authentication.getAuthorities().stream()
-                                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-                            response.sendRedirect(isAdmin ? "/admin/dashboard" : "/dashboard");
+                        .successHandler((_req, res, auth) -> {
+                            boolean isAdmin = auth.getAuthorities().stream()
+                                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                            res.sendRedirect(isAdmin ? "/admin/dashboard" : "/dashboard");
                         })
-                );
-
-        return http.build();
+                )
+                .build();
     }
 
     @Bean

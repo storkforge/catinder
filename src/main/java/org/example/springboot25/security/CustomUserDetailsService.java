@@ -1,6 +1,5 @@
 package org.example.springboot25.security;
 
-import org.example.springboot25.entities.User;
 import org.example.springboot25.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
