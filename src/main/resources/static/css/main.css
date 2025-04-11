@@ -229,7 +229,7 @@ a:active {
     color: #c41717;
 }
 
-.login-button {
+.header-button {
     background-color: transparent;
     border: none;
     outline: none;
@@ -239,6 +239,10 @@ a:active {
     color: #fffaef;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
+}
+
+.login-button {
+    composes: header-button;
 }
 
 .login-button:hover {
@@ -247,15 +251,7 @@ a:active {
 }
 
 .logout-button {
-    background-color: transparent;
-    border: none;
-    outline: none;
-    border-radius: 20px;
-    padding: 5px 15px;
-    font-size: 16px;
-    color: #fffaef;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    composes: header-button;
 }
 
 .logout-button:hover {

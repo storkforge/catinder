@@ -52,10 +52,6 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .userDetailsService(customUserDetailsService)
-//                .formLogin(form -> form
-//                        .loginPage("/login")
-//                        .permitAll()
-//                )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((_req, res, auth) -> {
                             boolean isAdmin = auth.getAuthorities().stream()
