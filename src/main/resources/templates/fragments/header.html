@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <header th:fragment="header">
     <div class="header-left">
         <h1><span class="cat-emoji">🐱</span>Catinder</h1>
@@ -9,11 +9,20 @@
         <button class="lang-button" aria-label="Change language" title="Change language">
             &#127760; Language
         </button>
-        <form th:action="@{/logout}" method="post" style="display: inline;">
-            <!-- Todo: Include CSRF token later -->
-            <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
-            <button type="submit" class="logout-button" title="Logout">Logout</button>
-        </form>
+        <div sec:authorize="!isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <!-- Todo: Include CSRF token later -->
+                <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+                <a class="login-button" th:href="@{auth/login}" title="Login">Login</a>
+            </form>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <!-- Todo: Include CSRF token later -->
+                <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+                <button type="submit" class="login-button" title="Logout">Logout</button>
+            </form>
+        </div>
     </div>
 </header>
 </html>
