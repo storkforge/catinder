@@ -2,12 +2,19 @@ type Query {
     getAllUsers: [UserOutputDTO]
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
+
+    etAllCatPhotos: [CatPhoto]
+    getCatPhotoById(id: ID!): CatPhoto
 }
 
 type Mutation {
     createUser(input: UserInput!): UserOutputDTO
     updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
     deleteUser(userId: ID!): Boolean
+
+    createCatPhoto(input: CatPhotoInput!): CatPhoto
+    updateCatPhoto(id: ID!, input: CatPhotoUpdate!): CatPhoto
+    deleteCatPhoto(id: ID!): Boolean!
 }
 
 scalar DateTime
