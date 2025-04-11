@@ -8,6 +8,7 @@ public class CatOutputDTO {
     private String catGender;
     private Integer catAge;
     private String catPersonality;
+    private Long userId;
 
     public Long getCatId() {
         return catId;
@@ -63,5 +64,13 @@ public class CatOutputDTO {
 
     public void setCatPersonality(String catPersonality) {
         this.catPersonality = catPersonality;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
