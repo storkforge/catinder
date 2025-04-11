@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
 @Entity
 @Table(name = "app_user")
 public class User {
+
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +37,15 @@ public class User {
     private String userLocation;
 
     @NotNull
-    private String userRole;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     @NotBlank
     private String userAuthProvider;
+
+    @NotBlank
+    @JsonIgnore
+    private String userPassword;
 
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cat> userCats = new ArrayList<>();
@@ -52,7 +60,6 @@ public class User {
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
-
     public Long getUserId() {
         return userId;
     }
@@ -61,8 +68,8 @@ public class User {
         return userFullName;
     }
 
-    public void setUserFullName(String fullName) {
-        this.userFullName = fullName;
+    public void setUserFullName(String userFullName) {
+        this.userFullName = userFullName;
     }
 
     public String getUserName() {
@@ -89,11 +96,11 @@ public class User {
         this.userLocation = userLocation;
     }
 
-    public String getUserRole() {
+    public UserRole getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(String userRole) {
+    public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
 
@@ -103,6 +110,26 @@ public class User {
 
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
+    }
+
+    public String getUserPassword() {
+        return null; // To not expose even the hashed password
+    }
+
+    public void setUserPassword(String userPassword) {
+        // Using a static encoder instance for consistency
+        this.userPassword = ENCODER.encode(userPassword);
+    }
+
+    /**
+     * Verifies if the provided raw password matches the stored hashed password
+     *
+     * @param rawPassword the password to check
+     * @return true if the password matches, false otherwise
+     */
+
+    public boolean checkPassword(String rawPassword) {
+        return ENCODER.matches(rawPassword, this.userPassword);
     }
 
     public List<Cat> getUserCats() {
@@ -136,5 +163,4 @@ public class User {
     public void setUserPost(List<Post> userPost) {
         this.userPost = userPost;
     }
-
 }

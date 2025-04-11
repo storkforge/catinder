@@ -96,7 +96,7 @@ public class UserGraphQLController {
        if(input.getUserLocation() == null || input.getUserLocation().trim().isEmpty()) {
            throw new IllegalArgumentException("Location is required");
        }
-       if(input.getUserRole() == null || input.getUserRole().trim().isEmpty()) {
+       if(input.getUserRole() == null) {
            throw new IllegalArgumentException("Role is required");
        }
        if(input.getUserAuthProvider() == null || input.getUserAuthProvider().trim().isEmpty()) {

@@ -2,11 +2,14 @@ package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +22,12 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> getAllUsers() {
@@ -76,8 +82,14 @@ public class UserService {
         if (userRepository.existsByUserEmail(user.getUserEmail()))
             throw new AlreadyExistsException("Account with given email already exists.");
         if (userRepository.existsByUserName(user.getUserName()))
+
             throw new AlreadyExistsException("Username is taken.");
         log.info("Creating new user: {}", user.getUserName());
+
+        // 🔒 Hash password before saving
+        String hashedPassword = passwordEncoder.encode(user.getUserPassword());
+        user.setUserPassword(hashedPassword);
+
         return userRepository.save(user);
     }
 
@@ -146,7 +158,12 @@ public class UserService {
             existingUser.setUserLocation((String) updates.get("userLocation"));
         }
         if (updates.containsKey("userRole")) {
-            existingUser.setUserRole((String) updates.get("userRole"));
+            Object roleObj = updates.get("userRole");
+            if (roleObj instanceof String roleStr) {
+                existingUser.setUserRole(UserRole.valueOf(roleStr));
+            } else if (roleObj instanceof UserRole roleEnum) {
+                existingUser.setUserRole(roleEnum);
+            }
         }
         if (updates.containsKey("userAuthProvider")) {
             existingUser.setUserAuthProvider((String) updates.get("userAuthProvider"));
@@ -154,9 +171,11 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-
     public void deleteUserById(Long userId) {
         log.info("Deleting user with id: {}", userId + ".");
         userRepository.deleteById(userId);
+    }
+
+    public void changeUserRole(Long userId, String newRole) {
     }
 }

@@ -1,6 +1,7 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Reminder;
+import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.ReminderRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class ReminderService {
 
     public List<Reminder> getAllReminders() {
         return reminderRepository.findAll();
+    }
+    public List<Reminder> getRemindersByUser(User user) {
+        return reminderRepository.findAllByUser(user);
     }
 
     public Reminder getReminderById(Long id) {
