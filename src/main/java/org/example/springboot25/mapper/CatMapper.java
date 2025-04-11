@@ -5,6 +5,7 @@ import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +27,9 @@ public class CatMapper {
         cat.setCatAge(catInputDTO.getCatAge());
         cat.setCatPersonality(catInputDTO.getCatPersonality());
 
-        // TODO: Replace with UserNotFoundException once merged
-        User user = userRepository.findById(catInputDTO.getUserId()).orElseThrow();
+        User user = userRepository.findById(catInputDTO.getUserId())
+                .orElseThrow(() -> new NotFoundException("User with ID " + catInputDTO.getUserId() + " not found"));
+
         cat.setUserCatOwner(user);
         return cat;
     }
