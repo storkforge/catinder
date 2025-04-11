@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+@PreAuthorize("hasRole('ADMIN')")
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -26,15 +27,13 @@ public class AdminController {
         this.userService = userService;
     }
 
-    // Admin Dashboard
-    @PreAuthorize("hasRole('ADMIN')")
+    // Admin Dashboard)
     @GetMapping("/dashboard")
     public String adminDashboard() {
         return "admin/dashboard";
     }
 
     // User List
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public String adminUserList(Model model) {
         try {
@@ -48,7 +47,6 @@ public class AdminController {
     }
 
     // Edit user form
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id);
@@ -57,7 +55,6 @@ public class AdminController {
     }
 
     // Update user
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users/update")
     public String updateUser(@ModelAttribute("user") User user) {
         userService.updateUser(user.getUserId(), user);
@@ -65,7 +62,6 @@ public class AdminController {
     }
 
     // View Logs
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/logs")
     public String viewLogs(Model model) {
         model.addAttribute("logs", List.of(
@@ -76,7 +72,6 @@ public class AdminController {
         return "admin/logs";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users/role")
     public String changeUserRole(@RequestParam Long userId, @RequestParam String newRole) {
         try {
@@ -89,7 +84,6 @@ public class AdminController {
     }
 
     // Visa alla inlägg (för moderering)
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/posts")
     public String showAllPosts(Model model) {
         try {
@@ -103,7 +97,6 @@ public class AdminController {
     }
 
     // Ta bort ett inlägg
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/posts/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
         try {
@@ -116,7 +109,6 @@ public class AdminController {
     }
 
     // Ta bort en användare
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users/delete/{userId}")
     public String deleteUser(@PathVariable Long userId) {
         try {
@@ -130,7 +122,6 @@ public class AdminController {
     }
 
     // Systeminställningar – placeholder för framtida grejer
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/settings")
     public String settingsPage() {
         return "admin/settings"; // t.ex. templates/admin/settings.html
