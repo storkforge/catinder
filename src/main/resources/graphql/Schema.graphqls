@@ -1,0 +1,30 @@
+type Query {
+    # getAllUsers: [UserOutputDTO]
+    # getUserById(userId: ID!): UserOutputDTO
+    # getUserByUsername(userName: String!): UserOutputDTO
+
+    # getAllCats: [CatOutputDTO]
+    # getCatById(catId: ID!): CatOutputDTO
+    # getCatByName(catName: String!): CatOutputDTO
+
+    getAllEvents: [EventOutputDTO]
+    getEventById(eventId: ID!): EventOutputDTO
+    getEventByName(eventName: String!): EventOutputDTO
+}
+
+type Mutation {
+    # createUser(input: UserInput!): UserOutputDTO
+    # updateUser(userId: ID!, input: UserUpdateInput!): UserOutputDTO
+    # deleteUser(userId: ID!): Boolean
+
+    # createCat(input: CatInput!): CatOutputDTO
+    # updateCat(catId: ID!, input: CatUpdateInput!): CatOutputDTO
+    # deleteCat(catId: ID!): Boolean
+
+    createEvent(input: EventInput!): EventOutputDTO
+    updateEvent(eventId: ID!, input: EventUpdateInput!): EventOutputDTO
+    deleteEvent(eventId: ID!): Boolean
+}
+
+
+scalar DateTime
