@@ -1,4 +1,4 @@
-package org.example.springboot25.web;
+package org.example.springboot25.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
