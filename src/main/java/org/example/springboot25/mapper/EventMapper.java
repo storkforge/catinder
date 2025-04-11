@@ -11,18 +11,18 @@ import org.springframework.stereotype.Component;
 public class EventMapper {
 
 
-    private final UserMapper userMapper;
-
-    public EventMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+//    private final UserMapper userMapper;
+//
+//    public EventMapper(UserMapper userMapper) {
+//        this.userMapper = userMapper;
+//    }
 
     public Event toEvent(EventInputDTO dto, User user) {
         Event event = new Event();
         event.setEventName(dto.getEventName());
         event.setEventDescription(dto.getEventDescription());
         event.setEventLocation(dto.getEventLocation());
-        event.setEventDateTime(dto.getEventDateTime());
+       // event.setEventDateTime(dto.getEventDateTime());
         event.setUserEventPlanner(user);
         return event;
     }
@@ -31,7 +31,7 @@ public class EventMapper {
         if (dto.getEventName() != null) event.setEventName(dto.getEventName());
         if (dto.getEventDescription() != null) event.setEventDescription(dto.getEventDescription());
         if (dto.getEventLocation() != null) event.setEventLocation(dto.getEventLocation());
-        if (dto.getEventDateTime() != null) event.setEventDateTime(dto.getEventDateTime());
+        //if (dto.getEventDateTime() != null) event.setEventDateTime(dto.getEventDateTime());
     }
 
 
@@ -41,11 +41,11 @@ public class EventMapper {
         dto.setEventName(event.getEventName());
         dto.setEventDescription(event.getEventDescription());
         dto.setEventLocation(event.getEventLocation());
-        dto.setEventDateTime(event.getEventDateTime());
-
-        if (event.getUserEventPlanner() != null) {
-            dto.setUserEventPlanner(userMapper.toDto(event.getUserEventPlanner()));
-        }
+//        dto.setEventDateTime(event.getEventDateTime());
+//
+//        if (event.getUserEventPlanner() != null) {
+//            dto.setUserEventPlanner(userMapper.toDto(event.getUserEventPlanner()));
+//        }
 
         return dto;
     }
