@@ -11,26 +11,26 @@
 <div th:replace="fragments/header"></div>
 
 <div class="form-container">
-    <h2>Add participant:</h2>
+    <h2 th:text="#{add.participant}" >Add participant:</h2>
 
     <form th:action="@{/participants/add}" method="post">
 
         <div class="form-row">
-            <label for="userName">User Name:</label>
+            <label th:text="#{user.name.with.colon}" for="userName">User Name:</label>
             <input type="text" id="userName" name="userName" required/>
         </div>
 
         <div class="form-row">
-            <label for="eventName">Event Name:</label>
+            <label th:text="#{event.name.with.colon}" for="eventName">Event Name:</label>
             <input type="text" id="eventName" name="eventName" required/>
         </div>
 
         <div class="form-row">
-            <button type="submit">Submit</button>
+            <button th:text="#{submit}" type="submit">Submit</button>
         </div>
     </form>
 </div>
-
+<!--Kolla success och error messages-->
 <div th:if="${success}" class="success-message">
     <p th:text="${success}"></p>
 </div>

@@ -11,25 +11,31 @@
 <div th:replace="fragments/header"></div>
 
 <div class="form-container">
-    <h2>Delete participant:</h2>
+<<<<<<< HEAD
+    <h2 th:text="#{delete.participant.with.colon}" >Delete participant:</h2>
+=======
+    <h2 th:text="#{delete.participant}" >Delete participant:</h2>
+>>>>>>> 2395503 (Updated translations for participants and error, cat htmls)
 
     <form th:action="@{/participants/delete}" method="post">
 
         <div class="form-row">
-            <label for="userName">User Name:</label>
+            <label th:text="#{user.name.with.colon}" for="userName">User Name:</label>
             <input type="text" id="userName" name="userName" required/>
         </div>
 
         <div class="form-row">
-            <label for="eventName">Event Name:</label>
+            <label th:text="#{event.name.with.colon}" for="eventName">Event Name:</label>
             <input type="text" id="eventName" name="eventName" required/>
         </div>
 
         <div class="form-row">
-            <button type="submit">Delete</button>
+            <button th:text="#{delete}" type="submit">Delete</button>
         </div>
     </form>
 </div>
+
+<!--kolla messages-->
 
 <div th:if="${success}" class="success-message">
     <p th:text="${success}"></p>

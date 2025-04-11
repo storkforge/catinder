@@ -106,16 +106,16 @@
 </header>
 
 <div class="main-content">
-    <h2>Cat Detail</h2>
+    <h2 th:text="#{cat.detail}">Cat Detail</h2>
     <div>
-        <p><strong>ID:</strong> <span th:text="${cat.catId}"></span></p>
-        <p><strong>Name:</strong> <span th:text="${cat.catName}"></span></p>
-        <p><strong>Breed:</strong> <span th:text="${cat.catBreed}"></span></p>
-        <p><strong>Gender:</strong> <span th:text="${cat.catGender}"></span></p>
-        <p><strong>Age:</strong> <span th:text="${cat.catAge}"></span></p>
-        <p><strong>Personality:</strong> <span th:text="${cat.catPersonality}"></span></p>
+        <p><strong th:text="#{cat.id}">ID:</strong> <span th:text="${cat.catId}"></span></p>
+        <p><strong th:text="#{cat.name}">Name:</strong> <span th:text="${cat.catName}"></span></p>
+        <p><strong th:text="#{cat.breed}">Breed:</strong> <span th:text="${cat.catBreed}"></span></p>
+        <p><strong th:text="#{cat.gender}">Gender:</strong> <span th:text="${cat.catGender}"></span></p>
+        <p><strong th:text="#{cat.age}">Age:</strong> <span th:text="${cat.catAge}"></span></p>
+        <p><strong th:text="#{cat.personality}">Personality:</strong> <span th:text="${cat.catPersonality}"></span></p>
     </div>
-    <a th:href="@{/cats}">Back to Cats List</a>
+    <a th:text="#{back.to.cats.list}" th:href="@{/cats}">Back to Cats List</a>
 </div>
 </body>
 </html>

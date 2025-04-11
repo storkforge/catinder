@@ -3,7 +3,7 @@
 <header th:fragment="header">
     <div class="header-left">
         <h1><span class="cat-emoji">🐱</span>Catinder</h1>
-        <a class="about-link" th:href="@{/about}">About</a>
+        <a class="about-link" th:href="@{/about}" th:text="#{about}">About</a>
     </div>
     <div class="header-right">
         <div sec:authorize="!isAuthenticated()">
@@ -19,6 +19,43 @@
         <button class="lang-button" aria-label="Change language" title="Change language">
             &#127760; Language
         </button>
+        <form id="langForm" action="/change-language" method="get" style="display: none;">
+            <select name="lang" onchange="this.form.submit()">
+                <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                <option value="sv" th:selected="${#locale.language == 'sv'}">Svenska</option>
+                <option value="fr" th:selected="${#locale.language == 'fr'}">Français</option>
+            </select>
+        </form>
     </div>
+
+<!--    visar vilket språk som är valt-->
+    <p>Current language: <span th:text="${#locale.language}">unknown</span></p>
+    <p style="text-align: center; font-size: 12px; color: #777;">
+        About text: <span th:text="#{about}">Default About</span>
+    </p>
+    <p>Test message: <span th:text="#{test.message}">default</span></p>
+
+
+
+
+    <script>
+        const langButton = document.getElementById('langToggle');
+        const langForm = document.getElementById('langForm');
+
+        langButton.addEventListener('click', function() {
+            if (langForm.style.display === 'none' || langForm.style.display === '') {
+                langForm.style.display = 'block';
+            } else {
+                langForm.style.display = 'none';
+            }
+        });
+
+        // Försvinner när man tycker utanför drop menyn, behålla eller ta bort?
+        document.addEventListener('click', function(event) {
+            if (!langButton.contains(event.target) && !langForm.contains(event.target)) {
+                langForm.style.display = 'none';
+            }
+        });
+    </script>
 </header>
 </html>
