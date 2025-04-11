@@ -73,9 +73,9 @@ public class Event {
         return eventDateTime;
     }
 
-//    public void setEventDateTime(OffsetDateTime eventDateTime) {
-//        this.eventDateTime = eventDateTime;
-//    }
+    public void setEventDateTime(LocalDateTime eventDateTime) {
+        this.eventDateTime = eventDateTime;
+    }
 
     public User getUserEventPlanner() {
         return userEventPlanner;
