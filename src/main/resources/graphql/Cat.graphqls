@@ -1,0 +1,29 @@
+input CatInput {
+    catName: String!
+    catProfilePicture: String
+    catBreed: String!
+    catGender: String!
+    catAge: Int
+    catPersonality: String
+    userId: ID!
+}
+
+input CatUpdate {
+    catName: String
+    catProfilePicture: String
+    catBreed: String
+    catGender: String
+    catAge: Int
+    catPersonality: String
+    userId: ID
+}
+
+type CatOutputDTO {
+    catId: ID
+    catName: String
+    catProfilePicture: String
+    catBreed: String
+    catGender: String
+    catAge: Int
+    catPersonality: String
+}
