@@ -16,7 +16,7 @@ input EventInput {
     userId: ID!
 }
 
-input EventUpdateInput {
+input EventUpdate {
     eventName: String
     eventDescription: String
     eventLocation: String
