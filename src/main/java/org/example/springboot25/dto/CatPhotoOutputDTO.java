@@ -1,0 +1,52 @@
+package org.example.springboot25.dto;
+
+import java.time.LocalDateTime;
+
+public class CatPhotoOutputDTO {
+
+    private Long id;
+    private String catPhotoUrl;
+    private String catPhotoCaption;
+    private LocalDateTime catPhotoCreatedAt;
+    private Long catPhotoCatId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCatPhotoUrl() {
+        return catPhotoUrl;
+    }
+
+    public void setCatPhotoUrl(String catPhotoUrl) {
+        this.catPhotoUrl = catPhotoUrl;
+    }
+
+    public String getCatPhotoCaption() {
+        return catPhotoCaption;
+    }
+
+    public void setCatPhotoCaption(String catPhotoCaption) {
+        this.catPhotoCaption = catPhotoCaption;
+    }
+
+    public LocalDateTime getCatPhotoCreatedAt() {
+        return catPhotoCreatedAt;
+    }
+
+    public void setCatPhotoCreatedAt(LocalDateTime catPhotoCreatedAt) {
+        this.catPhotoCreatedAt = catPhotoCreatedAt;
+    }
+
+    public Long getCatPhotoCatId() {
+        return catPhotoCatId;
+    }
+
+    public void setCatPhotoCatId(Long catPhotoCatId) {
+        this.catPhotoCatId = catPhotoCatId;
+    }
+}
