@@ -51,6 +51,11 @@ public class EventParticipantService {
                 .orElseThrow(() -> new NotFoundException("Participant not found"));
     }
 
+    public EventParticipant getParticipantById(Long eventParticipantId) {
+        return eventParticipantRepository.findById(eventParticipantId)
+                .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + eventParticipantId));
+    }
+
     public EventParticipant addParticipant(String userName, String eventName) {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new NotFoundException("User not found: " + userName));
@@ -77,9 +82,30 @@ public class EventParticipantService {
         return eventParticipantRepository.save(participant);
     }
 
+    public EventParticipant updateParticipant(Long eventParticipantId, String userName, String eventName) {
+        EventParticipant participant = eventParticipantRepository.findById(eventParticipantId)
+                .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + eventParticipantId));
+
+        participant.getUser().setUserName(userName);
+        participant.getEvent().setEventName(eventName);
+
+        return eventParticipantRepository.save(participant);
+    }
+
+
     public void deleteParticipant(String userName, String eventName) {
         EventParticipant participant = getParticipant(userName, eventName);
         eventParticipantRepository.delete(participant);
     }
+
+    public void deleteParticipantById(String eventParticipantId) {
+        Long id = Long.parseLong(eventParticipantId);
+
+        EventParticipant participant = eventParticipantRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + id));
+
+        eventParticipantRepository.delete(participant);
+    }
+
 }
 
