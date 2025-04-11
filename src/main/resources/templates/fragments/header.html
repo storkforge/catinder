@@ -11,15 +11,13 @@
         </div>
         <div sec:authorize="isAuthenticated()">
             <form th:action="@{/logout}" method="post" style="display: inline;">
-                <!-- Todo: Include CSRF token later -->
-                <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
                 <button type="submit" class="header-button logout-button" title="Logout">Logout</button>
             </form>
         </div>
-        <button class="lang-button" aria-label="Change language" title="Change language">
-            &#127760; Language
+        <button class="lang-button" id="langToggle" aria-label="Change language" title="Change language">
+            &#127760; <span th:text="#{language}">Language</span>
         </button>
-        <form id="langForm" action="/change-language" method="get" style="display: none;">
+        <form id="langForm" th:action="@{/change-language}" method="get" style="display: none;">
             <select name="lang" onchange="this.form.submit()">
                 <option value="en" th:selected="${#locale.language == 'en'}">English</option>
                 <option value="sv" th:selected="${#locale.language == 'sv'}">Svenska</option>
