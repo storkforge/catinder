@@ -1,8 +1,8 @@
 package org.example.springboot25.mapper;
 
-import org.example.springboot25.DTO.UserInputDTO;
-import org.example.springboot25.DTO.UserOutputDTO;
-import org.example.springboot25.DTO.UserUpdateDTO;
+import org.example.springboot25.dto.UserInputDTO;
+import org.example.springboot25.dto.UserOutputDTO;
+import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
 import org.springframework.stereotype.Component;
 

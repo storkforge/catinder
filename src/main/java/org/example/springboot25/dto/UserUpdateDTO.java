@@ -1,9 +1,9 @@
-package org.example.springboot25.DTO;
+package org.example.springboot25.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class UserInputDTO {
+public class UserUpdateDTO {
 
     @NotBlank
     private String userFullName;

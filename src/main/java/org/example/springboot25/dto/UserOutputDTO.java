@@ -1,9 +1,13 @@
-package org.example.springboot25.DTO;
+package org.example.springboot25.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public class UserUpdateDTO {
+public class UserOutputDTO {
+
+    @NotNull
+    private Long userId;
 
     @NotBlank
     private String userFullName;
@@ -23,6 +27,14 @@ public class UserUpdateDTO {
 
     @NotBlank
     private String userAuthProvider;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getUserFullName() {
         return userFullName;

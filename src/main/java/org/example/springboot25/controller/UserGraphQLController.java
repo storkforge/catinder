@@ -1,9 +1,9 @@
 package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
-import org.example.springboot25.DTO.UserInputDTO;
-import org.example.springboot25.DTO.UserOutputDTO;
-import org.example.springboot25.DTO.UserUpdateDTO;
+import org.example.springboot25.dto.UserInputDTO;
+import org.example.springboot25.dto.UserOutputDTO;
+import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.mapper.UserMapper;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.UserNotFoundException;
