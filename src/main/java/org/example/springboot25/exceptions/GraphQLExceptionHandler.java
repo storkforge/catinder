@@ -10,6 +10,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class GraphQLExceptionHandler implements DataFetcherExceptionResolver {
             return Mono.just(List.of(error));
         }
 
-        else if (throwable instanceof UserNotFoundException) {
+        else if (throwable instanceof NotFoundException) {
             GraphQLError error = GraphqlErrorBuilder.newError(datafetch)
                     .message(throwable.getMessage())
                     .extensions(Map.of("code", "NOT_FOUND"))

@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.UserMapper;
 import org.example.springboot25.entities.User;
-import org.example.springboot25.exceptions.UserNotFoundException;
 import org.example.springboot25.service.UserService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -35,7 +35,7 @@ public class UserGraphQLController {
     public UserOutputDTO getUserById(@Argument Long userId) {
         User user = userService.getUserById(userId);
         if(user == null) {
-            throw new UserNotFoundException("User with id " + userId + " not found");
+            throw new NotFoundException("User with id " + userId + " not found");
         }
         return userMapper.toDto(user);
     }
@@ -44,7 +44,7 @@ public class UserGraphQLController {
     public UserOutputDTO getUserByUserName(@Argument String userName) {
         User user = userService.getUserByUserName(userName);
         if (user == null) {
-            throw new UserNotFoundException("User with name " + userName + " not found");
+            throw new NotFoundException("User with name " + userName + " not found");
         }
         return userMapper.toDto(user);
     }
@@ -63,7 +63,7 @@ public class UserGraphQLController {
         }
         User userToUpdate = userService.getUserById(userId);
         if(userToUpdate == null) {
-            throw new UserNotFoundException("User with id " + userId + " not found");
+            throw new NotFoundException("User with id " + userId + " not found");
         }
         userMapper.updateUserFromDto(input, userToUpdate);
         return userMapper.toDto(userService.updateUser(userId, userToUpdate));
