@@ -1,22 +1,23 @@
 package org.example.springboot25.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
 import org.example.springboot25.entities.Cat;
-import org.example.springboot25.exceptions.CatNotFoundException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.CatMapper;
 import org.example.springboot25.service.CatService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Controller
+@Validated
 public class CatGraphQLController {
 
     private final CatService catService;
@@ -36,7 +37,7 @@ public class CatGraphQLController {
     @QueryMapping
     public CatOutputDTO getCatById(@Argument Long catId) {
         Cat cat = catService.getCatById(catId)
-                .orElseThrow(() -> new EntityNotFoundException("Cat with ID " + catId + " not found"));
+                .orElseThrow(() -> new NotFoundException("Cat with ID " + catId + " not found"));
         return catMapper.toDTO(cat);
     }
 
@@ -54,11 +55,10 @@ public class CatGraphQLController {
         return catMapper.toDTO(savedCat);
     }
 
-    // ToDo: CatService need getCatByName-method, to make this method easier
     @MutationMapping
     public CatOutputDTO updateCat(@Argument Long catId, @Argument("input") @Valid CatUpdateDTO input) {
         Cat catToUpdate = catService.getCatById(catId)
-                .orElseThrow(() -> new CatNotFoundException("Cat with ID " + catId + " not found"));
+                .orElseThrow(() -> new NotFoundException("Cat with ID " + catId + " not found"));
 
         catMapper.updateCatFromDTO(input, catToUpdate);
         Cat updatedCat = catService.updateCat(catId, catToUpdate);
