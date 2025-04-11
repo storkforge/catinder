@@ -3,7 +3,7 @@ package org.example.springboot25.service;
 import jakarta.transaction.Transactional;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.exceptions.UserAlreadyExistsException;
+import org.example.springboot25.exceptions.AlreadyExistsException;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +74,9 @@ public class UserService {
 
     public User addUser(User user) {
         if (userRepository.existsByUserEmail(user.getUserEmail()))
-            throw new UserAlreadyExistsException("Account with given email already exists.");
+            throw new AlreadyExistsException("Account with given email already exists.");
         if (userRepository.existsByUserName(user.getUserName()))
-            throw new UserAlreadyExistsException("Username is taken.");
+            throw new AlreadyExistsException("Username is taken.");
         log.info("Creating new user: {}", user.getUserName());
         return userRepository.save(user);
     }
@@ -91,13 +91,13 @@ public class UserService {
         // Check if the email belongs to a different user.
         Optional<User> userByEmail = userRepository.findByUserEmail(user.getUserEmail());
         if (userByEmail.isPresent() && !userByEmail.get().getUserId().equals(userId)) {
-            throw new UserAlreadyExistsException("Account with given email already exists.");
+            throw new AlreadyExistsException("Account with given email already exists.");
         }
 
         // Check if the username belongs to a different user.
         Optional<User> userByName = userRepository.findByUserName(user.getUserName());
         if (userByName.isPresent() && !userByName.get().getUserId().equals(userId)) {
-            throw new UserAlreadyExistsException("Username is taken.");
+            throw new AlreadyExistsException("Username is taken.");
         }
         log.info("Updating user: {}", user.getUserName());
         oldUser.setUserName(user.getUserName());
@@ -120,7 +120,7 @@ public class UserService {
             String newEmail = updates.get("userEmail").toString();
             Optional<User> userByEmail = userRepository.findByUserEmail(newEmail);
             if (userByEmail.isPresent() && !userByEmail.get().getUserId().equals(userId)) {
-                throw new UserAlreadyExistsException("Account with given email already exists.");
+                throw new AlreadyExistsException("Account with given email already exists.");
             }
         }
 
@@ -128,7 +128,7 @@ public class UserService {
             String newUserName = updates.get("userName").toString();
             Optional<User> userByName = userRepository.findByUserName(newUserName);
             if (userByName.isPresent() && !userByName.get().getUserId().equals(userId)) {
-                throw new UserAlreadyExistsException("Username is taken.");
+                throw new AlreadyExistsException("Username is taken.");
             }
         }
 
