@@ -1,7 +1,7 @@
 type Query {
-    # getAllUsers: [UserOutputDTO]
-    # getUserById(userId: ID!): UserOutputDTO
-    # getUserByUsername(userName: String!): UserOutputDTO
+    getAllUsers: [UserOutputDTO]
+    getUserById(userId: ID!): UserOutputDTO
+    getUserByUserName(userName: String!): UserOutputDTO
 
     getAllCats: [CatOutputDTO]
     getCatById(catId: ID!): CatOutputDTO
@@ -9,13 +9,13 @@ type Query {
 }
 
 type Mutation {
-    # createUser(input: UserInput!): UserOutputDTO
-    # updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
-    # deleteUser(userId: ID!): Boolean
+    createUser(input: UserInput!): UserOutputDTO
+    updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
+    deleteUser(userId: ID!): Boolean
 
     createCat(input: CatInput!): CatOutputDTO
     updateCat(catId: ID!, input: CatUpdate!): CatOutputDTO
     deleteCat(catId: ID!): Boolean
 }
 
-# scalar DateTime
+scalar DateTime

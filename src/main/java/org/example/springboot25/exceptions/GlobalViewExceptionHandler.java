@@ -50,8 +50,8 @@ public class GlobalViewExceptionHandler {
         return mav;
     }
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ModelAndView handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ModelAndView handleUserAlreadyExistsException(AlreadyExistsException ex) {
         ModelAndView mav = new ModelAndView("error-page");
         mav.addObject("error", ex.getMessage());
         return mav;
