@@ -1,13 +1,25 @@
 package org.example.springboot25.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.OffsetDateTime;
 
 public class EventInputDTO {
 
+    @NotBlank
     private String eventName;
+
+    @NotBlank
     private String eventDescription;
+
+    @NotBlank
     private String eventLocation;
+
+    @NotNull
     private OffsetDateTime eventDateTime;
+
+    @NotNull
     private Long userId;
 
 
