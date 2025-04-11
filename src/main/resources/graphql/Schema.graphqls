@@ -2,12 +2,19 @@ type Query {
     getAllUsers: [UserOutputDTO]
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
+
+    getAllRecommendations: [Recommendation]
+    getRecommendationById(id: ID!): Recommendation
 }
 
 type Mutation {
     createUser(input: UserInput!): UserOutputDTO
     updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
     deleteUser(userId: ID!): Boolean
+
+    createRecommendation(input: RecommendationInput!): Recommendation
+    updateRecommendation(id: ID!, input: RecommendationUpdate!): Recommendation
+    deleteRecommendation(id: ID!): Boolean!
 }
 
 scalar DateTime
