@@ -56,9 +56,19 @@ public class AdminController {
 
     // Update user
     @PostMapping("/users/update")
-    public String updateUser(@ModelAttribute("user") User user) {
-        userService.updateUser(user.getUserId(), user);
-        return "redirect:/admin/users";
+    public String updateUser(@ModelAttribute("user") User user, Model model) {
+        try {
+            userService.updateUser(user.getUserId(), user);
+            return "redirect:/admin/users?success=updated";
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid user ID: {}", user.getUserId(), e);
+            model.addAttribute("error", "Användaren kunde inte uppdateras: ogiltigt ID.");
+        } catch (Exception e) {
+            log.error("Unexpected error during user update", e);
+            model.addAttribute("error", "Ett oväntat fel inträffade vid uppdatering.");
+        }
+        model.addAttribute("user", user);
+        return "admin/user-edit"; // Stay on the same page if update fails
     }
 
     // View Logs
