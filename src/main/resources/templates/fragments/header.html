@@ -27,17 +27,6 @@
             </select>
         </form>
     </div>
-
-<!--    visar vilket språk som är valt-->
-    <p>Current language: <span th:text="${#locale.language}">unknown</span></p>
-    <p style="text-align: center; font-size: 12px; color: #777;">
-        About text: <span th:text="#{about}">Default About</span>
-    </p>
-    <p>Test message: <span th:text="#{test.message}">default</span></p>
-
-
-
-
     <script>
         const langButton = document.getElementById('langToggle');
         const langForm = document.getElementById('langForm');
@@ -49,8 +38,6 @@
                 langForm.style.display = 'none';
             }
         });
-
-        // Försvinner när man tycker utanför drop menyn, behålla eller ta bort?
         document.addEventListener('click', function(event) {
             if (!langButton.contains(event.target) && !langForm.contains(event.target)) {
                 langForm.style.display = 'none';
