@@ -33,12 +33,24 @@ public class CatMapper {
     }
 
     public void updateCatFromDTO(CatUpdateDTO catUpdateDTO, Cat cat) {
-        if(catUpdateDTO.getCatName() != null) cat.setCatName(catUpdateDTO.getCatName());
-        if(catUpdateDTO.getCatProfilePicture() != null) cat.setCatProfilePicture(catUpdateDTO.getCatProfilePicture());
-        if(catUpdateDTO.getCatBreed() != null) cat.setCatBreed(catUpdateDTO.getCatBreed());
-        if(catUpdateDTO.getCatGender() != null) cat.setCatGender(catUpdateDTO.getCatGender());
-        if(catUpdateDTO.getCatAge() != null) cat.setCatAge(catUpdateDTO.getCatAge());
-        if(catUpdateDTO.getCatPersonality() != null) cat.setCatPersonality(catUpdateDTO.getCatPersonality());
+        if(catUpdateDTO.getCatName() != null) {
+            cat.setCatName(catUpdateDTO.getCatName().trim());
+        }
+        if(catUpdateDTO.getCatProfilePicture() != null) {
+            cat.setCatProfilePicture(catUpdateDTO.getCatProfilePicture().trim());
+        }
+        if(catUpdateDTO.getCatBreed() != null) {
+            cat.setCatBreed(catUpdateDTO.getCatBreed().trim());
+        }
+        if(catUpdateDTO.getCatGender() != null) {
+            cat.setCatGender(catUpdateDTO.getCatGender().trim());
+        }
+        if(catUpdateDTO.getCatAge() != null) {
+            cat.setCatAge(catUpdateDTO.getCatAge());
+        }
+        if(catUpdateDTO.getCatPersonality() != null) {
+            cat.setCatPersonality(catUpdateDTO.getCatPersonality().trim());
+        }
     }
 
     public CatOutputDTO toDTO(Cat cat) {
