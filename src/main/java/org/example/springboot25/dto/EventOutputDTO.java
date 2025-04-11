@@ -9,7 +9,7 @@ public class EventOutputDTO {
     private String eventDescription;
     private String eventLocation;
     private OffsetDateTime eventDateTime;
-    // private UserOutputDTO userEventPlanner;
+    private UserOutputDTO userEventPlanner;
 
 
     public Long getEventId() {
@@ -52,11 +52,11 @@ public class EventOutputDTO {
         this.eventDateTime = eventDateTime;
     }
 
-    // public UserOutputDTO getUserEventPlanner() {
-       // return userEventPlanner;
-    //}
+     public UserOutputDTO getUserEventPlanner() {
+        return userEventPlanner;
+    }
 
-//    public void setUserEventPlanner(UserOutputDTO userEventPlanner) {
-//        this.userEventPlanner = userEventPlanner;
-//    }
+    public void setUserEventPlanner(UserOutputDTO userEventPlanner) {
+        this.userEventPlanner = userEventPlanner;
+    }
 }
