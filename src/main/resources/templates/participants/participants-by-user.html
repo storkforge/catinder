@@ -18,7 +18,7 @@
     <form th:action="@{/by-user/search}" method="get">
         <div class="form-row" style="margin: 15px;">
             <label th:text="#{user.name.with.colon}" for="userName">User name:</label><br>
-            <input th:text="#{eg.love.cats}" type="text" id="userName" name="userName" placeholder="e.g. LoveALlCats" required>
+            <input th:placeholder="#{eg.love.cats}" type="text" id="userName" name="userName" placeholder="e.g. LoveALlCats" required>
         </div>
         <div class="form-row" style="margin: 15px;">
             <button th:text="#{search}" type="submit">Search</button>

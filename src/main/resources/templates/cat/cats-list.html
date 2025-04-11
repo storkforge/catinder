@@ -137,7 +137,7 @@
             <td>
                 <a th:text="#{view}" th:href="@{'/cats/' + ${cat.catId}}">View</a> |
                 <a th:text="#{edit}" th:href="@{'/cats/' + ${cat.catId} + '/edit'}">Edit</a> |
-                <a th:text="#{delete}" th:href="@{'/cats/' + ${cat.catId} + '/delete'}" onclick="return confirm('Are you sure?');">Delete</a>
+                <a th:text="#{delete}" th:href="@{'/cats/' + ${cat.catId} + '/delete'}" th:onclick="'return confirm(\'' + #{confirm.delete} + '\');'">Delete</a>
             </td>
         </tr>
         </tbody>

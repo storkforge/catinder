@@ -14,8 +14,8 @@
     <p th:text="${message}"></p>
 </div>
 
-<!-- Otherwise, display the list of users KOLLA ÖVERSÄTTNING-->
-<div th:text="#{Users}" th:if="${users}">
+<!-- Otherwise, display the list of users -->
+<div th:if="${users}">
     <ul>
         <li th:each="user : ${users}"
             th:text="|${user.userName} - ${user.userFullName}|"></li>
