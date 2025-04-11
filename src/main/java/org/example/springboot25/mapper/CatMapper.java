@@ -20,12 +20,14 @@ public class CatMapper {
 
     public Cat toCat (CatInputDTO catInputDTO) {
         Cat cat = new Cat();
-        cat.setCatName(catInputDTO.getCatName());
-        cat.setCatProfilePicture(catInputDTO.getCatProfilePicture());
-        cat.setCatBreed(catInputDTO.getCatBreed());
-        cat.setCatGender(catInputDTO.getCatGender());
+        cat.setCatName(catInputDTO.getCatName().trim());
+        cat.setCatProfilePicture(catInputDTO.getCatProfilePicture() != null ?
+                catInputDTO.getCatProfilePicture().trim() : null);
+        cat.setCatBreed(catInputDTO.getCatBreed().trim());
+        cat.setCatGender(catInputDTO.getCatGender().trim());
         cat.setCatAge(catInputDTO.getCatAge());
-        cat.setCatPersonality(catInputDTO.getCatPersonality());
+        cat.setCatPersonality(catInputDTO.getCatPersonality() != null ?
+                catInputDTO.getCatPersonality().trim() : null);
 
         User user = userRepository.findById(catInputDTO.getUserId())
                 .orElseThrow(() -> new NotFoundException("User with ID " + catInputDTO.getUserId() + " not found"));
@@ -64,6 +66,9 @@ public class CatMapper {
         catOutputDTO.setCatGender(cat.getCatGender());
         catOutputDTO.setCatAge(cat.getCatAge());
         catOutputDTO.setCatPersonality(cat.getCatPersonality());
+        if (cat.getUserCatOwner() != null) {
+            catOutputDTO.setUserId(cat.getUserCatOwner().getUserId());
+        }
         return catOutputDTO;
     }
 }
