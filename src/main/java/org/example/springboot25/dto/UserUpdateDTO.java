@@ -2,6 +2,7 @@ package org.example.springboot25.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.example.springboot25.entities.UserRole;
 
 public class UserUpdateDTO {
 
@@ -19,7 +20,7 @@ public class UserUpdateDTO {
     private String userLocation;
 
     @NotBlank
-    private String userRole;
+    private UserRole userRole;
 
     @NotBlank
     private String userAuthProvider;
@@ -56,11 +57,11 @@ public class UserUpdateDTO {
         this.userLocation = userLocation;
     }
 
-    public String getUserRole() {
+    public UserRole getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(String userRole) {
+    public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
 
