@@ -1,12 +1,15 @@
-package org.example.springboot25.DTO;
+package org.example.springboot25.dto;
 
 import java.time.OffsetDateTime;
 
-public class EventUpdateDTO {
+public class EventInputDTO {
+
     private String eventName;
     private String eventDescription;
     private String eventLocation;
     private OffsetDateTime eventDateTime;
+    private Long userId;
+
 
     public String getEventName() {
         return eventName;
@@ -38,5 +41,13 @@ public class EventUpdateDTO {
 
     public void setEventDateTime(OffsetDateTime eventDateTime) {
         this.eventDateTime = eventDateTime;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

@@ -1,8 +1,8 @@
-package org.example.springboot25.Mapper;
+package org.example.springboot25.mapper;
 
-import org.example.springboot25.DTO.EventInputDTO;
-import org.example.springboot25.DTO.EventOutputDTO;
-import org.example.springboot25.DTO.EventUpdateDTO;
+import org.example.springboot25.dto.EventInputDTO;
+import org.example.springboot25.dto.EventOutputDTO;
+import org.example.springboot25.dto.EventUpdateDTO;
 import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.User;
 import org.springframework.stereotype.Component;
