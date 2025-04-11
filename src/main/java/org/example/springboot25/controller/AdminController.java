@@ -27,6 +27,7 @@ public class AdminController {
     }
 
     // Admin Dashboard
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/dashboard")
     public String adminDashboard() {
         return "admin/dashboard";
@@ -47,6 +48,7 @@ public class AdminController {
     }
 
     // Edit user form
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id);
@@ -55,6 +57,7 @@ public class AdminController {
     }
 
     // Update user
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users/update")
     public String updateUser(@ModelAttribute("user") User user) {
         userService.updateUser(user.getUserId(), user);
@@ -62,6 +65,7 @@ public class AdminController {
     }
 
     // View Logs
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/logs")
     public String viewLogs(Model model) {
         model.addAttribute("logs", List.of(
