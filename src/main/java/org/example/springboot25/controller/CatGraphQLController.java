@@ -33,7 +33,7 @@ public class CatGraphQLController {
         return catService.getAllCats().stream().map(catMapper::toDTO).toList();
     }
 
-    // ToDo: CatService needs an update on getCatById-method to make this method easier
+    // ToDo: CatService should return a Cat directly instead of Optional<Cat> to simplify controller logic
     @QueryMapping
     public CatOutputDTO getCatById(@Argument Long catId) {
         Cat cat = catService.getCatById(catId)
@@ -67,7 +67,11 @@ public class CatGraphQLController {
 
     @MutationMapping
     public boolean deleteCat(@Argument Long catId) {
-        catService.deleteCat(catId);
-        return true;
+        try {
+            catService.deleteCat(catId);
+            return true;
+        } catch (NotFoundException e) {
+            return false;
+        }
     }
 }
