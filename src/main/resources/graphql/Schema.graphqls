@@ -2,12 +2,19 @@ type Query {
     getAllUsers: [UserOutputDTO]
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
+
+    getAllPosts: [Post]
+    getPostById(id: ID!): Post
 }
 
 type Mutation {
     createUser(input: UserInput!): UserOutputDTO
     updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
     deleteUser(userId: ID!): Boolean
+
+    createPost(input: PostInput!): Post
+    updatePost(id: ID!, input: PostUpdate!): Post
+    deletePost(id: ID!): Boolean!
 }
 
 scalar DateTime
