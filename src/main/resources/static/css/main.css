@@ -242,6 +242,23 @@ a:active {
 }
 
 .login-button:hover {
-    background-color: rgba(148, 148, 148, 0.3);
+    background-color: rgba(131, 255, 0, 0.3);
+    color: #fff;
+}
+
+.logout-button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 16px;
+    color: #fffaef;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: rgba(255, 0, 0, 0.3);
     color: #fff;
 }

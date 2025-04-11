@@ -6,23 +6,23 @@
         <a class="about-link" th:href="@{/about}">About</a>
     </div>
     <div class="header-right">
-        <button class="lang-button" aria-label="Change language" title="Change language">
-            &#127760; Language
-        </button>
         <div sec:authorize="!isAuthenticated()">
-            <form th:action="@{/logout}" method="post" style="display: inline;">
+            <form th:action="@{/login}" method="post" style="display: inline;">
                 <!-- Todo: Include CSRF token later -->
                 <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
-                <a class="login-button" th:href="@{auth/login}" title="Login">Login</a>
+                <a class="login-button" th:href="@{/oauth2/authorization/google}" title="Login">Login</a>
             </form>
         </div>
         <div sec:authorize="isAuthenticated()">
             <form th:action="@{/logout}" method="post" style="display: inline;">
                 <!-- Todo: Include CSRF token later -->
                 <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
-                <button type="submit" class="login-button" title="Logout">Logout</button>
+                <button type="submit" class="logout-button" title="Logout">Logout</button>
             </form>
         </div>
+        <button class="lang-button" aria-label="Change language" title="Change language">
+            &#127760; Language
+        </button>
     </div>
 </header>
 </html>
