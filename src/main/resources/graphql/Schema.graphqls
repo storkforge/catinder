@@ -3,7 +3,7 @@ type Query {
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
 
-    etAllCatPhotos: [CatPhoto]
+    getAllCatPhotos: [CatPhoto]
     getCatPhotoById(id: ID!): CatPhoto
 }
 
