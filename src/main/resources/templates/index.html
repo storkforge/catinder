@@ -17,5 +17,13 @@
         <li><a th:href="@{/reminders}" th:text="#{Reminders}">Reminders</a></li>
     </ul>
 </nav>
+<script>
+    setTimeout(function () {
+        var successMsg = document.getElementById('successMessage');
+        if (successMsg) {
+            successMsg.style.display = 'none';
+        }
+    }, 5000);
+</script>
 </body>
 </html>

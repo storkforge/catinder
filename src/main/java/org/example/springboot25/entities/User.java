@@ -76,7 +76,13 @@ public class User {
     }
 
     public void setUserName(String userName) {
-        this.userName = "@" + userName;
+        if (userName == null) {
+            this.userName = null;
+        } else if (!userName.startsWith("@")) {
+            this.userName = "@" + userName;
+        } else {
+            this.userName = userName;
+        }
     }
 
     public String getUserEmail() {

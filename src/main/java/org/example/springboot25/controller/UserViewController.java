@@ -1,10 +1,13 @@
 package org.example.springboot25.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
 import org.example.springboot25.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -195,10 +198,12 @@ public class UserViewController {
     }
 
     @DeleteMapping("/{userId}")
-    String deleteUser(@PathVariable Long userId, RedirectAttributes redirectAttributes, Model model) {
+    String deleteUser(@PathVariable Long userId, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
         try {
             userService.deleteUserById(userId);
             redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
+            SecurityContextHolder.clearContext();
+            request.getSession().invalidate();
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
             return "error-page";

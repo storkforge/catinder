@@ -262,6 +262,10 @@ a:hover {
     max-width: 100px;
 }
 
+.settings-button {
+    scale: 60%;
+}
+
 .nav-button img.header-choice {
     width: 40px;
     height: auto;

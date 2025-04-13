@@ -11,19 +11,19 @@
 
     <nav class="header-nav">
         <a class="nav-button" aria-label="Cats" th:href="@{/cats}" title="Cats">
-            <img class="header-choice" th:src="@{/images/paw_white.png}" alt="Cats" />
+            <img class="header-choice" th:src="@{/images/paw_white.png}" alt="Cats"/>
             <span>Cats</span>
         </a>
         <a class="nav-button" aria-label="Posts" th:href="@{/posts}" title="Posts">
-            <img class="header-choice" th:src="@{/images/post_white.png}" alt="Posts" />
+            <img class="header-choice" th:src="@{/images/post_white.png}" alt="Posts"/>
             <span>Posts</span>
         </a>
         <a class="nav-button" aria-label="Events" th:href="@{/events}" title="Events">
-            <img class="header-choice" th:src="@{/images/event_white.png}" alt="Events" />
+            <img class="header-choice" th:src="@{/images/event_white.png}" alt="Events"/>
             <span>Events</span>
         </a>
         <a class="nav-button" aria-label="Recommendations" th:href="@{/recommendations}" title="Recommendations">
-            <img class="header-choice" th:src="@{/images/recommendation_white.png}" alt="Recommendations" />
+            <img class="header-choice" th:src="@{/images/recommendation_white.png}" alt="Recommendations"/>
             <span>Recommendations</span>
         </a>
     </nav>
@@ -38,6 +38,14 @@
                 <a class="dropdown-item" th:href="@{/faq}">FAQ</a>
             </div>
         </div>
+        <div class="header-nav">
+            <a th:if="user" sec:authorize="isAuthenticated()" class="nav-button settings-button"
+               th:href="@{/users/{userId}/edit(userId=${currentUser.userId})}" th:title="Settings">
+                <img class="header-choice" th:src="@{/images/profilesettings_white.png}" alt="Settings"/>
+                <span>Settings</span>
+            </a>
+        </div>
+
         <button class="lang-button" aria-label="Change language" title="Change language">
             &#127760; Language
         <div sec:authorize="!isAuthenticated()">
