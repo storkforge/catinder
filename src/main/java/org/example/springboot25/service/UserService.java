@@ -13,6 +13,7 @@ import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,17 +56,16 @@ public class UserService {
     }
 
     public UserOutputDTO addUser(UserInputDTO userInputDTO) {
-        if (userRepository.existsByUserEmail(userInputDTO.getUserEmail())) {
-            throw new AlreadyExistsException("Email is already in use.");
+        try {
+            log.info("Creating user: {}", userInputDTO.getUserName());
+            User user = userMapper.toUser(userInputDTO);
+            User saved = userRepository.save(user);
+            return userMapper.toDto(saved);
+        } catch (DataIntegrityViolationException ex) {
+            throw new AlreadyExistsException("Username or email already exists.");
         }
-        if (userRepository.existsByUserName(userInputDTO.getUserName())) {
-            throw new AlreadyExistsException("Username is already taken.");
-        }
-
-        log.info("Creating user: {}", userInputDTO.getUserName());
-        User user = userMapper.toUser(userInputDTO);
-        return userMapper.toDto(userRepository.save(user));
     }
+
     /**
      * Updates a user using values from UserUpdateDTO.
      *
@@ -78,6 +78,7 @@ public class UserService {
      * @throws NotFoundException if the user doesn't exist.
      * @throws IllegalArgumentException if validation fails in the mapper.
      */
+
     public UserOutputDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
