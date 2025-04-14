@@ -40,7 +40,11 @@ public class EventGraphQLController {
 
     @QueryMapping
     public EventOutputDTO getEventById(@Argument Long eventId) {
-        return eventMapper.toDTO(eventService.getEventById(eventId));
+        Event event = eventService.getEventById(eventId);
+        if (event == null) {
+            throw new NotFoundException("Event not found with ID: " + eventId);
+        }
+        return eventMapper.toDTO(event);
     }
 
     // ToDO: Needs getEventByName in Event-service for this to work
@@ -62,6 +66,9 @@ public class EventGraphQLController {
     @MutationMapping
     public EventOutputDTO updateEvent(@Argument Long eventId, @Argument("input") @Valid EventUpdateDTO input) {
         Event event = eventService.getEventById(eventId);
+        if (event == null) {
+            throw new NotFoundException("Event not found with ID: " + eventId);
+        }
         eventMapper.updateEventFromDTO(input, event);
         return eventMapper.toDTO(eventService.updateEvent(eventId, event));
     }
