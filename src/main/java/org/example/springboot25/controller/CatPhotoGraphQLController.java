@@ -16,7 +16,6 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class CatPhotoGraphQLController {
@@ -35,13 +34,13 @@ public class CatPhotoGraphQLController {
     public List<CatPhotoOutputDTO> getAllCatPhotos() {
         return catPhotoService.getAllCatPhotos().stream()
                 .map(catPhotoMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @QueryMapping
     public CatPhotoOutputDTO getCatPhotoById(@Argument("catPhotoId") Long id) {
         CatPhoto catPhoto = catPhotoService.getCatPhotoById(id)
-                .orElseThrow(() -> new NotFoundException("CatPhoto not found"));
+                .orElseThrow(() -> new NotFoundException("CatPhoto with ID: " + id + " not found"));
         return catPhotoMapper.toDTO(catPhoto);
     }
 
@@ -49,25 +48,27 @@ public class CatPhotoGraphQLController {
     @MutationMapping
     public CatPhotoOutputDTO createCatPhoto(@Argument("input") @Valid CatPhotoInputDTO input) {
         Cat cat = catService.getCatById(input.getCatPhotoCatId())
-                .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatPhotoCatId()));
+                .orElseThrow(() -> new NotFoundException("Cat with ID: " + input.getCatPhotoCatId() + " not found"));
 
         CatPhoto catPhoto = catPhotoService.saveCatPhoto(catPhotoMapper.toEntityInput(input, cat));
         return catPhotoMapper.toDTO(catPhoto);
     }
 
     @MutationMapping
-    public CatPhotoOutputDTO updateCatPhoto(@Argument Long id, @Argument("input") CatPhotoUpdateDTO input) {
+    public CatPhotoOutputDTO updateCatPhoto(@Argument Long id, @Argument("input") @Valid CatPhotoUpdateDTO input) {
         Cat cat = catService.getCatById(input.getCatPhotoCatId())
-                .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatPhotoCatId()));
+                .orElseThrow(() -> new NotFoundException("Cat found with ID: " + input.getCatPhotoCatId()));
 
         CatPhoto updatedCatPhoto = catPhotoService.updateCatPhoto(id, catPhotoMapper.toEntityUpdate(input, cat))
-                .orElseThrow(() -> new NotFoundException("CatPhoto not found with ID: " + id));
+                .orElseThrow(() -> new NotFoundException("CatPhoto with ID: " + id + " not found"));
 
         return catPhotoMapper.toDTO(updatedCatPhoto);
     }
 
     @MutationMapping
     public boolean deleteCatPhoto(@Argument Long id) {
+        catPhotoService.getCatPhotoById(id)
+                .orElseThrow(() -> new NotFoundException("CatPhoto with ID: " + id  + " not found"));
         return catPhotoService.deleteCatPhoto(id);
     }
 }
