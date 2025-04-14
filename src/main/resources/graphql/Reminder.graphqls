@@ -19,4 +19,6 @@ input ReminderUpdate {
     reminderType: String
     reminderInfo: String
     reminderDate: DateTime
+    userId: ID
+    catId: ID
 }

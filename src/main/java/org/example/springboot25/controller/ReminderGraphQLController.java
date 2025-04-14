@@ -58,12 +58,30 @@ public class ReminderGraphQLController {
 
     @MutationMapping
     public ReminderOutputDTO updateReminder(@Argument Long id, @Argument("input") ReminderUpdateDTO input) {
-        User user = userService.getUserById(input.getUserId());
-        Cat cat = catService.getCatById(input.getCatId())
-                .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatId()));
-        Reminder updatedReminder = reminderService.updateReminder(id, reminderMapper.toEntityUpdate(input, reminderService.getReminderById(id), user, cat));
-        return reminderMapper.toDTO(updatedReminder);
+        Reminder existing = reminderService.getReminderById(id);
+
+        User user;
+        if (input.getUserId() != null) {
+            user = userService.getUserById(input.getUserId());
+        } else {
+            user = existing.getUser();
+        }
+
+        Cat cat;
+        if (input.getCatId() != null) {
+            cat = catService.getCatById(input.getCatId())
+                    .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatId()));
+        } else {
+            cat = existing.getCatReminderCat();
+        }
+
+        Reminder updated = reminderService.updateReminder(
+                id,
+                reminderMapper.toEntityUpdate(input, existing, user, cat)
+        );
+        return reminderMapper.toDTO(updated);
     }
+
 
     @MutationMapping
     public boolean deleteReminder(@Argument Long id) {
