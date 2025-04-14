@@ -53,7 +53,8 @@ public class RecommendationGraphQLController {
         Cat cat = catService.getCatById(input.getCatId())
                 .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatId()));
 
-        Recommendation recommendation = recommendationService.createRecommendation(recommendationMapper.toEntityInput(input, user, cat));
+        Recommendation recommendation = recommendationService.createRecommendation
+                (recommendationMapper.toEntityInput(input, user, cat));
         return recommendationMapper.toDTO(recommendation);
     }
 
