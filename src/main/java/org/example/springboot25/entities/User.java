@@ -48,7 +48,6 @@ public class User {
 
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
-    private Long userID;
 
     public Long getUserId() {
         return userId;
@@ -134,5 +133,5 @@ public class User {
         this.userPost = userPost;
     }
 
-    public void setUserId(Long userId) { this.userID = userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 }
