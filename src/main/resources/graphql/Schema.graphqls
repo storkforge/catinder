@@ -14,7 +14,7 @@ type Mutation {
 
     createRecommendation(input: RecommendationInput!): Recommendation
     updateRecommendation(id: ID!, input: RecommendationUpdate!): Recommendation
-    deleteRecommendation(id: ID!): Boolean!
+    deleteRecommendation(id: ID!): Boolean
 }
 
 scalar DateTime
