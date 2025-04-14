@@ -1,0 +1,27 @@
+type Recommendation {
+    id: ID!
+    recommendationCategory: String!
+    recommendationProductName: String!
+    recommendationProductDescription: String!
+    recommendationProductLink: String!
+    userId: ID!
+    catId: ID!
+}
+
+input RecommendationInput {
+    recommendationCategory: String!
+    recommendationProductName: String!
+    recommendationProductDescription: String!
+    recommendationProductLink: String!
+    userId: ID!
+    catId: ID
+}
+
+input RecommendationUpdate {
+    recommendationCategory: String
+    recommendationProductName: String
+    recommendationProductDescription: String
+    recommendationProductLink: String
+    userId: ID!
+    catId: ID!
+}
