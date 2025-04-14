@@ -22,4 +22,6 @@ input RecommendationUpdate {
     recommendationProductName: String
     recommendationProductDescription: String
     recommendationProductLink: String
+    userId: ID!
+    catId: ID!
 }
