@@ -19,59 +19,38 @@ import java.util.List;
 public class UserGraphQLController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     public UserGraphQLController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
 
     @QueryMapping
     public List<UserOutputDTO> getAllUsers() {
-        return userService.getAllUsers().stream().map(userMapper::toDto).toList();
+        return userService.getAllUsers();
     }
 
     @QueryMapping
     public UserOutputDTO getUserById(@Argument Long userId) {
-        User user = userService.getUserById(userId);
-        if(user == null) {
-            throw new NotFoundException("User with id " + userId + " not found");
-        }
-        return userMapper.toDto(user);
+        return userService.getUserById(userId);
     }
 
     @QueryMapping
     public UserOutputDTO getUserByUserName(@Argument String userName) {
-        User user = userService.getUserByUserName(userName);
-        if (user == null) {
-            throw new NotFoundException("User with name " + userName + " not found");
-        }
-        return userMapper.toDto(user);
+        return userService.getUserDtoByUserName(userName);
     }
 
     @MutationMapping
     public UserOutputDTO createUser(@Argument("input") @Valid UserInputDTO input) {
-        validateUserInput(input);
-        User user = userMapper.toUser(input);
-        return userMapper.toDto(userService.addUser(user));
+        return userService.addUser(input);
     }
 
     @MutationMapping
     public UserOutputDTO updateUser(@Argument Long userId, @Argument("input") UserUpdateDTO input) {
-        if(input == null) {
-            throw new IllegalArgumentException("Input cannot be null");
-        }
-        User userToUpdate = userService.getUserById(userId);
-        if(userToUpdate == null) {
-            throw new NotFoundException("User with id " + userId + " not found");
-        }
-        userMapper.updateUserFromDto(input, userToUpdate);
-        return userMapper.toDto(userService.updateUser(userId, userToUpdate));
+        return userService.updateUser(userId, input);
     }
 
     @MutationMapping
     public boolean deleteUser(@Argument Long userId) {
-
         try {
             userService.deleteUserById(userId);
             return true;
