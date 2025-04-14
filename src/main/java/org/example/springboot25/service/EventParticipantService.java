@@ -1,13 +1,11 @@
 package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
-import org.example.springboot25.dto.EventParticipantInputDTO;
 import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.EventParticipant;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.ConflictException;
 import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.mapper.EventParticipantMapper;
 import org.example.springboot25.repository.EventParticipantRepository;
 import org.example.springboot25.repository.EventRepository;
 import org.example.springboot25.repository.UserRepository;
