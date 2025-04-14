@@ -1,6 +1,9 @@
 package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
+import org.example.springboot25.dto.UserInputDTO;
+import org.example.springboot25.dto.UserOutputDTO;
+import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.service.UserService;
@@ -12,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,119 +26,99 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    // Helper method for access control
-    private boolean isNotOwnerOrAdmin(User targetUser, User currentUser) {
-        boolean isOwner = targetUser.getUserId().equals(currentUser.getUserId());
+    private boolean isNotOwnerOrAdmin(Long targetUserId, User currentUser) {
+        boolean isOwner = targetUserId.equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
     }
 
-    // Only ADMIN can get list of all users
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllUsers() {
+    public List<UserOutputDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    // Authenticated user can get their own profile or ADMIN can get any
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/id/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public User getById(@PathVariable Long userId, Authentication auth) {
-        User target = userService.getUserById(userId);
+    public UserOutputDTO getById(@PathVariable Long userId, Authentication auth) {
         User current = userService.getUserByUserName(auth.getName());
+        UserOutputDTO target = userService.getUserById(userId);
 
-        if (isNotOwnerOrAdmin(target, current)) {
+        if (isNotOwnerOrAdmin(target.getUserId(), current)) {
             throw new AccessDeniedException("You are not owner or admin");
         }
 
         return target;
     }
 
-    // Public (no auth): useful for username check, or you can lock it down
     @GetMapping("/username/{userName}")
     @ResponseStatus(HttpStatus.OK)
-    public User getByUserName(@PathVariable String userName) {
-        return userService.getUserByUserName(userName);
+    public UserOutputDTO getByUserName(@PathVariable String userName) {
+        return userService.getUserDtoByUserName(userName);
     }
 
-    // These GETs can remain public or restricted, depending on project need
     @GetMapping("/by-username/{userName}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByUserName(@PathVariable String userName){
+    public List<UserOutputDTO> getAllByUserName(@PathVariable String userName) {
         return userService.getAllUsersByUserName(userName);
     }
 
     @GetMapping("/by-name/{userFullName}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByFullName(@PathVariable String userFullName) {
+    public List<UserOutputDTO> getAllByFullName(@PathVariable String userFullName) {
         return userService.getAllUsersByFullName(userFullName);
     }
 
     @GetMapping("/by-location/{userLocation}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByLocation(@PathVariable String userLocation) {
+    public List<UserOutputDTO> getAllByLocation(@PathVariable String userLocation) {
         return userService.getAllUsersByLocation(userLocation);
     }
 
     @GetMapping("/by-role/{userRole}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByRole(@PathVariable String userRole) {
+    public List<UserOutputDTO> getAllByRole(@PathVariable String userRole) {
         return userService.getAllUsersByRole(userRole);
     }
 
     @GetMapping("/by-search-term/{searchTerm}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getAllByUserNameOrCatName(@PathVariable String searchTerm) {
+    public List<UserOutputDTO> getAllByUserNameOrCatName(@PathVariable String searchTerm) {
         return userService.getAllUsersByUserNameOrCatName(searchTerm);
     }
 
-    // Registration should be open
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User addUser(@RequestBody @Valid User user) {
-        return userService.addUser(user);
+    public UserOutputDTO addUser(@RequestBody @Valid UserInputDTO userInputDTO) {
+        return userService.addUser(userInputDTO);
     }
 
-    // Only the user themselves or an admin can update profile
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PutMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@PathVariable Long userId, @RequestBody @Valid User user, Authentication auth) {
-        User target = userService.getUserById(userId);
+    public UserOutputDTO updateUser(@PathVariable Long userId,
+                                    @RequestBody @Valid UserUpdateDTO userUpdateDTO,
+                                    Authentication auth) {
         User current = userService.getUserByUserName(auth.getName());
+        UserOutputDTO target = userService.getUserById(userId);
 
-        if (isNotOwnerOrAdmin(target, current)) {
+        if (isNotOwnerOrAdmin(target.getUserId(), current)) {
             throw new AccessDeniedException("You are not owner or admin");
         }
 
-        return userService.updateUser(userId, user);
+        return userService.updateUser(userId, userUpdateDTO);
     }
 
-    @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
-    @PatchMapping("/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    public User updateUser(@PathVariable Long userId, @RequestBody Map<String, Object> updates, Authentication auth) {
-        User target = userService.getUserById(userId);
-        User current = userService.getUserByUserName(auth.getName());
-
-        if (isNotOwnerOrAdmin(target, current)) {
-            throw new AccessDeniedException("You are not owner or admin");
-        }
-
-        return userService.updateUser(userId, updates);
-    }
-
-    // Only user themselves or ADMIN can delete account
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId, Authentication auth) {
-        User target = userService.getUserById(userId);
         User current = userService.getUserByUserName(auth.getName());
+        UserOutputDTO target = userService.getUserById(userId);
 
-        if (isNotOwnerOrAdmin(target, current)) {
+        if (isNotOwnerOrAdmin(target.getUserId(), current)) {
             throw new AccessDeniedException("You can only delete your own account.");
         }
 

@@ -25,6 +25,7 @@ public class UserInputDTO {
     @NotBlank
     private String userAuthProvider;
 
+    // Getters and Setters
     public String getUserFullName() {
         return userFullName;
     }

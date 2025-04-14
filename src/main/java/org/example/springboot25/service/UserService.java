@@ -1,20 +1,21 @@
 package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
+import org.example.springboot25.dto.UserInputDTO;
+import org.example.springboot25.dto.UserOutputDTO;
+import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
-import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
+import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.mapper.UserMapper;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,22 +23,25 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
-    public List<User> getAllUsers() {
+    public List<UserOutputDTO> getAllUsers() {
         log.info("Fetching all users");
-        return userRepository.findAll();
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
+    public UserOutputDTO getUserById(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+        return userMapper.toDto(user);
     }
 
     public User getUserByUserName(String userName) {
@@ -45,137 +49,79 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
     }
 
-    public User getUserByEmail(String userEmail) {
-        return userRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new NotFoundException("User with email " + userEmail + " not found"));
+    public UserOutputDTO getUserDtoByUserName(String userName) {
+        User user = getUserByUserName(userName);
+        return userMapper.toDto(user);
     }
 
-    public List<User> getAllUsersByUserName(String userName) {
-        return userRepository.findAllByUserName(userName);
+    public UserOutputDTO addUser(UserInputDTO userInputDTO) {
+        if (userRepository.existsByUserEmail(userInputDTO.getUserEmail())) {
+            throw new AlreadyExistsException("Email is already in use.");
+        }
+        if (userRepository.existsByUserName(userInputDTO.getUserName())) {
+            throw new AlreadyExistsException("Username is already taken.");
+        }
+
+        log.info("Creating user: {}", userInputDTO.getUserName());
+        User user = userMapper.toUser(userInputDTO);
+        return userMapper.toDto(userRepository.save(user));
     }
 
-    public List<User> getAllUsersByFullName(String fullName) {
-        return userRepository.findAllByUserFullName(fullName);
-    }
+    public UserOutputDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
-    public List<User> getAllUsersByLocation(String userLocation) {
-        return userRepository.findAllByLocation(userLocation);
-    }
-
-    public List<User> getAllUsersByRole(String userRole) {
-        return userRepository.findAllByRole(userRole);
-    }
-
-    public List<User> getAllUsersByRoleAndLocation(String userRole, String userLocation) {
-        return userRepository.findAllByRoleAndLocation(userRole, userLocation);
-    }
-
-    public List<User> getAllUsersByCatName(String catName) {
-        return userRepository.findAllUsersByCatName(catName);
-    }
-
-    public List<User> getAllUsersByUserNameOrCatName(String searchTerm) {
-        return userRepository.findUsersByUsernameOrCatName(searchTerm);
-    }
-
-    public User addUser(User user) {
-        if (userRepository.existsByUserEmail(user.getUserEmail()))
-            throw new AlreadyExistsException("Account with given email already exists.");
-        if (userRepository.existsByUserName(user.getUserName()))
-
-            throw new AlreadyExistsException("Username is taken.");
-        log.info("Creating new user: {}", user.getUserName());
-
-        // 🔒 Hash password before saving
-        String hashedPassword = passwordEncoder.encode(user.getUserPassword());
-        user.setUserPassword(hashedPassword);
-
-        return userRepository.save(user);
-    }
-
-    /**
-     * Full update of a user.
-     * Retrieves the existing user by id, updates all fields, and saves.
-     */
-    public User updateUser(Long userId, User user) {
-        User oldUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
-        // Check if the email belongs to a different user.
-        Optional<User> userByEmail = userRepository.findByUserEmail(user.getUserEmail());
-        if (userByEmail.isPresent() && !userByEmail.get().getUserId().equals(userId)) {
-            throw new AlreadyExistsException("Account with given email already exists.");
-        }
-
-        // Check if the username belongs to a different user.
-        Optional<User> userByName = userRepository.findByUserName(user.getUserName());
-        if (userByName.isPresent() && !userByName.get().getUserId().equals(userId)) {
-            throw new AlreadyExistsException("Username is taken.");
-        }
-        log.info("Updating user: {}", user.getUserName());
-        oldUser.setUserName(user.getUserName());
-        oldUser.setUserFullName(user.getUserFullName());
-        oldUser.setUserEmail(user.getUserEmail());
-        oldUser.setUserLocation(user.getUserLocation());
-        oldUser.setUserRole(user.getUserRole());
-        oldUser.setUserAuthProvider(user.getUserAuthProvider());
-        return userRepository.save(oldUser);
-    }
-
-    /**
-     * Partially updates a user based on provided field changes.
-     */
-    public User updateUser(Long userId, Map<String, Object> updates) {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
-
-        if (updates.containsKey("userEmail")) {
-            String newEmail = updates.get("userEmail").toString();
-            Optional<User> userByEmail = userRepository.findByUserEmail(newEmail);
-            if (userByEmail.isPresent() && !userByEmail.get().getUserId().equals(userId)) {
-                throw new AlreadyExistsException("Account with given email already exists.");
-            }
-        }
-
-        if (updates.containsKey("userName")) {
-            String newUserName = updates.get("userName").toString();
-            Optional<User> userByName = userRepository.findByUserName(newUserName);
-            if (userByName.isPresent() && !userByName.get().getUserId().equals(userId)) {
-                throw new AlreadyExistsException("Username is taken.");
-            }
-        }
-
-        log.info("Partially updating user: {}", existingUser.getUserName());
-        if (updates.containsKey("userFullName")) {
-            existingUser.setUserFullName((String) updates.get("userFullName"));
-        }
-        if (updates.containsKey("userName")) {
-            existingUser.setUserName((String) updates.get("userName"));
-        }
-        if (updates.containsKey("userEmail")) {
-            existingUser.setUserEmail((String) updates.get("userEmail"));
-        }
-        if (updates.containsKey("userLocation")) {
-            existingUser.setUserLocation((String) updates.get("userLocation"));
-        }
-        if (updates.containsKey("userRole")) {
-            Object roleObj = updates.get("userRole");
-            if (roleObj instanceof String roleStr) {
-                existingUser.setUserRole(UserRole.valueOf(roleStr));
-            } else if (roleObj instanceof UserRole roleEnum) {
-                existingUser.setUserRole(roleEnum);
-            }
-        }
-        if (updates.containsKey("userAuthProvider")) {
-            existingUser.setUserAuthProvider((String) updates.get("userAuthProvider"));
-        }
-        return userRepository.save(existingUser);
+        userMapper.updateUserFromDto(userUpdateDTO, user);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     public void deleteUserById(Long userId) {
-        log.info("Deleting user with id: {}", userId + ".");
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("User with id " + userId + " not found");
+        }
+        log.info("Deleting user with id: {}", userId);
         userRepository.deleteById(userId);
     }
 
     public void changeUserRole(Long userId, String newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+        user.setUserRole(UserRole.valueOf(newRole));
+        userRepository.save(user);
+    }
+
+    public List<UserOutputDTO> getAllUsersByUserName(String userName) {
+        return userRepository.findAllByUserNameContainingIgnoreCase(userName).stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    public List<UserOutputDTO> getAllUsersByFullName(String fullName) {
+        return userRepository.findAllByUserFullNameContainingIgnoreCase(fullName).stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    public List<UserOutputDTO> getAllUsersByLocation(String location) {
+        return userRepository.findAllByUserLocationIgnoreCase(location).stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    public List<UserOutputDTO> getAllUsersByRole(String role) {
+        try {
+            UserRole userRole = UserRole.valueOf(role.toUpperCase());
+            return userRepository.findAllByUserRole(userRole).stream()
+                    .map(userMapper::toDto)
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException("Invalid user role: " + role);
+        }
+    }
+
+    public List<UserOutputDTO> getAllUsersByUserNameOrCatName(String searchTerm) {
+        return userRepository.findByUserNameOrCatName(searchTerm).stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 }
