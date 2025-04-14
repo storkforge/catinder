@@ -16,6 +16,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CatPhotoGraphQLController {
@@ -55,15 +56,33 @@ public class CatPhotoGraphQLController {
     }
 
     @MutationMapping
-    public CatPhotoOutputDTO updateCatPhoto(@Argument Long id, @Argument("input") @Valid CatPhotoUpdateDTO input) {
-        Cat cat = catService.getCatById(input.getCatPhotoCatId())
-                .orElseThrow(() -> new NotFoundException("Cat found with ID: " + input.getCatPhotoCatId()));
+    public CatPhotoOutputDTO updateCatPhoto(@Argument Long id, @Argument("input") CatPhotoUpdateDTO input) {
+        Optional<CatPhoto> optionalExisting = catPhotoService.getCatPhotoById(id);
+        if (optionalExisting.isEmpty()) {
+            throw new NotFoundException("CatPhoto with ID " + id + " not found");
+        }
+        CatPhoto existing = optionalExisting.get();
 
-        CatPhoto updatedCatPhoto = catPhotoService.updateCatPhoto(id, catPhotoMapper.toEntityUpdate(input, cat))
-                .orElseThrow(() -> new NotFoundException("CatPhoto with ID: " + id + " not found"));
+        Cat cat = existing.getCatPhotoCat();
+        if (input.getCatPhotoCatId() != null) {
+            Optional<Cat> optionalCat = catService.getCatById(input.getCatPhotoCatId());
+            if (optionalCat.isEmpty()) {
+                throw new NotFoundException("Cat with ID " + input.getCatPhotoCatId() + " not found");
+            }
+            cat = optionalCat.get();
+        }
 
-        return catPhotoMapper.toDTO(updatedCatPhoto);
+        CatPhoto updated = catPhotoMapper.toEntityUpdate(existing, input, cat);
+
+        Optional<CatPhoto> optionalUpdated = catPhotoService.updateCatPhoto(id, updated);
+        if (optionalUpdated.isEmpty()) {
+            throw new NotFoundException("Failed to update CatPhoto with ID " + id);
+        }
+
+        return catPhotoMapper.toDTO(optionalUpdated.get());
     }
+
+
 
     @MutationMapping
     public boolean deleteCatPhoto(@Argument Long id) {

@@ -22,7 +22,9 @@ public class CatPhotoMapper {
             dto.setCatPhotoCreatedAt(catPhoto.getCatPhotoCreatedAt().atOffset(ZoneOffset.UTC));
         }
 
-        dto.setCatPhotoCatId(catPhoto.getCatPhotoCat().getCatId());
+        if (catPhoto.getCatPhotoCat() != null) {
+            dto.setCatPhotoCatId(catPhoto.getCatPhotoCat().getCatId());
+        }
         return dto;
     }
 
@@ -34,17 +36,16 @@ public class CatPhotoMapper {
         return catPhoto;
     }
 
-    public CatPhoto toEntityUpdate(CatPhotoUpdateDTO input, Cat cat) {
-        CatPhoto catPhoto = new CatPhoto();
+    public CatPhoto toEntityUpdate(CatPhoto existingCatPhoto, CatPhotoUpdateDTO input, Cat cat) {
         if (input.getCatPhotoUrl() != null) {
-            catPhoto.setCatPhotoUrl(input.getCatPhotoUrl());
+            existingCatPhoto.setCatPhotoUrl(input.getCatPhotoUrl());
         }
         if (input.getCatPhotoCaption() != null) {
-            catPhoto.setCatPhotoCaption(input.getCatPhotoCaption());
+            existingCatPhoto.setCatPhotoCaption(input.getCatPhotoCaption());
         }
         if (input.getCatPhotoCatId() != null) {
-            catPhoto.setCatPhotoCat(cat);
+            existingCatPhoto.setCatPhotoCat(cat);
         }
-        return catPhoto;
+        return existingCatPhoto;
     }
 }
