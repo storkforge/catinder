@@ -7,6 +7,8 @@ import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.CatPhoto;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneOffset;
+
 @Component
 public class CatPhotoMapper {
 
@@ -15,7 +17,11 @@ public class CatPhotoMapper {
         dto.setId(catPhoto.getCatPhotoId());
         dto.setCatPhotoUrl(catPhoto.getCatPhotoUrl());
         dto.setCatPhotoCaption(catPhoto.getCatPhotoCaption());
-        dto.setCatPhotoCreatedAt(catPhoto.getCatPhotoCreatedAt());
+
+        if (catPhoto.getCatPhotoCreatedAt() != null) {
+            dto.setCatPhotoCreatedAt(catPhoto.getCatPhotoCreatedAt().atOffset(ZoneOffset.UTC));
+        }
+
         dto.setCatPhotoCatId(catPhoto.getCatPhotoCat().getCatId());
         return dto;
     }

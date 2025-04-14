@@ -1,13 +1,14 @@
 package org.example.springboot25.dto;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class CatPhotoOutputDTO {
 
     private Long id;
     private String catPhotoUrl;
     private String catPhotoCaption;
-    private LocalDateTime catPhotoCreatedAt;
+    private OffsetDateTime catPhotoCreatedAt;
     private Long catPhotoCatId;
 
     public Long getId() {
@@ -34,11 +35,11 @@ public class CatPhotoOutputDTO {
         this.catPhotoCaption = catPhotoCaption;
     }
 
-    public LocalDateTime getCatPhotoCreatedAt() {
+    public OffsetDateTime getCatPhotoCreatedAt() {
         return catPhotoCreatedAt;
     }
 
-    public void setCatPhotoCreatedAt(LocalDateTime catPhotoCreatedAt) {
+    public void setCatPhotoCreatedAt(OffsetDateTime catPhotoCreatedAt) {
         this.catPhotoCreatedAt = catPhotoCreatedAt;
     }
 
