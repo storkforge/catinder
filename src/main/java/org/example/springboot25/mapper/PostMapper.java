@@ -8,6 +8,7 @@ import org.example.springboot25.entities.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Component
 public class PostMapper {
@@ -26,7 +27,9 @@ public class PostMapper {
         dto.setId(post.getPostId());
         dto.setPostText(post.getPostText());
         dto.setPostImageUrl(post.getPostImageUrl());
-        dto.setPostCreatedAt(post.getPostCreatedAt());
+        if (post.getPostCreatedAt() != null) {
+            dto.setPostCreatedAt(post.getPostCreatedAt().atOffset(ZoneOffset.UTC));
+        }
         dto.setUserPostAuthorId(post.getUser().getUserId());
         return dto;
 

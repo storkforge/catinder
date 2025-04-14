@@ -1,13 +1,13 @@
 package org.example.springboot25.dto;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class PostOutputDTO {
 
     private Long id;
     private String postText;
     private String postImageUrl;
-    private LocalDateTime postCreatedAt;
+    private OffsetDateTime postCreatedAt;
     private Long userPostAuthorId;
 
     public Long getId() {
@@ -34,11 +34,11 @@ public class PostOutputDTO {
         this.postImageUrl = postImageUrl;
     }
 
-    public LocalDateTime getPostCreatedAt() {
+    public OffsetDateTime  getPostCreatedAt() {
         return postCreatedAt;
     }
 
-    public void setPostCreatedAt(LocalDateTime postCreatedAt) {
+    public void setPostCreatedAt(OffsetDateTime  postCreatedAt) {
         this.postCreatedAt = postCreatedAt;
     }
 
