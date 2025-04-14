@@ -9,42 +9,42 @@
 <body>
 <div th:replace="fragments/header"></div>
 <div class="form-container">
-    <h2>New user:</h2>
+    <h2 th:text="#{new.user}">New user:</h2>
     <form th:if="${user.userId == null}"
           th:action="@{/users/add}"
           th:object="${user}" method="post">
 
         <div class="form-row">
-            <label for="userName">Username:</label>
+            <label for="userName" th:text="#{username}">Username:</label>
             <input type="text" id="userName" th:field="*{userName}" required/>
         </div>
         <div class="form-row">
-            <label for="userFullName">Full name:</label>
+            <label for="userFullName" th:text="#{full.name}">Full name:</label>
             <input type="text" id="userFullName" th:field="*{userFullName}"/>
         </div>
         <div class="form-row">
-            <label for="userEmail">Email:</label>
+            <label for="userEmail" th:text="#{email}">Email:</label>
             <input type="email" id="userEmail" th:field="*{userEmail}"/>
         </div>
         <div class="form-row">
-            <label for="userLocation">Location:</label>
+            <label for="userLocation" th:text="#{location}">Location:</label>
             <input type="text" id="userLocation" th:field="*{userLocation}"/>
         </div>
         <div class="form-row">
-            <label for="userRole">Authority:</label>
+            <label for="userRole" th:text="#{authority}">Authority:</label>
             <input type="text" id="userRole" th:field="*{userRole}"/>
         </div>
         <div class="form-row">
-            <label for="userAuthProvider">Social login:</label>
+            <label for="userAuthProvider" th:text="#{social.login}">Social login:</label>
             <input type="text" id="userAuthProvider" th:field="*{userAuthProvider}" />
         </div>
         <div class="form-row">
-            <button type="submit">Create Account</button>
+            <button type="submit" th:text="#{create.account}">Create Account</button>
         </div>
     </form>
 </div>
 <div class="success-message" th:if="${success}" th:text="${success}"></div>
-<div th:if="${error}" th:text="${error}">
+<div th:if="${error}"  th:text="#{error.while.creating.acc}">
     There was an error while trying to create your account.
 </div>
 </body>
