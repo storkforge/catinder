@@ -7,6 +7,7 @@ import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.User;
 import org.springframework.stereotype.Component;
 
+import java.sql.Time;
 import java.time.ZoneOffset;
 
 @Component
@@ -24,6 +25,8 @@ public class EventMapper {
         event.setEventName(dto.getEventName());
         event.setEventDescription(dto.getEventDescription());
         event.setEventLocation(dto.getEventLocation());
+        // Time zone is discarded intentionally. All times assumed to be local.
+        // GraphQL uses OffsetDateTime, but we store as LocalDateTime in entity for simplicity.
         // Converting OffsetDateTime to LocalDateTime (timezone information is lost)
         event.setEventDateTime(dto.getEventDateTime().toLocalDateTime());
         event.setUserEventPlanner(user);
