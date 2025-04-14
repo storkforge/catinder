@@ -1,11 +1,13 @@
 package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
+import org.example.springboot25.dto.EventParticipantInputDTO;
 import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.EventParticipant;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.ConflictException;
 import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.mapper.EventParticipantMapper;
 import org.example.springboot25.repository.EventParticipantRepository;
 import org.example.springboot25.repository.EventRepository;
 import org.example.springboot25.repository.UserRepository;
@@ -21,13 +23,19 @@ public class EventParticipantService {
     private final EventParticipantRepository eventParticipantRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final UserService userService;
+    private final EventService eventService;
 
     public EventParticipantService(EventParticipantRepository eventParticipantRepository,
                                    UserRepository userRepository,
-                                   EventRepository eventRepository) {
+                                   EventRepository eventRepository,
+                                   UserService userService,
+                                   EventService eventService) {
         this.eventParticipantRepository = eventParticipantRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+        this.userService = userService;
+        this.eventService = eventService;
     }
 
     public List<EventParticipant> getAllParticipants() {
@@ -86,11 +94,18 @@ public class EventParticipantService {
         EventParticipant participant = eventParticipantRepository.findById(eventParticipantId)
                 .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + eventParticipantId));
 
-        participant.getUser().setUserName(userName);
-        participant.getEvent().setEventName(eventName);
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User not found: " + userName));
+
+        Event event = eventRepository.findByEventName(eventName)
+                .orElseThrow(() -> new NotFoundException("Event not found: " + eventName));
+
+        participant.setUser(user);
+        participant.setEvent(event);
 
         return eventParticipantRepository.save(participant);
     }
+
 
 
     public void deleteParticipant(String userName, String eventName) {
@@ -99,13 +114,19 @@ public class EventParticipantService {
     }
 
     public void deleteParticipantById(String eventParticipantId) {
-        Long id = Long.parseLong(eventParticipantId);
+        try {
+            Long id = Long.parseLong(eventParticipantId);
 
-        EventParticipant participant = eventParticipantRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + id));
+            EventParticipant participant = eventParticipantRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + id));
 
-        eventParticipantRepository.delete(participant);
+            eventParticipantRepository.delete(participant);
+
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid event participant ID format: " + eventParticipantId, e);
+        }
     }
+
 
 }
 
