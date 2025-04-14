@@ -1,6 +1,5 @@
 package org.example.springboot25.dto;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 public class CatPhotoOutputDTO {
