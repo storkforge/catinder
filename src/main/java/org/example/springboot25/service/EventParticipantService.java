@@ -12,6 +12,7 @@ import org.example.springboot25.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -92,9 +93,8 @@ public class EventParticipantService {
         Event event = eventRepository.findByEventName(eventName)
                 .orElseThrow(() -> new NotFoundException("Event not found: " + eventName));
 
-        // Check if another participant with the same user and event already exists
-        if (eventParticipantRepository.existsByUserAndEvent(user, event) &&
-                !participant.getUser().equals(user) && !participant.getEvent().equals(event)) {
+        Optional<EventParticipant> existingParticipant = eventParticipantRepository.findByUserAndEvent(user, event);
+        if (existingParticipant.isPresent() && !existingParticipant.get().getEventParticipantId().equals(eventParticipantId)) {
             throw new ConflictException("User is already participating in this event.");
         }
 
