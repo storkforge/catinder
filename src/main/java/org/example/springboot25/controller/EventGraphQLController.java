@@ -6,6 +6,7 @@ import org.example.springboot25.dto.EventOutputDTO;
 import org.example.springboot25.dto.EventUpdateDTO;
 import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.EventMapper;
 import org.example.springboot25.service.EventService;
 import org.example.springboot25.service.UserService;
@@ -51,6 +52,9 @@ public class EventGraphQLController {
     @MutationMapping
     public EventOutputDTO createEvent(@Argument("input") @Valid EventInputDTO input) {
         User user = userService.getUserById(input.getUserId());
+        if (user == null) {
+            throw new NotFoundException("User not found with ID: " + input.getUserId());
+        }
         Event event = eventMapper.toEvent(input, user);
         return eventMapper.toDTO(eventService.createEvent(event));
     }
