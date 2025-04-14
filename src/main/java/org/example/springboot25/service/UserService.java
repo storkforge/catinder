@@ -94,10 +94,15 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public void changeUserRole(Long userId, String newRole) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
-        user.setUserRole(UserRole.valueOf(newRole));
+    public void changeUserRole(Long targetUserId, String newRole, User requestingUser) {
+        if (requestingUser.getUserRole() != UserRole.ADMIN) {
+            throw new SecurityException("Only ADMIN users can change roles.");
+        }
+
+        User user = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new NotFoundException("User with id " + targetUserId + " not found"));
+
+        user.setUserRole(UserRole.valueOf(newRole.toUpperCase()));
         userRepository.save(user);
     }
 
