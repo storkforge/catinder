@@ -5,7 +5,7 @@ type Query {
 
     getAllEventParticipants: [EventParticipant]
     getEventParticipantById(id: ID!): EventParticipant
-    getEventParticipantByName(userName: String!): EventParticipant
+    getEventParticipantByUserName(userName: String!): EventParticipant
 }
 
 type Mutation {
@@ -15,7 +15,7 @@ type Mutation {
 
     createEventParticipant(input: EventParticipantInput!): EventParticipant
     updateEventParticipant(id: ID!, update: EventParticipantUpdate!): EventParticipant
-    deleteEventParticipant(id: ID!): Boolean!
+    deleteEventParticipant(id: ID!): Boolean
 }
 
 scalar DateTime
