@@ -70,8 +70,13 @@ public class RecommendationGraphQLController {
 
     @MutationMapping
     public boolean deleteRecommendation(@Argument Long id) {
-        recommendationService.deleteRecommendation(id);
-        return true;
+        try {
+            recommendationService.deleteRecommendation(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
+
 }
 
