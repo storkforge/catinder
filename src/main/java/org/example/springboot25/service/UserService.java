@@ -51,8 +51,16 @@ public class UserService {
     }
 
     public UserOutputDTO getUserDtoByUserName(String userName) {
-        User user = getUserByUserName(userName);
-        return userMapper.toDto(user);
+        return userMapper.toDto(getUserByUserName(userName));
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByUserEmail(email)
+                .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+    }
+
+    public UserOutputDTO getUserDtoByEmail(String email) {
+        return userMapper.toDto(getUserByEmail(email));
     }
 
     public UserOutputDTO addUser(UserInputDTO userInputDTO) {
@@ -69,16 +77,16 @@ public class UserService {
     /**
      * Updates a user using values from UserUpdateDTO.
      *
-     * Validation for partial fields (e.g., email format) is handled inside UserMapper.updateUserFromDto().
-     * This method only checks user existence and delegates further validation to the mapper.
+     * This method first ensures the user exists. Field-level validation (e.g., email format)
+     * is delegated to UserMapper.updateUserFromDto(). Only non-null fields in the DTO will be applied,
+     * allowing for partial updates.
      *
-     * @param userId The ID of the user to update.
-     * @param userUpdateDTO The update fields.
-     * @return Updated user DTO.
-     * @throws NotFoundException if the user doesn't exist.
-     * @throws IllegalArgumentException if validation fails in the mapper.
+     * @param userId         The ID of the user to update.
+     * @param userUpdateDTO  The DTO containing update fields (can be partial).
+     * @return               The updated user as a UserOutputDTO.
+     * @throws NotFoundException         If the user with the given ID is not found.
+     * @throws IllegalArgumentException If validation fails inside the mapper.
      */
-
     public UserOutputDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -136,8 +144,25 @@ public class UserService {
         }
     }
 
+    public List<UserOutputDTO> getAllUsersByRoleAndLocation(String role, String location) {
+        try {
+            UserRole userRole = UserRole.valueOf(role.toUpperCase());
+            return userRepository.findAllByRoleAndLocation(userRole.name(), location).stream()
+                    .map(userMapper::toDto)
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            throw new NotFoundException("Invalid user role: " + role);
+        }
+    }
+
     public List<UserOutputDTO> getAllUsersByUserNameOrCatName(String searchTerm) {
         return userRepository.findByUserNameOrCatName(searchTerm).stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    public List<UserOutputDTO> getAllUsersByCatName(String catName) {
+        return userRepository.findAllUsersByCatName(catName).stream()
                 .map(userMapper::toDto)
                 .toList();
     }
