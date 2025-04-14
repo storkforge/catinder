@@ -1,12 +1,24 @@
 package org.example.springboot25.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class RecommendationInputDTO {
 
+    @NotBlank
     private String recommendationCategory;
+
+    @NotBlank
     private String recommendationProductName;
+
     private String recommendationProductDescription;
+
     private String recommendationProductLink;
+
+    @NotNull
     private Long userId;
+
+    @NotNull
     private Long catId;
 
     public String getRecommendationCategory() {
