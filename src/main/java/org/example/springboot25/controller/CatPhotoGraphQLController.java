@@ -39,13 +39,13 @@ public class CatPhotoGraphQLController {
     }
 
     @QueryMapping
-    public CatPhotoOutputDTO getCatPhotoById(@Argument Long id) {
+    public CatPhotoOutputDTO getCatPhotoById(@Argument("catPhotoId") Long id) {
         CatPhoto catPhoto = catPhotoService.getCatPhotoById(id)
                 .orElseThrow(() -> new NotFoundException("CatPhoto not found"));
         return catPhotoMapper.toDTO(catPhoto);
     }
 
-    // Mutation: Create a new CatPhoto
+
     @MutationMapping
     public CatPhotoOutputDTO createCatPhoto(@Argument("input") @Valid CatPhotoInputDTO input) {
         Cat cat = catService.getCatById(input.getCatPhotoCatId())

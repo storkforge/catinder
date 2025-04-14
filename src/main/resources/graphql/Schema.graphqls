@@ -4,7 +4,7 @@ type Query {
     getUserByUserName(userName: String!): UserOutputDTO
 
     getAllCatPhotos: [CatPhoto]
-    getCatPhotoById(id: ID!): CatPhoto
+    getCatPhotoById(catPhotoId: ID!): CatPhoto
 }
 
 type Mutation {
@@ -14,7 +14,7 @@ type Mutation {
 
     createCatPhoto(input: CatPhotoInput!): CatPhoto
     updateCatPhoto(id: ID!, input: CatPhotoUpdate!): CatPhoto
-    deleteCatPhoto(id: ID!): Boolean!
+    deleteCatPhoto(id: ID!): Boolean
 }
 
 scalar DateTime
