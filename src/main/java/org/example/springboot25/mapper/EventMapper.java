@@ -40,9 +40,9 @@ public class EventMapper {
             event.setEventLocation(dto.getEventLocation());
         }
         if (dto.getEventDateTime() != null) {
-                event.setEventDateTime(dto.getEventDateTime().toLocalDateTime());
-            }
+            event.setEventDateTime(dto.getEventDateTime().toLocalDateTime());
         }
+    }
 
 
         public EventOutputDTO toDTO(Event event) {
