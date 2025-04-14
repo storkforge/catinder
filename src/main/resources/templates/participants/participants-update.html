@@ -11,42 +11,42 @@
 <div th:replace="fragments/header"></div>
 
 <div class="form-container">
-    <h2>Update Event Participation</h2>
+    <h2 th:text="#{update.event.participation}">Update Event Participation</h2>
 
     <form th:action="@{/participants/update}" method="post">
         <div class="form-row">
-            <label for="userName">Current Username:</label>
+            <label for="userName" th:text="#{current.username}">Current Username:</label>
             <input type="text" id="userName" name="userName" required/>
         </div>
 
         <div class="form-row">
-            <label for="newUserName">New Username:</label>
+            <label for="newUserName" th:text="#{new.username}">New Username:</label>
             <input type="text" id="newUserName" name="newUserName" required/>
         </div>
 
-
         <div class="form-row">
-            <label for="eventName">Current Event Name:</label>
+            <label for="eventName" th:text="#{current.event.name}">Current Event Name:</label>
             <input type="text" id="eventName" name="eventName" required/>
         </div>
 
         <div class="form-row">
-            <label for="newEventName">New Event Name:</label>
+            <label for="newEventName" th:text="#{new.event.name}">New Event Name:</label>
             <input type="text" id="newEventName" name="newEventName" required/>
         </div>
 
         <div class="form-row">
-            <button type="submit">Update</button>
+            <button type="submit" th:text="#{update}">Update</button>
         </div>
     </form>
 </div>
 
+<!-- kolla igenom -->
 <div th:if="${success}" class="success-message">
-    <p th:text="${success}">Update successful!</p>
+    <p th:text="#{update.success}">Update successful!</p>
 </div>
 
 <div th:if="${error}" class="error-message">
-    <p th:text="${error}">An error occurred.</p>
+    <p th:text="#{error.occurred}">An error occurred.</p>
 </div>
 
 </body>
