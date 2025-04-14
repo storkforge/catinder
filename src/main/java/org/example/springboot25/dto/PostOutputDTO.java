@@ -34,11 +34,11 @@ public class PostOutputDTO {
         this.postImageUrl = postImageUrl;
     }
 
-    public OffsetDateTime  getPostCreatedAt() {
+    public OffsetDateTime getPostCreatedAt() {
         return postCreatedAt;
     }
 
-    public void setPostCreatedAt(OffsetDateTime  postCreatedAt) {
+    public void setPostCreatedAt(OffsetDateTime postCreatedAt) {
         this.postCreatedAt = postCreatedAt;
     }
 
