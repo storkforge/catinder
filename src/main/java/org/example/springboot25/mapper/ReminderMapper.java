@@ -8,6 +8,8 @@ import org.example.springboot25.entities.Reminder;
 import org.example.springboot25.entities.User;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneOffset;
+
 @Component
 public class ReminderMapper {
 
@@ -26,7 +28,9 @@ public class ReminderMapper {
         dto.setId(reminder.getReminderId());
         dto.setReminderType(reminder.getReminderType());
         dto.setReminderInfo(reminder.getReminderInfo());
-        dto.setReminderDate(reminder.getReminderDate());
+        if (reminder.getReminderDate() != null) {
+            dto.setReminderDate(reminder.getReminderDate().atOffset(ZoneOffset.UTC));
+        }
         dto.setUserId(reminder.getUser().getUserId());
         dto.setCatId(reminder.getCatReminderCat().getCatId());
         return dto;
@@ -36,8 +40,9 @@ public class ReminderMapper {
         if (input.getReminderType() != null) existingReminder.setReminderType(input.getReminderType());
         if (input.getReminderInfo() != null) existingReminder.setReminderInfo(input.getReminderInfo());
         if (input.getReminderDate() != null) existingReminder.setReminderDate(input.getReminderDate());
-        existingReminder.setUser(user);
-        existingReminder.setCatReminderCat(cat);
+        if (user != null) existingReminder.setUser(user);
+        if (cat != null) existingReminder.setCatReminderCat(cat);
+
         return existingReminder;
     }
 }

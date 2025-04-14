@@ -1,13 +1,12 @@
 package org.example.springboot25.dto;
-
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class ReminderOutputDTO {
 
     private Long id;
     private String reminderType;
     private String reminderInfo;
-    private LocalDateTime reminderDate;
+    private OffsetDateTime reminderDate;
     private Long userId;
     private Long catId;
 
@@ -35,11 +34,11 @@ public class ReminderOutputDTO {
         this.reminderInfo = reminderInfo;
     }
 
-    public LocalDateTime getReminderDate() {
+    public OffsetDateTime getReminderDate() {
         return reminderDate;
     }
 
-    public void setReminderDate(LocalDateTime reminderDate) {
+    public void setReminderDate(OffsetDateTime reminderDate) {
         this.reminderDate = reminderDate;
     }
 
