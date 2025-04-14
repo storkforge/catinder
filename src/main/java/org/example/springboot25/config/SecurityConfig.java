@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/premium/**").hasRole("PREMIUM")
                         .requestMatchers("/user/**").hasAnyRole("BASIC", "PREMIUM")
-                        .requestMatchers("/register", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
+                        .requestMatchers("/", "/register", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .rememberMe(remember -> remember
@@ -46,21 +46,17 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/") // Redirect to homepage after logout
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .userDetailsService(customUserDetailsService)
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .permitAll()
-                )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((_req, res, auth) -> {
                             boolean isAdmin = auth.getAuthorities().stream()
                                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-                            res.sendRedirect(isAdmin ? "/admin/dashboard" : "/dashboard");
+                            res.sendRedirect(isAdmin ? "/admin/" : "/");
                         })
                 )
                 .build();
