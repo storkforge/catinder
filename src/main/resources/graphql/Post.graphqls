@@ -1,4 +1,4 @@
-type Post {
+type PostOutputDTO {
     id: ID!
     postText: String!
     postImageUrl: String
@@ -8,7 +8,7 @@ type Post {
 
 input PostInput {
     postText: String!
-    postImageUrl: String
+    postImageUrl: String!
     userPostAuthorId: ID!
 }
 
