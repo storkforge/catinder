@@ -9,6 +9,36 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
+    // Konvertera från UserOutputDTO till User
+    public User toUser(UserOutputDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("UserOutputDTO cannot be null");
+        }
+        User user = new User();
+        user.setUserId(dto.getUserId());
+        user.setUserFullName(dto.getUserFullName());
+        user.setUserName(dto.getUserName());
+        user.setUserEmail(dto.getUserEmail());
+        user.setUserLocation(dto.getUserLocation());
+        user.setUserRole(dto.getUserRole());
+        user.setUserAuthProvider(dto.getUserAuthProvider());
+        return user;
+    }
+
+    // Konvertera från User till UserUpdateDTO
+    public UserUpdateDTO toUserUpdateDTO(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setUserFullName(user.getUserFullName());
+        dto.setUserName(user.getUserName());
+        dto.setUserEmail(user.getUserEmail());
+        dto.setUserLocation(user.getUserLocation());
+        dto.setUserRole(user.getUserRole());
+        dto.setUserAuthProvider(user.getUserAuthProvider());
+        return dto;
+    }
     public User toUser(UserInputDTO dto) {
         if (dto == null) {
             throw new IllegalArgumentException("UserInputDTO cannot be null");
@@ -26,7 +56,11 @@ public class UserMapper {
         user.setUserAuthProvider(dto.getUserAuthProvider());
         return user;
     }
-
+    /**
+     * Applies partial updates from UserUpdateDTO to a User entity.
+     * Performs basic field validation (e.g., email format).
+     * This method is used by the service layer to delegate update field logic.
+     */
     public void updateUserFromDto(UserUpdateDTO dto, User user) {
         if(dto.getUserEmail() != null &&  !isValidEmail(dto.getUserEmail())) {
             throw new IllegalArgumentException("Invalid email format");

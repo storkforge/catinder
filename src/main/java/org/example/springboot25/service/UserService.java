@@ -66,7 +66,18 @@ public class UserService {
         User user = userMapper.toUser(userInputDTO);
         return userMapper.toDto(userRepository.save(user));
     }
-
+    /**
+     * Updates a user using values from UserUpdateDTO.
+     *
+     * Validation for partial fields (e.g., email format) is handled inside UserMapper.updateUserFromDto().
+     * This method only checks user existence and delegates further validation to the mapper.
+     *
+     * @param userId The ID of the user to update.
+     * @param userUpdateDTO The update fields.
+     * @return Updated user DTO.
+     * @throws NotFoundException if the user doesn't exist.
+     * @throws IllegalArgumentException if validation fails in the mapper.
+     */
     public UserOutputDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
