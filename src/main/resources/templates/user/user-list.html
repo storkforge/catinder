@@ -8,14 +8,14 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
-<h2>Users:</h2>
+<h2 th:text="#{Users}">Users:</h2>
 <!-- If there is a message (e.g., no users found), display it -->
 <div th:if="${message}">
     <p th:text="${message}"></p>
 </div>
 
-<!-- Otherwise, display the list of users -->
-<div th:if="${users}">
+<!-- Otherwise, display the list of users KOLLA ÖVERSÄTTNING-->
+<div th:text="#{Users}" th:if="${users}">
     <ul>
         <li th:each="user : ${users}"
             th:text="|${user.userName} - ${user.userFullName}|"></li>
