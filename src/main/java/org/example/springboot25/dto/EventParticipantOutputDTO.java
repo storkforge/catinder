@@ -5,6 +5,14 @@ public class EventParticipantOutputDTO {
     private String userName;
     private String eventName;
 
+    public EventParticipantOutputDTO() {}
+
+    public EventParticipantOutputDTO(Long id, String userName, String eventName) {
+        this.id = id;
+        this.userName = userName;
+        this.eventName = eventName;
+    }
+
     public Long getId() {
         return id;
     }
