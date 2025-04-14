@@ -95,7 +95,7 @@ public class AdminController {
                 "User admin created a post",
                 "User catlover updated profile"
         ));
-        return "admin/logs";
+        return "admin/dashboard";
     }
 
     // Change user role
