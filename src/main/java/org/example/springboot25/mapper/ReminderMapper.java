@@ -24,6 +24,9 @@ public class ReminderMapper {
     }
 
     public ReminderOutputDTO toDTO(Reminder reminder) {
+        if (reminder == null) {
+            throw new IllegalArgumentException("Reminder must not be null");
+        }
         ReminderOutputDTO dto = new ReminderOutputDTO();
         dto.setId(reminder.getReminderId());
         dto.setReminderType(reminder.getReminderType());
@@ -31,8 +34,12 @@ public class ReminderMapper {
         if (reminder.getReminderDate() != null) {
             dto.setReminderDate(reminder.getReminderDate().atOffset(ZoneOffset.UTC));
         }
-        dto.setUserId(reminder.getUser().getUserId());
-        dto.setCatId(reminder.getCatReminderCat().getCatId());
+        if (reminder.getUser() != null) {
+            dto.setUserId(reminder.getUser().getUserId());
+        }
+        if (reminder.getCatReminderCat() != null) {
+            dto.setCatId(reminder.getCatReminderCat().getCatId());
+        }
         return dto;
     }
 
