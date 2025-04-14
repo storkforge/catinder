@@ -14,6 +14,12 @@ import java.time.ZoneOffset;
 public class PostMapper {
 
     public Post toEntityInput(PostInputDTO input, User user) {
+        if (input == null) {
+            throw new IllegalArgumentException("PostInputDTO cannot be null");
+        }
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         Post post = new Post();
         post.setPostText(input.getPostText());
         post.setPostImageUrl(input.getPostImageUrl());
@@ -23,6 +29,9 @@ public class PostMapper {
     }
 
     public PostOutputDTO toDTO(Post post) {
+        if (post == null) {
+            throw new IllegalArgumentException("Post cannot be null");
+        }
         PostOutputDTO dto = new PostOutputDTO();
         dto.setId(post.getPostId());
         dto.setPostText(post.getPostText());
@@ -36,6 +45,12 @@ public class PostMapper {
     }
 
     public Post updateFromDto(PostUpdateDTO dto, Post post) {
+        if (dto == null) {
+            throw new IllegalArgumentException("PostUpdateDTO cannot be null");
+        }
+        if (post == null) {
+            throw new IllegalArgumentException("Post cannot be null");
+        }
         if (dto.getPostText() != null) {
             post.setPostText(dto.getPostText());
         }
