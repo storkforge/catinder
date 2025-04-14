@@ -92,13 +92,17 @@ public class EventParticipantService {
         Event event = eventRepository.findByEventName(eventName)
                 .orElseThrow(() -> new NotFoundException("Event not found: " + eventName));
 
+        // Check if another participant with the same user and event already exists
+        if (eventParticipantRepository.existsByUserAndEvent(user, event) &&
+                !participant.getUser().equals(user) && !participant.getEvent().equals(event)) {
+            throw new ConflictException("User is already participating in this event.");
+        }
+
         participant.setUser(user);
         participant.setEvent(event);
 
         return eventParticipantRepository.save(participant);
     }
-
-
 
     public void deleteParticipant(String userName, String eventName) {
         EventParticipant participant = getParticipant(userName, eventName);
