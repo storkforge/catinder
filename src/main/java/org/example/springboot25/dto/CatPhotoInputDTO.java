@@ -66,7 +66,7 @@ public class CatPhotoInputDTO {
     @Override
     public String toString() {
         return "CatPhotoInputDTO{" +
-                "catPhotoName='" + catPhotoCaption + '\'' +
+                "catPhotoCaption='" + catPhotoCaption + '\'' +
                 ", catPhotoUrl='" + catPhotoUrl + '\'' +
                 ", catPhotoCatId=" + catPhotoCatId +
                 '}';
