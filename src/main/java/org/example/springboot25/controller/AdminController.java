@@ -52,14 +52,13 @@ public class AdminController {
         }
     }
 
-    // Edit user form
     @GetMapping("/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         try {
             UserOutputDTO userDTO = userService.getUserById(id);
             UserUpdateDTO updateDTO = userMapper.toUserUpdateDTO(userMapper.toUser(userDTO));
             model.addAttribute("user", updateDTO);
-            model.addAttribute("userId", userDTO.getUserId()); // Needed for form binding
+            model.addAttribute("userId", id);
             return "admin/user-edit";
         } catch (Exception e) {
             log.error("Could not load user with ID {}: {}", id, e.getMessage());
@@ -83,7 +82,7 @@ public class AdminController {
             log.error("Unexpected error during user update", e);
             model.addAttribute("error", "An unexpected error occurred.");
         }
-        model.addAttribute("user", userUpdateDTO);
+        model.addAttribute("userId", userUpdateDTO);
         return "admin/user-edit";
     }
 
