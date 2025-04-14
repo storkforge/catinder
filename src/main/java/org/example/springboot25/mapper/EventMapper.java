@@ -6,8 +6,6 @@ import org.example.springboot25.dto.EventUpdateDTO;
 import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.User;
 import org.springframework.stereotype.Component;
-
-import java.sql.Time;
 import java.time.ZoneOffset;
 
 @Component
@@ -47,7 +45,6 @@ public class EventMapper {
             event.setEventDateTime(dto.getEventDateTime().toLocalDateTime());
         }
     }
-
 
     public EventOutputDTO toDTO(Event event) {
         EventOutputDTO dto = new EventOutputDTO();
