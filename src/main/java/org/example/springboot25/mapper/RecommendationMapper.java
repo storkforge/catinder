@@ -29,7 +29,7 @@ public class RecommendationMapper {
         dto.setRecommendationProductName(recommendation.getRecommendationProductName());
         dto.setRecommendationProductDescription(recommendation.getRecommendationProductDescription());
         dto.setRecommendationProductLink(recommendation.getRecommendationProductLink());
-        dto.setUserId(recommendation.getUser().getUserId());
+        dto.setUserId(recommendation.getUser() != null ? recommendation.getUser().getUserId() : null);
         dto.setCatId(recommendation.getCatRecommendationCat() != null ? recommendation.getCatRecommendationCat().getCatId() : null);
         return dto;
     }
@@ -48,8 +48,12 @@ public class RecommendationMapper {
             existingRecommendation.setRecommendationProductLink(input.getRecommendationProductLink());
         }
 
-        existingRecommendation.setUser(user);
-        existingRecommendation.setCatRecommendationCat(cat);
+        if (user != null) {
+            existingRecommendation.setUser(user);
+        }
+        if (cat != null) {
+            existingRecommendation.setCatRecommendationCat(cat);
+        }
         return existingRecommendation;
     }
 }
