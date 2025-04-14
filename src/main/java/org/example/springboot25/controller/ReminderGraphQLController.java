@@ -1,5 +1,7 @@
 package org.example.springboot25.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.example.springboot25.dto.ReminderInputDTO;
 import org.example.springboot25.dto.ReminderOutputDTO;
 import org.example.springboot25.dto.ReminderUpdateDTO;
@@ -48,10 +50,18 @@ public class ReminderGraphQLController {
     }
 
     @MutationMapping
-    public ReminderOutputDTO createReminder(@Argument("input") ReminderInputDTO input) {
+    public ReminderOutputDTO createReminder(@Argument("input") @Valid ReminderInputDTO input) {
+
+        if (input.getReminderDate() == null) {
+            throw new ValidationException("Reminder date is required");
+        }
+        if (input.getUserId() == null) {
+            throw new ValidationException("User ID is required");
+        }
+
         User user = userService.getUserById(input.getUserId());
         Cat cat = catService.getCatById(input.getCatId())
-                .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatId()));
+                .orElseThrow(() -> new NotFoundException("Cat with ID: " + input.getCatId() + " not found"));
         Reminder reminder = reminderService.createReminder(reminderMapper.toEntityInput(input, user, cat));
         return reminderMapper.toDTO(reminder);
     }
@@ -70,7 +80,7 @@ public class ReminderGraphQLController {
         Cat cat;
         if (input.getCatId() != null) {
             cat = catService.getCatById(input.getCatId())
-                    .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatId()));
+                    .orElseThrow(() -> new NotFoundException("Cat with ID: " + input.getCatId() + " not found") );
         } else {
             cat = existing.getCatReminderCat();
         }
