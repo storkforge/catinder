@@ -10,27 +10,27 @@
 
 <div th:replace="fragments/header"></div>
 
-<h2 style="text-align: center; margin-top: 40px;">Find Participants for an Event</h2>
+<h2 th:text="#{find.participants.for.event}" style="text-align: center; margin-top: 40px;">Find Participants for an Event</h2>
 
 <div class="form-container" style="text-align: center;">
-    <p>Enter the event name to see which users are participating in it.</p>
+    <p th:text="#{enter.event.name.to.see.users}" >Enter the event name to see which users are participating in it.</p>
 
     <form th:action="@{/eventSearch}" method="get">
         <div class="form-row" style="margin: 15px;">
-            <label for="eventName">Event name:</label><br>
-            <input type="text" id="eventName" name="eventName" placeholder="e.g. CatMeeting" required/>
+            <label th:text="#{event.name.with.colon}" for="eventName">Event name:</label><br>
+            <input th:placeholder="#{eg.catmeeting}" type="text" id="eventName" name="eventName" placeholder="e.g. CatMeeting" required/>
         </div>
         <div class="form-row" style="margin: 15px;">
-            <button type="submit">Search</button>
+            <button th:text="#{search}" type="submit">Search</button>
         </div>
     </form>
 </div>
 
 <div th:if="${participants != null}" style="text-align: center; margin-top: 30px;">
-    <h3>Participants for Selected Event</h3>
+    <h3 th:text="#{participants.for.selected.event}" >Participants for Selected Event</h3>
 
     <div th:if="${#lists.isEmpty(participants)}">
-        <p>No participants found for this event.</p>
+        <p th:text="#{no.participants.found.for.this.event}" >No participants found for this event.</p>
     </div>
 
     <div th:unless="${#lists.isEmpty(participants)}">

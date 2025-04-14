@@ -10,10 +10,10 @@
 
 <div th:replace="fragments/header"></div>
 
-<h2 style="text-align: center; margin-top: 40px;">All Event Participations</h2>
+<h2 th:text="#{all.event.participations}" style="text-align: center; margin-top: 40px;">All Event Participations</h2>
 
 <div class="form-container" style="text-align: center; margin-top: 20px;">
-
+<!-- vad för text?-->
     <div th:if="${message}">
         <p th:text="${message}"></p>
     </div>
@@ -22,11 +22,11 @@
         <table class="table" style="margin: 0 auto; width: 100%; max-width: 800px; border-collapse: collapse;">
             <thead>
             <tr style="background-color: #f0f0f0;">
-                <th style="padding: 10px;">Participation ID</th>
-                <th style="padding: 10px;">Username</th>
-                <th style="padding: 10px;">User Email</th>
-                <th style="padding: 10px;">Event Name</th>
-                <th style="padding: 10px;">Event Location</th>
+                <th th:text="#{participation.id}" style="padding: 10px;">Participation ID</th>
+                <th th:text="#{user.name}" style="padding: 10px;">Username</th>
+                <th th:text="#{user.email}" style="padding: 10px;">User Email</th>
+                <th th:text="#{event.name}" style="padding: 10px;">Event Name</th>
+                <th th:text="#{event.location}" style="padding: 10px;">Event Location</th>
             </tr>
             </thead>
             <tbody>

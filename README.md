@@ -1,3 +1,7 @@
 # 🐱 Catinder
 
-Catinder är ett grupprojekt utvecklat som en del av en laboration i kursen Komplex Javaprogrammering, med fokus på fullstackutveckling i Spring Boot. Applikationen är en social plattform för kattägare där användare kan skapa profiler för sina katter, dela bilder och historier, hitta kattträffar i närheten och få AI-genererade rekommendationer för leksaker, mat och vårdtips.
+Catinder is a group project developed as part of a lab assignment in the course Advanced Java Programming, with a focus on full-stack development using Spring Boot.
+The application is a social platform for cat owners, where users can create profiles for their cats, share photos and stories, find local cat meetups, and receive AI-generated recommendations for toys, food, and care tips.
+
+The project also includes a REST API, GraphQL endpoints, and a responsive web interface built with Thymeleaf. It uses role-based authorization, GitHub Actions for CI, and is developed collaboratively by students using Git and GitHub.
+
