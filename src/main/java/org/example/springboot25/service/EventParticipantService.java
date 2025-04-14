@@ -21,19 +21,13 @@ public class EventParticipantService {
     private final EventParticipantRepository eventParticipantRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
-    private final UserService userService;
-    private final EventService eventService;
 
     public EventParticipantService(EventParticipantRepository eventParticipantRepository,
                                    UserRepository userRepository,
-                                   EventRepository eventRepository,
-                                   UserService userService,
-                                   EventService eventService) {
+                                   EventRepository eventRepository) {
         this.eventParticipantRepository = eventParticipantRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
-        this.userService = userService;
-        this.eventService = eventService;
     }
 
     public List<EventParticipant> getAllParticipants() {
