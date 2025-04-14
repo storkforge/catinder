@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 public class EventParticipantMapper {
 
     public EventParticipant toEntityInput(EventParticipantInputDTO dto, User user, Event event) {
+        if (dto == null || user == null || event == null) {
+            throw new IllegalArgumentException("DTO, User, and Event must not be null");
+        }
         EventParticipant ep = new EventParticipant();
         ep.setUser(user);
         ep.setEvent(event);
@@ -19,6 +22,9 @@ public class EventParticipantMapper {
     }
 
     public EventParticipant toEntityUpdate(EventParticipantUpdateDTO dto, User user, Event event) {
+        if (dto == null || user == null || event == null) {
+            throw new IllegalArgumentException("DTO, User, and Event must not be null");
+        }
         EventParticipant ep = new EventParticipant();
         ep.setUser(user);
         ep.setEvent(event);
