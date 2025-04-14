@@ -45,21 +45,29 @@ public class EventParticipantGraphQLController {
     }
 
     @MutationMapping
-    public EventParticipantOutputDTO updateEventParticipant(@Argument ("input")Long eventParticipantId, @Argument("input") EventParticipantUpdateDTO input) {
-        EventParticipant eventParticipant = eventPartService.updateParticipant(eventParticipantId, input.getUserName(), input.getEventName());
+    public EventParticipantOutputDTO updateEventParticipant(
+            @Argument("id") Long eventParticipantId,
+            @Argument("update") EventParticipantUpdateDTO input) {
+
+        EventParticipant eventParticipant = eventPartService.updateParticipant(
+                eventParticipantId,
+                input.getUserName(),
+                input.getEventName()
+        );
+
         return eventPartMapper.toDTO(eventParticipant);
     }
 
     @MutationMapping
-    public boolean deleteEventParticipant(@Argument String id) {
+    public boolean deleteEventParticipant(@Argument Long id) {
         try {
+            eventPartService.deleteParticipantById(String.valueOf(id));
             return true;
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid ID format: " + id);
         } catch (NotFoundException e) {
             return false;
         }
     }
+
 }
 
 

@@ -14,7 +14,7 @@ type Mutation {
     deleteUser(userId: ID!): Boolean
 
     createEventParticipant(input: EventParticipantInput!): EventParticipant
-    updateEventParticipant(id: ID!, input: EventParticipantUpdate!): EventParticipant
+    updateEventParticipant(id: ID!, update: EventParticipantUpdate!): EventParticipant
     deleteEventParticipant(id: ID!): Boolean!
 }
 
