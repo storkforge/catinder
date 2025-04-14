@@ -26,10 +26,14 @@ public class EventParticipantMapper {
     }
 
     public EventParticipantOutputDTO toDTO(EventParticipant entity) {
+        if (entity == null) {
+            return null;
+        }
+
         EventParticipantOutputDTO dto = new EventParticipantOutputDTO();
         dto.setId(entity.getEventParticipantId());
-        dto.setUserName(entity.getUser().getUserName());
-        dto.setEventName(entity.getEvent().getEventName());
+        dto.setUserName(entity.getUser() != null ? entity.getUser().getUserName() : null);
+        dto.setEventName(entity.getEvent() != null ? entity.getEvent().getEventName() : null);
         return dto;
     }
 }
