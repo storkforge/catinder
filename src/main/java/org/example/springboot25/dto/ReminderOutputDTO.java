@@ -1,5 +1,6 @@
 package org.example.springboot25.dto;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 public class ReminderOutputDTO {
 
@@ -57,4 +58,36 @@ public class ReminderOutputDTO {
     public void setCatId(Long catId) {
         this.catId = catId;
     }
+
+    @Override
+    public String toString() {
+        return "ReminderOutputDTO{" +
+                "id=" + id +
+                ", reminderType='" + reminderType + '\'' +
+                ", reminderInfo='" + reminderInfo + '\'' +
+                ", reminderDate=" + reminderDate +
+                ", userId=" + userId +
+                ", catId=" + catId +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReminderOutputDTO that = (ReminderOutputDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(reminderType, that.reminderType) &&
+                Objects.equals(reminderInfo, that.reminderInfo) &&
+                Objects.equals(reminderDate, that.reminderDate) &&
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(catId, that.catId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, reminderType, reminderInfo, reminderDate, userId, catId);
+    }
+
+
 }
