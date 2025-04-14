@@ -5,6 +5,7 @@ import org.example.springboot25.dto.PostOutputDTO;
 import org.example.springboot25.dto.PostUpdateDTO;
 import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.PostMapper;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
@@ -36,27 +37,59 @@ public class PostGraphQLController {
 
     @QueryMapping
     public PostOutputDTO getPostById(@Argument Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Post ID cannot be null");
+        }
+
         Post post = postService.getPostById(id);
+        if (post == null) {
+            throw new NotFoundException("Post with ID: " + id + " not found");
+        }
+
         return postMapper.toDTO(post);
     }
 
+
     @MutationMapping
     public PostOutputDTO createPost(@Argument("input") PostInputDTO input) {
-        User user = userService.getUserById(input.getUserPostAuthorId());  // No Optional needed here
+        if (input == null || input.getUserPostAuthorId() == null) {
+            throw new IllegalArgumentException("Invalid post input");
+        }
+        User user = userService.getUserById(input.getUserPostAuthorId());
+        if (user == null) {
+            throw new NotFoundException("User with ID: " + input.getUserPostAuthorId() + " not found");
+        }
         Post post = postService.createPost(postMapper.toEntityInput(input, user));
         return postMapper.toDTO(post);
     }
 
     @MutationMapping
     public PostOutputDTO updatePost(@Argument Long id, @Argument("input") PostUpdateDTO input) {
+        if (id == null) {
+            throw new IllegalArgumentException("Post ID cannot be null");
+        }
+        if (input == null) {
+            throw new IllegalArgumentException("Update input cannot be null");
+        }
         Post existingPost = postService.getPostById(id);
+        if (existingPost == null) {
+            throw new NotFoundException("Post with ID: " + id + " not found");
+        }
         Post updatedPost = postMapper.updateFromDto(input, existingPost);
-        postService.updatePost(id, updatedPost);
-        return postMapper.toDTO(updatedPost);
+        Post savedPost = postService.updatePost(id, updatedPost);
+        return postMapper.toDTO(savedPost);
     }
 
     @MutationMapping
     public boolean deletePost(@Argument Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Post ID cannot be null");
+        }
+
+        Post post = postService.getPostById(id);
+        if (post == null) {
+            throw new NotFoundException("Post with ID: " + id + " not found");
+        }
         postService.deletePost(id);
         return true;
     }
