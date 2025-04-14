@@ -17,31 +17,38 @@ import java.util.List;
 @Controller
 public class EventParticipantGraphQLController {
 
-    private final EventParticipantService eventPartService;
-    private final EventParticipantMapper eventPartMapper;
+    private final EventParticipantService eventParticipantService;
+    private final EventParticipantMapper eventParticipantMapper;
+
 
     public EventParticipantGraphQLController(EventParticipantService eventPartService, EventParticipantMapper eventPartMapper) {
-        this.eventPartService = eventPartService;
-        this.eventPartMapper = eventPartMapper;
+        this.eventParticipantService = eventPartService;
+        this.eventParticipantMapper = eventPartMapper;
     }
 
     @QueryMapping
     public List<EventParticipantOutputDTO> getAllEventParticipants() {
-        return eventPartService.getAllParticipants().stream()
-                .map(eventPartMapper::toDTO)
+        return eventParticipantService.getAllParticipants().stream()
+                .map(eventParticipantMapper::toDTO)
                 .toList();
     }
 
     @QueryMapping
     public EventParticipantOutputDTO getEventParticipantById(@Argument Long id) {
-        EventParticipant eventParticipant = eventPartService.getParticipantById(id);
-        return eventPartMapper.toDTO(eventParticipant);
+        EventParticipant eventParticipant = eventParticipantService.getParticipantById(id);
+        return eventParticipantMapper.toDTO(eventParticipant);
+    }
+
+    @QueryMapping
+    public EventParticipantOutputDTO getEventParticipantByUserName(@Argument String userName) {
+        EventParticipant eventParticipant = eventParticipantService.getParticipant(userName, null);
+        return eventParticipantMapper.toDTO(eventParticipant);
     }
 
     @MutationMapping
     public EventParticipantOutputDTO createEventParticipant(@Argument("input") EventParticipantInputDTO input) {
-        EventParticipant eventParticipant = eventPartService.addParticipant(input.getUserName(), input.getEventName());
-        return eventPartMapper.toDTO(eventParticipant);
+        EventParticipant eventParticipant = eventParticipantService.addParticipant(input.getUserName(), input.getEventName());
+        return eventParticipantMapper.toDTO(eventParticipant);
     }
 
     @MutationMapping
@@ -49,19 +56,19 @@ public class EventParticipantGraphQLController {
             @Argument("id") Long eventParticipantId,
             @Argument("update") EventParticipantUpdateDTO input) {
 
-        EventParticipant eventParticipant = eventPartService.updateParticipant(
+        EventParticipant eventParticipant = eventParticipantService.updateParticipant(
                 eventParticipantId,
                 input.getUserName(),
                 input.getEventName()
         );
 
-        return eventPartMapper.toDTO(eventParticipant);
+        return eventParticipantMapper.toDTO(eventParticipant);
     }
 
     @MutationMapping
     public boolean deleteEventParticipant(@Argument Long id) {
         try {
-            eventPartService.deleteParticipantById(String.valueOf(id));
+            eventParticipantService.deleteParticipantById(String.valueOf(id));
             return true;
         } catch (NotFoundException e) {
             return false;
