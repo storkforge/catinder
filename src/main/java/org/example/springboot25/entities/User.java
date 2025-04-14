@@ -20,14 +20,11 @@ public class User {
     @NotBlank
     private String userFullName;
 
-    @NotBlank
-    @Column(unique = true)
-    private String userName;
-
-    @Email
-    @NotBlank
     @Column(unique = true)
     private String userEmail;
+
+    @Column(unique = true)
+    private String userName;
 
     @NotBlank
     private String userLocation;
