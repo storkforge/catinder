@@ -4,9 +4,6 @@ import jakarta.validation.Valid;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
-import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.mapper.UserMapper;
-import org.example.springboot25.entities.User;
 import org.example.springboot25.service.UserService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -20,7 +17,7 @@ public class UserGraphQLController {
 
     private final UserService userService;
 
-    public UserGraphQLController(UserService userService, UserMapper userMapper) {
+    public UserGraphQLController(UserService userService) {
         this.userService = userService;
     }
 
@@ -58,30 +55,4 @@ public class UserGraphQLController {
             return false;
         }
     }
-
-    private void validateUserInput(UserInputDTO input) {
-       if (input == null) {
-           throw new IllegalArgumentException("User input cannot be null");
-       }
-       if (input.getUserFullName() == null || input.getUserFullName().trim().isEmpty()) {
-           throw new IllegalArgumentException("User full name cannot be null or empty");
-       }
-       if (input.getUserName() == null || input.getUserName().trim().isEmpty()) {
-           throw new IllegalArgumentException("Username is required");
-       }
-       if (input.getUserEmail() == null || input.getUserEmail().trim().isEmpty()) {
-           throw new IllegalArgumentException("Email is required");
-       }
-       if(input.getUserLocation() == null || input.getUserLocation().trim().isEmpty()) {
-           throw new IllegalArgumentException("Location is required");
-       }
-       if(input.getUserRole() == null) {
-           throw new IllegalArgumentException("Role is required");
-       }
-       if(input.getUserAuthProvider() == null || input.getUserAuthProvider().trim().isEmpty()) {
-           throw new IllegalArgumentException("Auth provider is required");
-       }
-     }
-
-
 }
