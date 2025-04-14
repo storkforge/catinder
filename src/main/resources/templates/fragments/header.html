@@ -1,14 +1,46 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <header th:fragment="header">
     <div class="header-left">
         <h1><span class="cat-emoji">🐱</span>Catinder</h1>
-        <a class="about-link" th:href="@{/about}">About</a>
+        <a class="about-link" th:href="@{/about}" th:text="#{about}">About</a>
     </div>
     <div class="header-right">
-        <button class="lang-button" aria-label="Change language" title="Change language">
-            &#127760; Language
+        <div sec:authorize="!isAuthenticated()">
+                <a class="header-button login-button" th:href="@{/oauth2/authorization/google}" title="Login">Login</a>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="header-button logout-button" title="Logout">Logout</button>
+            </form>
+        </div>
+        <button class="lang-button" id="langToggle" aria-label="Change language" title="Change language">
+            &#127760; <span th:text="#{language}">Language</span>
         </button>
+        <form id="langForm" th:action="@{/change-language}" method="get" style="display: none;">
+            <select name="lang" onchange="this.form.submit()">
+                <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                <option value="sv" th:selected="${#locale.language == 'sv'}">Svenska</option>
+                <option value="fr" th:selected="${#locale.language == 'fr'}">Français</option>
+            </select>
+        </form>
     </div>
+    <script>
+        const langButton = document.getElementById('langToggle');
+        const langForm = document.getElementById('langForm');
+
+        langButton.addEventListener('click', function() {
+            if (langForm.style.display === 'none' || langForm.style.display === '') {
+                langForm.style.display = 'block';
+            } else {
+                langForm.style.display = 'none';
+            }
+        });
+        document.addEventListener('click', function(event) {
+            if (!langButton.contains(event.target) && !langForm.contains(event.target)) {
+                langForm.style.display = 'none';
+            }
+        });
+    </script>
 </header>
 </html>
