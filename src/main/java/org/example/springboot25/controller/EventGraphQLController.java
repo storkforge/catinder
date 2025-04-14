@@ -56,7 +56,7 @@ public class EventGraphQLController {
     }
 
     @MutationMapping
-    public EventOutputDTO updateEvent(@Argument Long eventId, @Argument("input") EventUpdateDTO input) {
+    public EventOutputDTO updateEvent(@Argument Long eventId, @Argument("input") @Valid EventUpdateDTO input) {
         Event event = eventService.getEventById(eventId);
         eventMapper.updateEventFromDTO(input, event);
         return eventMapper.toDTO(eventService.updateEvent(eventId, event));
@@ -64,8 +64,13 @@ public class EventGraphQLController {
 
     @MutationMapping
     public boolean deleteEvent(@Argument Long eventId) {
-        eventService.deleteEvent(eventId);
-        return true;
+        try {
+            eventService.deleteEvent(eventId);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
+
 }
 

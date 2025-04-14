@@ -52,7 +52,7 @@ public class EventOutputDTO {
         this.eventDateTime = eventDateTime;
     }
 
-     public UserOutputDTO getUserEventPlanner() {
+    public UserOutputDTO getUserEventPlanner() {
         return userEventPlanner;
     }
 

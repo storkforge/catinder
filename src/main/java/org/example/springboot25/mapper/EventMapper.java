@@ -24,6 +24,7 @@ public class EventMapper {
         event.setEventName(dto.getEventName());
         event.setEventDescription(dto.getEventDescription());
         event.setEventLocation(dto.getEventLocation());
+        // Converting OffsetDateTime to LocalDateTime (timezone information is lost)
         event.setEventDateTime(dto.getEventDateTime().toLocalDateTime());
         event.setUserEventPlanner(user);
         return event;
@@ -45,19 +46,24 @@ public class EventMapper {
     }
 
 
-        public EventOutputDTO toDTO(Event event) {
+    public EventOutputDTO toDTO(Event event) {
         EventOutputDTO dto = new EventOutputDTO();
         dto.setEventId(event.getEventId());
         dto.setEventName(event.getEventName());
         dto.setEventDescription(event.getEventDescription());
         dto.setEventLocation(event.getEventLocation());
+
         if (event.getEventDateTime() != null) {
-            dto.setEventDateTime(event.getEventDateTime().atOffset(ZoneOffset.ofHours(2)));
+            // Get offset based on system timezone rules (handles DST)
+            ZoneOffset offset = ZoneOffset.systemDefault().getRules().getOffset(event.getEventDateTime());
+            dto.setEventDateTime(event.getEventDateTime().atOffset(offset));
         }
-            if (event.getUserEventPlanner() != null) {
-                dto.setUserEventPlanner(userMapper.toDto(event.getUserEventPlanner()));
-            }
+
+        if (event.getUserEventPlanner() != null) {
+            dto.setUserEventPlanner(userMapper.toDto(event.getUserEventPlanner()));
+        }
 
         return dto;
     }
+
 }
