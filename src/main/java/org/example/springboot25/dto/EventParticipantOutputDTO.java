@@ -1,5 +1,7 @@
 package org.example.springboot25.dto;
 
+import java.util.Objects;
+
 public class EventParticipantOutputDTO {
     private Long id;
     private String userName;
@@ -36,4 +38,28 @@ public class EventParticipantOutputDTO {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EventParticipantOutputDTO that)) return false;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(userName, that.userName) &&
+                Objects.equals(eventName, that.eventName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userName, eventName);
+    }
+
+    @Override
+    public String toString() {
+        return "EventParticipantOutputDTO{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", eventName='" + eventName + '\'' +
+                '}';
+    }
 }
+
