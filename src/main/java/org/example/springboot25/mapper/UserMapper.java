@@ -95,4 +95,18 @@ public class UserMapper {
         return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
     }
 
+    public UserUpdateDTO outputToUpdateDTO(UserOutputDTO userDTO) {
+        if (userDTO == null) {
+            throw new IllegalArgumentException("UserOutputDTO cannot be null");
+        }
+
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setUserFullName(userDTO.getUserFullName());
+        dto.setUserName(userDTO.getUserName());
+        dto.setUserEmail(userDTO.getUserEmail());
+        dto.setUserLocation(userDTO.getUserLocation());
+        dto.setUserRole(userDTO.getUserRole());
+        dto.setUserAuthProvider(userDTO.getUserAuthProvider());
+        return dto;
+    }
 }
