@@ -63,7 +63,23 @@ public class UserService {
         return userMapper.toDto(getUserByEmail(email));
     }
 
+    /**
+     * Creates a new user after validating uniqueness of email and username.
+     *
+     * @param userInputDTO DTO containing user registration data
+     * @return UserOutputDTO of the saved user
+     * @throws AlreadyExistsException if username or email already exists
+     */
+
     public UserOutputDTO addUser(UserInputDTO userInputDTO) {
+        if (userRepository.existsByUserEmail(userInputDTO.getUserEmail())) {
+            throw new AlreadyExistsException("Email is already in use.");
+        }
+
+        if (userRepository.existsByUserName(userInputDTO.getUserName())) {
+            throw new AlreadyExistsException("Username is already taken.");
+        }
+
         try {
             log.info("Creating user: {}", userInputDTO.getUserName());
             User user = userMapper.toUser(userInputDTO);
