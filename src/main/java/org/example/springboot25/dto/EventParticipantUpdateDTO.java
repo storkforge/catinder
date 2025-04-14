@@ -1,5 +1,7 @@
 package org.example.springboot25.dto;
 
+import java.util.Objects;
+
 public class EventParticipantUpdateDTO {
     private String userName;
     private String eventName;
@@ -31,19 +33,17 @@ public class EventParticipantUpdateDTO {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof EventParticipantUpdateDTO)) return false;
         EventParticipantUpdateDTO that = (EventParticipantUpdateDTO) o;
-
-        if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
-        return eventName != null ? eventName.equals(that.eventName) : that.eventName == null;
+        return Objects.equals(userName, that.userName) &&
+                Objects.equals(eventName, that.eventName);
     }
 
     @Override
     public int hashCode() {
-        int result = userName != null ? userName.hashCode() : 0;
-        result = 31 * result + (eventName != null ? eventName.hashCode() : 0);
-        return result;
+        return Objects.hash(userName, eventName);
     }
+
 
     @Override
     public String toString() {
