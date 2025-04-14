@@ -27,6 +27,10 @@ public class UserRestController {
     }
 
     private boolean isNotOwnerOrAdmin(Long targetUserId, User currentUser) {
+        if (targetUserId == null || currentUser == null || currentUser.getUserId() == null) {
+            return true; // Fail-safe: deny access if missing critical info
+        }
+
         boolean isOwner = targetUserId.equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
