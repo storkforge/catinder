@@ -94,6 +94,10 @@ public class EventParticipantViewController {
                                     @RequestParam String eventName,
                                     RedirectAttributes redirectAttributes) {
         try {
+            if (userName == null || userName.isEmpty() || eventName == null || eventName.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Username and event name are required");
+                return "redirect:/participants/delete";
+            }
             eventParticipantService.deleteParticipant(userName, eventName);
             redirectAttributes.addFlashAttribute("success", "Participant deleted successfully!");
         } catch (Exception e) {

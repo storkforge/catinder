@@ -86,7 +86,7 @@ public class PostViewController {
         try {
             postService.updatePost(postId, post);
             redirectAttributes.addFlashAttribute("update_success", "Post Updated!");
-        } catch (Error ex) {
+        } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
             return "redirect:/posts/" + postId + "/edit";
         }

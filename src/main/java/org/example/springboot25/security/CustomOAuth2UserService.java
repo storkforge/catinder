@@ -49,15 +49,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } catch (NotFoundException e) {
             User user = new User();
             user.setUserEmail(email);
-            user.setUserFullName(oAuth2User.getAttribute("name"));
+            String fullName = oAuth2User.getAttribute("name");
+            user.setUserFullName(fullName != null ? fullName : "");
             user.setUserName(RandomUsernameGenerator.getRandomUsername());
-            user.setUserAuthProvider("google");
+            String providerName = userRequest.getClientRegistration().getRegistrationId();
+            user.setUserAuthProvider(providerName);
             user.setUserRole(UserRole.BASIC);
             userService.addUser(user);
             logger.info("Provisioned new user: {}", email);
         }
+        User finalUser = userService.getUserByEmail(email);
         return new DefaultOAuth2User(
-                Collections.singleton(() -> "ROLE_BASIC"),
+                Collections.singleton(() -> "ROLE_" + finalUser.getUserRole().name()),
                 oAuth2User.getAttributes(),
                 "sub"
         );

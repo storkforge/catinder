@@ -25,7 +25,7 @@ public class Recommendation {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "recommendation_user_id")
+    @JoinColumn(name = "recommendation_user_id", nullable = false)
     private User user;
 
     @NotNull
