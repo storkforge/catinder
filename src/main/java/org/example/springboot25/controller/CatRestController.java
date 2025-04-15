@@ -1,5 +1,8 @@
 package org.example.springboot25.controller;
 
+import org.example.springboot25.dto.CatInputDTO;
+import org.example.springboot25.dto.CatOutputDTO;
+import org.example.springboot25.dto.CatUpdateDTO;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
@@ -35,7 +38,6 @@ public class CatRestController {
         if (cat.getUserCatOwner() == null) {
             return true; // Om ägare saknas, neka åtkomst
         }
-
         boolean isOwner = cat.getUserCatOwner().getUserId().equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
@@ -43,64 +45,54 @@ public class CatRestController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public List<Cat> getAllCats(Authentication auth) {
-        User currentUser = (User) auth.getPrincipal();
-        return catService.getAllCatsByUser(currentUser);
+    public List<CatOutputDTO> getAllCats(Authentication auth) {
+        User currentUser = userService.getUserByUserName(auth.getName());
+        return catService.getAllCatsByOwner(currentUser);
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{catId}")
-    public ResponseEntity<Cat> getCatById(@PathVariable Long catId, Authentication auth) {
+    public CatOutputDTO getCatById(@PathVariable Long catId, Authentication auth) {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
-
         User current = userService.getUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(cat, current)) {
             throw new AccessDeniedException("You can only access your own cats.");
         }
-
-        return ResponseEntity.ok(cat);
+        return catService.toOutputDTO(cat);
     }
 
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM')")
     @PostMapping
-    public ResponseEntity<Cat> createCat(@RequestBody Cat cat, Authentication auth) {
-        User currentUser = userService.getUserByUserName(auth.getName());
-        cat.setUser(currentUser);
-        Cat createdCat = catService.createCat(cat);
-
-        return ResponseEntity
-                .created(URI.create("/api/cats/" + createdCat.getCatId()))
-                .body(createdCat);
+    public ResponseEntity<CatOutputDTO> createCat(@RequestBody CatInputDTO dto, Authentication auth) {
+        User owner = userService.getUserByUserName(auth.getName());
+        CatOutputDTO created = catService.createCat(dto, owner);
+        return ResponseEntity.created(URI.create("/api/cats/" + created.getCatId())).body(created);
     }
 
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PutMapping("/{catId}")
-    public ResponseEntity updateCat(@PathVariable Long catId, @RequestBody Cat catDetails, Authentication auth) {
+    public ResponseEntity<CatOutputDTO> updateCat(@PathVariable Long catId, @RequestBody CatInputDTO dto, Authentication auth) {
         Cat existing = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
-
         User currentUser = userService.getUserByUserName(auth.getName());
-        if (isNotOwnerOrAdmin(catDetails, currentUser)) {
+        if (isNotOwnerOrAdmin(existing, currentUser)) {
             throw new AccessDeniedException("You can only access your own cats.");
         }
-        Cat updatedCat = catService.updateCat(catId, catDetails);
-        return ResponseEntity.ok(updatedCat);
+        CatOutputDTO updated = catService.updateCat(catId, dto);
+        return ResponseEntity.ok(updated);
     }
 
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PatchMapping("/{catId}")
-    public ResponseEntity<Cat> partialUpdateCat(@PathVariable Long catId, @RequestBody Map<String, Object> updates, Authentication auth) {
+    public CatOutputDTO partialUpdateCat(@PathVariable Long catId, @RequestBody Map<String, Object> updates, Authentication auth) {
         Cat existing = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
-
-        User current = userService.getUserByUserName(auth.getName());
-        if (isNotOwnerOrAdmin(existing, current)) {
+        User currentUser = userService.getUserByUserName(auth.getName());
+        if (isNotOwnerOrAdmin(existing, currentUser)) {
             throw new AccessDeniedException("You can only update your own cats.");
         }
-
-        Cat updatedCat = catService.partialUpdateCat(catId, updates);
-        return ResponseEntity.ok(updatedCat);
+        return catService.partialUpdateCat(catId, updates);
     }
 
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
@@ -108,12 +100,10 @@ public class CatRestController {
     public ResponseEntity<Void> deleteCat(@PathVariable Long catId, Authentication auth) {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
-
-        User current = userService.getUserByUserName(auth.getName());
-        if (isNotOwnerOrAdmin(cat, current)) {
+        User currentUser = userService.getUserByUserName(auth.getName());
+        if (isNotOwnerOrAdmin(cat, currentUser)) {
             throw new AccessDeniedException("You can only delete your own cats.");
         }
-
         catService.deleteCat(catId);
         return ResponseEntity.noContent().build();
     }
