@@ -32,19 +32,32 @@
         </div>
         <div class="form-row">
             <label for="userRole">Subscription:</label>
-            <input type="text" id="userRole" th:field="*{userRole}"/>
+            <select id="userRole" th:field="*{userRole}" required>
+                <option value="" disabled>Select an option</option>
+                <option value="BASIC">BASIC</option>
+                <option value="PREMIUM">PREMIUM</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
         </div>
         <div class="form-row">
             <label for="userAuthProvider">Social login:</label>
-            <input type="text" id="userAuthProvider" th:field="*{userAuthProvider}"/>
+            <select id="userAuthProvider" th:field="*{userAuthProvider}" required>
+                <option value="google">Google</option>
+            </select>
         </div>
         <div class="form-row button-row">
             <button type="submit" class="save-button">Save</button>
-            <div id="successMessage" class="success-message" th:if="${update_success}"
-                 th:text="${update_success}"></div>
-            <div class="error-message" th:if="${error}" th:text="${error}"></div>
         </div>
-    </form>
+        <div id="successMessage">
+            <p  class="success-message" th:if="${update_success}"
+                 th:text="${update_success}">
+            </p>
+            <p class="error-message" th:if="${error}"
+                 th:text="${error}">
+            </p>
+        </div>
+</div>
+</form>
 </div>
 <div>
     <form th:action="@{/users/{userId}(userId=${user.userId})}" th:method="delete">
@@ -58,10 +71,11 @@
     </form>
 </div>
 <script>
+    // Hide the success message after 5 seconds
     setTimeout(function () {
-        var successMsg = document.getElementById('successMessage');
-        if (successMsg) {
-            successMsg.style.display = 'none';
+        var successContent = document.querySelector('#successMessage');
+        if (successContent) {
+            successContent.style.opacity = '0';
         }
     }, 5000);
 </script>

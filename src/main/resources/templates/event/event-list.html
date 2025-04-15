@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Catinder - Events</title>
@@ -8,34 +8,37 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
+
+<h2>All Events</h2>
 <div class="header-nav">
     <a class="submit create-button" th:href="@{/events/add}">
         <span>Create New Event</span>
     </a>
 </div>
-<h2>Upcoming Cat Events</h2>
-
-<!-- If the list is empty -->
-<div th:if="${#lists.isEmpty(events)}">
-    <p>No events available at the moment.</p>
+<div class="table-container">
+    <table id="event-table" th:if="${events}">
+        <thead>
+        <tr class="header-row">
+            <th>Event Name</th>
+            <th>Location</th>
+            <th>Date &amp; Time</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterate over events -->
+        <tr class="data-row" th:each="event : ${events}">
+            <td th:text="${event.eventName}"></td>
+            <td th:text="${event.eventLocation}"></td>
+            <td th:text="${#temporals.format(event.eventDateTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <a th:href="@{/events/event-details/{eventId}(eventId=${event.eventId})}" class="lang-button" style="color: black">
+                    View Details
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
-
-<!-- If events exist -->
-<div th:if="${!#lists.isEmpty(events)}">
-    <ul>
-        <li th:each="event : ${events}">
-            <div>
-                <p><strong>Name:</strong> <span th:text="${event.eventName}">Event Name</span></p>
-                <p><strong>Description:</strong> <span th:text="${event.eventDescription}">Description</span></p>
-                <p><strong>Location:</strong> <span th:text="${event.eventLocation}">Location</span></p>
-                <p><strong>Date:</strong>
-                    <span th:text="${#temporals.format(event.eventDateTime, 'yyyy-MM-dd HH:mm')}">Date</span>
-                </p>
-                <hr/>
-            </div>
-        </li>
-    </ul>
-</div>
-
 </body>
 </html>

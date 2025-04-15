@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Event Details</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+
+<!-- Container that mimics your add-user form container style -->
+<main class="form-container event-meta-container">
+    <!-- Event Header -->
+    <h2 th:text="${selectedEvent.eventName}">Event Name</h2>
+
+    <!-- Event Details Section -->
+    <div class="event-meta">
+        <strong><label>Description:</label></strong>
+        <p th:text="${selectedEvent.eventDescription}">Event description goes here</p>
+    </div>
+    <div class="event-meta">
+        <strong><label>Location:</label></strong>
+        <p th:text="${selectedEvent.eventLocation}">Event location goes here</p>
+    </div>
+    <div class="event-meta">
+        <strong><label>Date &amp; Time:</label></strong>
+        <p th:text="${#temporals.format(selectedEvent.eventDateTime, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</p>
+    </div>
+
+    <!-- Action Buttons Section -->
+    <div class="event-meta">
+        <!-- Attend Button -->
+        <form class="form-row" th:action="@{'/events/event-details/' + ${selectedEvent.eventId} + '/attend'}" method="post" style="display:inline;">
+            <button type="submit" class="create-button">Attend</button>
+        </form>
+        <!-- Cancel Attendance Button -->
+        <form class="form-row" th:action="@{'/events/event-details/' + ${selectedEvent.eventId} + '/cancel'}" method="post" style="display:inline;">
+            <button type="submit" class="create-button">Cancel Attendance</button>
+        </form>
+    </div>
+
+    <!-- Feedback Messages -->
+    <div class="event-meta" id="successMessage">
+        <div class="success-content">
+            <p class="success-message" th:if="${attendSuccess}" th:text="${attendSuccess}"></p>
+            <p class="success-message" th:if="${cancelSuccess}" th:text="${cancelSuccess}"></p>
+            <p class="success-message" th:if="${error}" th:text="${error}"></p>
+        </div>
+    </div>
+
+    <!-- Participants List Section -->
+    <div class="event-meta">
+        <h3>Participants</h3>
+        <ul class="no-bullets">
+            <li th:each="participant : ${selectedEvent.eventParticipants}">
+                <span th:text="${participant.user.userName}">Username</span>
+            </li>
+        </ul>
+    </div>
+</main>
+
+<script>
+    // Hide the success message after 5 seconds
+    setTimeout(function () {
+        var successContent = document.querySelector('#successMessage .success-content');
+        if (successContent) {
+            successContent.style.opacity = '0';
+        }
+    }, 5000);
+</script>
+</body>
+</html>

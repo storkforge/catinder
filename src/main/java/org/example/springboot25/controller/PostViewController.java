@@ -6,14 +6,20 @@ import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.UserRepository;
+import org.example.springboot25.security.CustomUserDetails;
 import org.example.springboot25.service.PostService;
+import org.example.springboot25.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 @Controller
@@ -21,18 +27,27 @@ import java.time.LocalDateTime;
 public class PostViewController {
 
     private final PostService postService;
+    private final UserService userService;
 
-    //Todo: Remove when security is implemented
-    @Autowired
-    private UserRepository userRepository;
-
-    public PostViewController(PostService postService) {
+    public PostViewController(PostService postService, UserService userService) {
         this.postService = postService;
+        this.userService = userService;
     }
 
     @GetMapping
-    public String showAllPosts(Model model) {
-        model.addAttribute("posts", postService.getAllPosts());
+    public String showAllPosts(Principal principal, Model model) {
+        User currentUser = null;
+        if (principal instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+            String email = oauth2User.getAttribute("email");
+            currentUser = userService.getUserByEmail(email);
+        } else if (principal != null) {
+            currentUser = userService.getUserByUserName(principal.getName());
+        }
+
+        model.addAttribute("posts", postService.getAllPostsOrderByDate());
+        model.addAttribute("currentUser", currentUser);
         return "post/post-list";
     }
 
@@ -45,36 +60,17 @@ public class PostViewController {
     }
 
     @PostMapping("/add")
-    String addPostForm(@Valid @ModelAttribute Post post, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "post/post-add";
-        }
-        try {
-            // Todo: Remove temp user when security is implemented
-            User dummyUser = userRepository.findByUserName("dummyUser")
-                    .orElseGet(() -> {
-                        User newDummy = new User();
-                        newDummy.setUserFullName("Dummy User");
-                        newDummy.setUserName("dummyUser");
-                        newDummy.setUserEmail("dummy@example.com");
-                        newDummy.setUserLocation("DummyVille");
-                        newDummy.setUserRole(UserRole.BASIC);
-                        newDummy.setUserAuthProvider("testProvider");
-                        newDummy.setUserPassword("dummyPassword");
-                        return userRepository.save(newDummy);
-                    });
-            //Todo: Add when security is implemented
-//            CustomUserDetails userDetails = (CustomUserDetails) ((Authentication) principal).getPrincipal();
-//            User currentUser = userDetails.getUser();
-
-            //Todo: Change param to currentUser when security is implemented
-            post.setUserPostAuthor(dummyUser);
+    public String processCreateNewPostForm(@ModelAttribute("post") Post post, Principal principal) {
+        if (principal instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+            String email = oauth2User.getAttribute("email");
+            User user = userService.getUserByEmail(email);
+            post.setUserPostAuthor(user);
             post.setPostCreatedAt(LocalDateTime.now());
             postService.createPost(post);
-            redirectAttributes.addFlashAttribute("success", "Account created!");
-        } catch (Exception ex) {
-            model.addAttribute("error", ex.getMessage());
-            return "post/post-add";
+        } else {
+            throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
         }
         return "redirect:/posts";
     }

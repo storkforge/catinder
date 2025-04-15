@@ -16,8 +16,15 @@
     <p><strong>Email:</strong> <span th:text="${user.userEmail}"></span></p>
     <p><strong>Location:</strong> <span th:text="${user.userLocation}"></span></p>
     <!-- Cats -->
-    <p><strong>Household:</strong> <span th:text="${user.userCats}"></span></p>
-
+    <p><strong>Household:</strong>
+        <span th:if="${#lists.isEmpty(cats)}">No cats found.</span>
+        <span th:if="${!#lists.isEmpty(cats)}">
+    <span th:each="cat, iterStat : ${cats}">
+      <span th:text="${cat.catName}">Cat Name</span>
+      <span th:if="${!iterStat.last}">, </span>
+    </span>
+  </span>
+    </p>
 </div>
 </body>
 </html>

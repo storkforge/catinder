@@ -2,9 +2,11 @@ package org.example.springboot25.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
+import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,9 +23,11 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserViewController {
     private final UserService userService;
+    private CatService catService;
 
-    public UserViewController(UserService userService) {
+    public UserViewController(UserService userService, CatService catService) {
         this.userService = userService;
+        this.catService = catService;
     }
 
     @GetMapping
@@ -40,7 +44,10 @@ public class UserViewController {
     public String getUserById(@PathVariable() Long userId, Model model) {
         try {
             User user = userService.getUserById(userId);
+            List<Cat> cats = catService.getAllCatsByUser(user);
             model.addAttribute("user", user);
+            model.addAttribute("cats", cats);
+
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());

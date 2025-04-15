@@ -7,34 +7,48 @@
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
-
+<div th:replace="fragments/header"></div>
+<h2>Posts</h2>
 <div class="header-nav">
     <a class="submit create-button" th:href="@{/posts/add}">
         <span>Create New Post</span>
     </a>
 </div>
 
-<h2>Cat Posts</h2>
-<div th:if="${#lists.isEmpty(posts)}">
-    <p>No posts have been added yet.</p>
-</div>
-<div th:if="${!#lists.isEmpty(posts)}">
-    <ul>
-        <li th:each="post : ${posts}">
-            <div>
-                <p><strong>Text:</strong> <span th:text="${post.postText}">Post text</span></p>
-                <p th:if="${post.postImageUrl}">
-                    <img th:src="${post.postImageUrl}" alt="Image" width="200"/>
-                </p>
-                <p><strong>Created:</strong>
-                    <span th:text="${#temporals.format(post.postCreatedAt, 'yyyy-MM-dd HH:mm')}">Date</span>
-                </p>
-                <hr/>
-            </div>
-        </li>
-    </ul>
-</div>
+<main class="posts-container">
+    <div th:if="${#lists.isEmpty(posts)}">
+        <p>No posts have been added yet.</p>
+    </div>
+    <div th:if="${!#lists.isEmpty(posts)}">
+        <ul class="no-bullets">
+            <li th:each="post : ${posts}">
+                <div class="post-card">
+                    <div class="post-meta-inline">
+                        <strong><span class="post-user" th:text="${post.user.userName}">Username</span></strong>
+                        <span class="post-created">
+                            <span th:text="${#temporals.format(post.postCreatedAt, 'yyyy-MM-dd HH:mm')}">Date</span>
+                        </span>
+                    </div>
+                    <p class="text-limited">
+                        <span th:text="${post.postText}">Post text goes here</span>
+                    </p>
+                    <div th:if="${post.postImageUrl}" class="post-image">
+                        <img th:src="${post.postImageUrl}" alt="Image" width="200" onerror="this.remove()"/>
+                    </div>
+                    <!-- Delete Button: Shown only if the post belongs to the current user -->
+                    <div th:if="${post.user.userName == currentUser.userName}">
+                        <form th:action="@{'/posts/' + ${post.postId}}" th:method="delete">
+                            <button type="submit" class="delete-button" onclick="return confirm('Delete this post?');">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
+
+            </li>
+        </ul>
+    </div>
+</main>
 </body>
 </html>
