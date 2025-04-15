@@ -3,14 +3,9 @@ package org.example.springboot25.controller;
 import jakarta.validation.Valid;
 import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
-import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.repository.UserRepository;
-import org.example.springboot25.security.CustomUserDetails;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -88,7 +83,7 @@ public class PostViewController {
     }
 
     @PutMapping("/{postId}")
-    public String updatePost(@PathVariable Long postId, @Valid @ModelAttribute Post post, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String updatePost(@PathVariable Long postId, @Valid @ModelAttribute Post post, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "post/post-update";
         }

@@ -4,11 +4,9 @@ import jakarta.validation.Valid;
 import org.example.springboot25.entities.*;
 import org.example.springboot25.exceptions.ConflictException;
 import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.repository.UserRepository;
 import org.example.springboot25.service.EventParticipantService;
 import org.example.springboot25.service.EventService;
 import org.example.springboot25.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -18,16 +16,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
 @RequestMapping("/events")
 public class EventViewController {
-    private EventService eventService;
-    private EventParticipantService eventParticipantService;
-    private UserService userService;
+    private final EventService eventService;
+    private final EventParticipantService eventParticipantService;
+    private final UserService userService;
 
     public EventViewController(EventService eventService, EventParticipantService eventParticipantService, UserService userService) {
         this.eventService = eventService;
@@ -41,16 +38,6 @@ public class EventViewController {
         return "event/event-list";
     }
 
-    // Display a specific event's participants side by side
-//    @GetMapping("/event-details")
-//    public String showEventDetails(@RequestParam("eventId") Long eventId, Model model) {
-//        List<Event> events = eventService.getAllEvents();
-//        Event selectedEvent = eventService.getEventById(eventId);
-//        // Make sure the selected event includes the participant list (e.g., via a join fetch)
-//        model.addAttribute("events", events);
-//        model.addAttribute("selectedEvent", selectedEvent);
-//        return "participants/event-participants";
-//    }
     @GetMapping("/event-details/{eventId}")
     public String showEventDetails(@PathVariable Long eventId, Principal principal, Model model) {
         // Retrieve all events if needed for navigation or sidebar
@@ -71,8 +58,7 @@ public class EventViewController {
     public String cancelAttendance(@PathVariable Long eventId, Principal principal, RedirectAttributes redirectAttributes) {
         User currentUser;
         Event event = eventService.getEventById(eventId);
-        if (principal instanceof OAuth2AuthenticationToken) {
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
             currentUser = userService.getUserByEmail(email);
@@ -93,8 +79,7 @@ public class EventViewController {
     public String attendEvent(@PathVariable Long eventId, Principal principal, RedirectAttributes redirectAttributes) {
         User currentUser;
         Event event = eventService.getEventById(eventId);
-        if (principal instanceof OAuth2AuthenticationToken) {
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
             currentUser = userService.getUserByEmail(email);
@@ -120,10 +105,8 @@ public class EventViewController {
     }
 
     @PostMapping("/add")
-    String addEventForm(@Valid @ModelAttribute Event event, BindingResult bindingResult,
-                        Model model, RedirectAttributes redirectAttributes, Principal principal) {
-        if (principal instanceof OAuth2AuthenticationToken) {
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+    String addEventForm(@Valid @ModelAttribute Event event, Model model, RedirectAttributes redirectAttributes, Principal principal) {
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
             User user = userService.getUserByEmail(email);
@@ -156,7 +139,7 @@ public class EventViewController {
     }
 
     @PutMapping("/{eventId}")
-    public String updateEvent(@PathVariable Long eventId, @Valid @ModelAttribute Event event, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String updateEvent(@PathVariable Long eventId, @Valid @ModelAttribute Event event, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "event/event-update";
         }

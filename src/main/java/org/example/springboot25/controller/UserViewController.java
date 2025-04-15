@@ -8,7 +8,6 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +22,7 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserViewController {
     private final UserService userService;
-    private CatService catService;
+    private final CatService catService;
 
     public UserViewController(UserService userService, CatService catService) {
         this.userService = userService;
@@ -178,7 +177,7 @@ public class UserViewController {
     }
 
     @PutMapping("/{userId}")
-    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/user-update";
         }
