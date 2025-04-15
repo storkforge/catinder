@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Catinder - Update User</title>
@@ -49,15 +49,14 @@
             <button type="submit" class="save-button">Save</button>
         </div>
         <div id="successMessage">
-            <p  class="success-message" th:if="${update_success}"
-                 th:text="${update_success}">
+            <p class="success-message" th:if="${update_success}"
+               th:text="${update_success}">
             </p>
             <p class="error-message" th:if="${error}"
-                 th:text="${error}">
+               th:text="${error}">
             </p>
         </div>
-</div>
-</form>
+    </form>
 </div>
 <div>
     <form th:action="@{/users/{userId}(userId=${user.userId})}" th:method="delete">

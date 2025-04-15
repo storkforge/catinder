@@ -53,8 +53,7 @@ public class CatViewController {
 
     @PostMapping
     public String processCreateNewCatForm(@ModelAttribute("cat") Cat cat, Principal principal) {
-        if (principal instanceof OAuth2AuthenticationToken) {
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
             User user = userService.getUserByEmail(email);

@@ -22,8 +22,7 @@ public class GlobalControllerAdvice {
     public User getCurrentUser(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof DefaultOAuth2User) {
-                DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
+            if (principal instanceof DefaultOAuth2User oauthUser) {
                 String email = oauthUser.getAttribute("email");
                 if (email != null) {
                     try {
