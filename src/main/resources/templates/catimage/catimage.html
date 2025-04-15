@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Random cat image</title>
+    <style>
+        body {text-align: center; font-family: sans-serif;}
+        img {max-width: 90%; height: auto; border-radius: 8px; box-shadow: 0 0 10px #aaa;}
+    </style>
+</head>
+<body>
+<h1>Random Cat Image</h1>
+<img th:src="${catImageUrl}" alt="=CatImage">
+<br><br>
+<a href="/catimage">Give me another cat image</a>
+
+</body>
+</html>
