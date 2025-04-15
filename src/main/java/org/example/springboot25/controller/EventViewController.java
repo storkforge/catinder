@@ -1,41 +1,114 @@
 package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
-import org.example.springboot25.entities.Event;
-import org.example.springboot25.entities.Post;
-import org.example.springboot25.entities.User;
-import org.example.springboot25.entities.UserRole;
+import org.example.springboot25.entities.*;
+import org.example.springboot25.exceptions.ConflictException;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.UserRepository;
+import org.example.springboot25.service.EventParticipantService;
 import org.example.springboot25.service.EventService;
+import org.example.springboot25.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Controller
 @RequestMapping("/events")
 public class EventViewController {
+    private EventService eventService;
+    private EventParticipantService eventParticipantService;
+    private UserService userService;
 
-    private final EventService eventService;
-
-    //Todo: Remove when security is implemented
-    @Autowired
-    private UserRepository userRepository;
-
-    public EventViewController(EventService eventService) {
+    public EventViewController(EventService eventService, EventParticipantService eventParticipantService, UserService userService) {
         this.eventService = eventService;
+        this.eventParticipantService = eventParticipantService;
+        this.userService = userService;
     }
 
     @GetMapping
     public String showAllEvents(Model model) {
         model.addAttribute("events", eventService.getAllEvents());
         return "event/event-list";
+    }
+
+    // Display a specific event's participants side by side
+//    @GetMapping("/event-details")
+//    public String showEventDetails(@RequestParam("eventId") Long eventId, Model model) {
+//        List<Event> events = eventService.getAllEvents();
+//        Event selectedEvent = eventService.getEventById(eventId);
+//        // Make sure the selected event includes the participant list (e.g., via a join fetch)
+//        model.addAttribute("events", events);
+//        model.addAttribute("selectedEvent", selectedEvent);
+//        return "participants/event-participants";
+//    }
+    @GetMapping("/event-details/{eventId}")
+    public String showEventDetails(@PathVariable Long eventId, Principal principal, Model model) {
+        // Retrieve all events if needed for navigation or sidebar
+        List<Event> events = eventService.getAllEvents();
+        Event selectedEvent = eventService.getEventById(eventId);
+
+        User currentUser = principal instanceof OAuth2AuthenticationToken
+                ? userService.getUserByEmail(((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email"))
+                : userService.getUserByUserName(principal.getName());
+
+        model.addAttribute("events", events);
+        model.addAttribute("selectedEvent", selectedEvent);
+        model.addAttribute("currentUser", currentUser);
+        return "event/event-details";
+    }
+
+    @PostMapping("/event-details/{eventId}/cancel")
+    public String cancelAttendance(@PathVariable Long eventId, Principal principal, RedirectAttributes redirectAttributes) {
+        User currentUser;
+        Event event = eventService.getEventById(eventId);
+        if (principal instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+            String email = oauth2User.getAttribute("email");
+            currentUser = userService.getUserByEmail(email);
+        } else {
+            currentUser = userService.getUserByUserName(principal.getName());
+        }
+        try {
+            eventParticipantService.deleteParticipant(currentUser.getUserName(), event.getEventName());
+        redirectAttributes.addFlashAttribute("cancelSuccess", "Your attendance has been cancelled!");
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", "Stop it!");
+        }
+        return "redirect:/events/event-details/" + eventId;
+    }
+
+    //??
+    @PostMapping("/event-details/{eventId}/attend")
+    public String attendEvent(@PathVariable Long eventId, Principal principal, RedirectAttributes redirectAttributes) {
+        User currentUser;
+        Event event = eventService.getEventById(eventId);
+        if (principal instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+            String email = oauth2User.getAttribute("email");
+            currentUser = userService.getUserByEmail(email);
+        } else {
+            currentUser = userService.getUserByUserName(principal.getName());
+        }
+
+        try {
+        eventParticipantService.addParticipant(currentUser.getUserName(), event.getEventName());
+        redirectAttributes.addFlashAttribute("attendSuccess", "You are now attending the event!");
+        } catch (ConflictException e) {
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/events/event-details/" + eventId;
     }
 
     @GetMapping("/add")
@@ -47,39 +120,28 @@ public class EventViewController {
     }
 
     @PostMapping("/add")
-    String addEventForm(@Valid @ModelAttribute Event event, Model model, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "event/event-add";
-        }
-        try {
-            // Todo: Change/fetch to actual user when implementing security
-            User dummyUser = userRepository.findByUserName("dummyUser")
-                    .orElseGet(() -> {
-                        User newDummy = new User();
-                        newDummy.setUserFullName("Dummy User");
-                        newDummy.setUserName("dummyUser");
-                        newDummy.setUserEmail("dummy@example.com");
-                        newDummy.setUserLocation("DummyVille");
-                        newDummy.setUserRole(UserRole.BASIC);
-                        newDummy.setUserAuthProvider("testProvider");
-                        newDummy.setUserPassword("dummyPassword");
-                        return userRepository.save(newDummy);
-                    });
-            //Todo: change to real user when security is implemented
-            event.setUserEventPlanner(dummyUser);
+    String addEventForm(@Valid @ModelAttribute Event event, BindingResult bindingResult,
+                        Model model, RedirectAttributes redirectAttributes, Principal principal) {
+        if (principal instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+            String email = oauth2User.getAttribute("email");
+            User user = userService.getUserByEmail(email);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
             model.addAttribute("formattedEventDateTime", event.getEventDateTime().format(formatter));
 
-            event.setEventDateTime(event.getEventDateTime());
+            event.setUserEventPlanner(user);
             eventService.createEvent(event);
+            eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
             redirectAttributes.addFlashAttribute("success", "Event created successfully!");
-        } catch (Exception ex) {
-            model.addAttribute("error", ex.getMessage());
+        } else {
+            model.addAttribute("error", "Something went wrong!");
             return "event/event-add";
         }
         return "redirect:/events";
     }
+
 
     @GetMapping("/{eventId}/edit")
     public String showUpdateForm(@PathVariable Long eventId, Model model) {

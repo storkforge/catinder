@@ -22,7 +22,7 @@ public class Post {
     @PastOrPresent
     private LocalDateTime postCreatedAt;
 
-    //@NotNull Todo: Take back NotNull when security is implemented
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "post_author_user_id")
     private User userPostAuthor;
@@ -63,4 +63,7 @@ public class Post {
         this.userPostAuthor = user;
     }
 
+    public void setUserPostAuthor(User user) {
+        this.userPostAuthor = user;
+    }
 }

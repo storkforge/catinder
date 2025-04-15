@@ -2,53 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Catinder - Cats List</title>
+    <title>Catinder - Cats</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
-    <style>
-        /* Styles list viewen */
-        .content {
-            margin: 2em;
-        }
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #e79a6f;
-            color: white;
-        }
-        a {
-            text-decoration: none;
-            color: #505050;
-            font-weight: 600;
-        }
-        a:hover {
-            color: #555;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
-<div class="content">
-    <h2 th:text="#{cat.list}">Cats List</h2>
-    <div class="header-nav">
-        <a class="submit create-button" th:href="@{/cats/new}">
-            <span th:text="#{add.new.cat}">Add New Cat</span>
-        </a>
-    </div>
-    <table>
+<div th:replace="fragments/header"></div>
+<h2 th:text="#{cat}>Cats</h2>
+<div class="header-nav">
+    <a class="submit create-button" th:href="@{/cats/new}">
+        <span th:text="#{add.new.cat}">Add New Cat</span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="cats-table">
         <thead>
-        <tr>
+        <!-- Add a specific class (header-row) for styling the header row -->
+        <tr class="header-row">
             <th>ID</th>
             <th th:text="#{cat.name}">Name</th>
             <th th:text="#{cat.breed}">Breed</th>
@@ -57,7 +27,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="cat : ${cats}">
+        <tr class="data-row" th:each="cat : ${cats}">
             <td th:text="${cat.catId}">1</td>
             <td th:text="${cat.catName}">Cat Name</td>
             <td th:text="${cat.catBreed}">Breed</td>
