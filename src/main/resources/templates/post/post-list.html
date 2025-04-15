@@ -43,6 +43,12 @@
                             </button>
                         </form>
                     </div>
+                    <!-- Update Button: Shown only if the post belongs to the current user -->
+                    <div th:if="${post.user.userName == currentUser.userName}">
+                        <a th:href="@{'/posts/' + ${post.postId} + '/edit'}" class="create-button">
+                            Update
+                        </a>
+                    </div>
                 </div>
 
 

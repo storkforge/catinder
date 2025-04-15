@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -74,7 +74,6 @@ public class EventViewController {
         return "redirect:/events/event-details/" + eventId;
     }
 
-    //??
     @PostMapping("/event-details/{eventId}/attend")
     public String attendEvent(@PathVariable Long eventId, Principal principal, RedirectAttributes redirectAttributes) {
         User currentUser;
@@ -99,29 +98,29 @@ public class EventViewController {
     @GetMapping("/add")
     String addEventForm(Model model) {
         if (!model.containsAttribute("event")) {
-            model.addAttribute("event", new Post());
+            model.addAttribute("event", new Event());
         }
         return "event/event-add";
     }
 
     @PostMapping("/add")
-    String addEventForm(@Valid @ModelAttribute Event event, Model model, RedirectAttributes redirectAttributes, Principal principal) {
+    public String processCreateNewEventForm(@ModelAttribute @Valid Event event,
+                                            Principal principal,
+                                            RedirectAttributes redirectAttributes) {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
             User user = userService.getUserByEmail(email);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-            model.addAttribute("formattedEventDateTime", event.getEventDateTime().format(formatter));
-
             event.setUserEventPlanner(user);
-            eventService.createEvent(event);
-            eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
-            redirectAttributes.addFlashAttribute("success", "Event created successfully!");
+        } else if (principal != null) {
+            User user = userService.getUserByUserName(principal.getName());
+            event.setUserEventPlanner(user);
         } else {
-            model.addAttribute("error", "Something went wrong!");
-            return "event/event-add";
+            throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
         }
+        event.setEventDateTime(LocalDateTime.now());
+        eventService.createEvent(event);
+        redirectAttributes.addFlashAttribute("success", "Event created!");
         return "redirect:/events";
     }
 

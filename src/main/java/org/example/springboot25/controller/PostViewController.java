@@ -32,8 +32,7 @@ public class PostViewController {
     @GetMapping
     public String showAllPosts(Principal principal, Model model) {
         User currentUser = null;
-        if (principal instanceof OAuth2AuthenticationToken) {
-            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
             currentUser = userService.getUserByEmail(email);
@@ -84,9 +83,6 @@ public class PostViewController {
 
     @PutMapping("/{postId}")
     public String updatePost(@PathVariable Long postId, @Valid @ModelAttribute Post post, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "post/post-update";
-        }
         try {
             postService.updatePost(postId, post);
             redirectAttributes.addFlashAttribute("update_success", "Post Updated!");

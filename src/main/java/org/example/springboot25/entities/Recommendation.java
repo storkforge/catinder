@@ -23,8 +23,9 @@ public class Recommendation {
     @NotBlank
     private String recommendationProductLink;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "recommendation_user_id", nullable = false)
+    @JoinColumn(name = "recommendation_user_id")
     private User user;
 
     @NotNull

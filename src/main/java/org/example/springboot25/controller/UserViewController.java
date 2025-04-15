@@ -176,7 +176,7 @@ public class UserViewController {
         }
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/{userId}/edit")
     public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/user-update";
@@ -188,7 +188,7 @@ public class UserViewController {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
             return "redirect:/users/" + userId + "/edit";
         }
-        return "redirect:/users/" + userId + "/edit";
+        return "redirect:/users/{userId}/edit";
     }
 
     @PatchMapping("/{userId}")

@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -86,15 +87,15 @@ public class CatViewController {
         return "redirect:/cats";
     }
 
-    //Uppdatera till view exception senare
-    @GetMapping("/{catId}/delete")
-    public String deleteCat(@PathVariable Long catId) {
+    //Todo: ????Move delete from cat-list to cat-details
+    @DeleteMapping("/{catId}/delete")
+    public String deleteCat(@PathVariable Long catId, RedirectAttributes redirectAttributes) {
         try {
             catService.deleteCat(catId);
-            return "redirect:/cats";
+            redirectAttributes.addFlashAttribute("delete_success", "Cat deleted successfully!");
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete cat with id " + catId, e);
+            redirectAttributes.addFlashAttribute("error", "Failed to delete cat with id " + catId);
         }
+        return "redirect:/cats";
     }
-
 }

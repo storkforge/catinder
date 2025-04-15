@@ -37,9 +37,18 @@
         </div>
     </form>
 </div>
-<div class="success-message" th:if="${success}" th:text="${success}"></div>
+<div id="success-message" th:if="${success}" th:text="${success}"></div>
 <div th:if="${error}" th:text="${error}">
     There was an error while trying to create your event.
 </div>
+<script>
+    // Hide message after 5 seconds
+    setTimeout(function () {
+        var successContent = document.querySelector('#successMessage');
+        if (successContent) {
+            successContent.style.opacity = '0';
+        }
+    }, 5000);
+</script>
 </body>
 </html>

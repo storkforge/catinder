@@ -45,9 +45,6 @@
                 <span>Settings</span>
             </a>
         </div>
-
-        <button class="lang-button" aria-label="Change language" title="Change language">
-            &#127760; Language
         <div sec:authorize="!isAuthenticated()">
                 <a class="header-button login-button" th:href="@{/oauth2/authorization/google}" title="Login">Login</a>
         </div>

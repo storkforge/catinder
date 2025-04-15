@@ -24,13 +24,20 @@
             <input type="text" id="postImageUrl" name="postImageUrl"
                    placeholder="http://example.com/image.jpg" th:value="${post.postImageUrl}"/>
         </div>
+    <div>
         <div class="form-row button-row">
             <button type="submit" class="save-button">Save</button>
-            <div id="successMessage" class="success-message" th:if="${update_success}"
-                 th:text="${update_success}"></div>
-            <div class="error-message" th:if="${error}" th:text="${error}"></div>
         </div>
+    </div>
     </form>
+    <div id="successMessage">
+        <p class="success-message" th:if="${update_success}"
+           th:text="${update_success}">
+        </p>
+        <p class="error-message" th:if="${error}"
+           th:text="${error}">
+        </p>
+    </div>
 </div>
 <div>
     <form th:action="@{/posts/{postId}(postId=${post.postId})}" th:method="delete">
@@ -43,6 +50,14 @@
         </div>
     </form>
 </div>
-</body>
+<script>
+    // Hide message after 5 seconds
+    setTimeout(function () {
+        var successContent = document.querySelector('#successMessage');
+        if (successContent) {
+            successContent.style.opacity = '0';
+        }
+    }, 5000);
+</script>
 </body>
 </html>
