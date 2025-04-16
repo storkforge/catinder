@@ -1,0 +1,15 @@
+type EventParticipant {
+    id: ID!
+    userName: String!
+    eventName: String!
+}
+
+input EventParticipantInput {
+    userName: String!
+    eventName: String!
+}
+
+input EventParticipantUpdate {
+    userName: String
+    eventName: String
+}
