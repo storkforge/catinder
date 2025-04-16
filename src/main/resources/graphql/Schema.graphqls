@@ -10,6 +10,13 @@ type Query {
     getAllEvents: [EventOutputDTO]
     getEventById(eventId: ID!): EventOutputDTO
     getEventByName(eventName: String!): EventOutputDTO
+
+    getAllReminders: [Reminder]
+    getReminderById(id: ID!): Reminder
+
+    getAllEventParticipants: [EventParticipant]
+    getEventParticipantById(id: ID!): EventParticipant
+    getEventParticipantByUserName(userName: String!): EventParticipant
 }
 
 type Mutation {
@@ -24,6 +31,14 @@ type Mutation {
     createEvent(input: EventInput!): EventOutputDTO
     updateEvent(eventId: ID!, input: EventUpdate!): EventOutputDTO
     deleteEvent(eventId: ID!): Boolean
+
+    createReminder(input: ReminderInput!): Reminder
+    updateReminder(id: ID!, input: ReminderUpdate!): Reminder
+    deleteReminder(id: ID!): Boolean!
+
+    createEventParticipant(input: EventParticipantInput!): EventParticipant
+    updateEventParticipant(id: ID!, update: EventParticipantUpdate!): EventParticipant
+    deleteEventParticipant(id: ID!): Boolean
 }
 
 scalar DateTime
