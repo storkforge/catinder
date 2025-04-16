@@ -63,4 +63,7 @@ public class Post {
         this.userPostAuthor = user;
     }
 
+    public void setUserPostAuthor(User user) {
+        this.userPostAuthor = user;
+    }
 }

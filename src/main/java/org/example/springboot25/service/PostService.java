@@ -25,6 +25,10 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    public List<Post> getAllPostsOrderByDate() {
+        return postRepository.findAllByOrderByPostCreatedAtDesc();
+    }
+
     public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Post with id " + id + " not found"));
