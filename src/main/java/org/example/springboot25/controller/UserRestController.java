@@ -28,12 +28,15 @@ public class UserRestController {
 
     private boolean isNotOwnerOrAdmin(Long targetUserId, User currentUser) {
         if (targetUserId == null || currentUser == null || currentUser.getUserId() == null) {
-            return true; // Fail-safe: deny access if missing critical info
+            return true;
         }
-
         boolean isOwner = targetUserId.equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
+    }
+
+    private User getCurrentUser(Authentication auth) {
+        return userService.findUserByUserName(auth.getName());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -47,8 +50,8 @@ public class UserRestController {
     @GetMapping("/id/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public UserOutputDTO getById(@PathVariable Long userId, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
-        UserOutputDTO target = userService.getUserById(userId);
+        User current = getCurrentUser(auth);
+        UserOutputDTO target = userService.getUserDtoById(userId);
 
         if (isNotOwnerOrAdmin(target.getUserId(), current)) {
             throw new AccessDeniedException("You are not owner or admin");
@@ -105,8 +108,8 @@ public class UserRestController {
     public UserOutputDTO updateUser(@PathVariable Long userId,
                                     @RequestBody @Valid UserUpdateDTO userUpdateDTO,
                                     Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
-        UserOutputDTO target = userService.getUserById(userId);
+        User current = getCurrentUser(auth);
+        UserOutputDTO target = userService.getUserDtoById(userId);
 
         if (isNotOwnerOrAdmin(target.getUserId(), current)) {
             throw new AccessDeniedException("You are not owner or admin");
@@ -119,8 +122,8 @@ public class UserRestController {
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
-        UserOutputDTO target = userService.getUserById(userId);
+        User current = getCurrentUser(auth);
+        UserOutputDTO target = userService.getUserDtoById(userId);
 
         if (isNotOwnerOrAdmin(target.getUserId(), current)) {
             throw new AccessDeniedException("You can only delete your own account.");
