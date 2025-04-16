@@ -92,7 +92,6 @@ public class ReminderGraphQLController {
         return reminderMapper.toDTO(updated);
     }
 
-
     @MutationMapping
     public boolean deleteReminder(@Argument Long id) {
         reminderService.deleteReminder(id);
