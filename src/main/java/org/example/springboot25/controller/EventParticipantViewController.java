@@ -74,7 +74,7 @@ public class EventParticipantViewController {
                                  RedirectAttributes redirectAttributes) {
         try {
             String userName = principal.getName();
-            User user = userService.getUserByUserName(userName);
+            User user = userService.findUserByUserName(userName);
             Event event = eventService.getEventById(eventId);
             eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
             redirectAttributes.addFlashAttribute("success", "You are now attending the event!");
