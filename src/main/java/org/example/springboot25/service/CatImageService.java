@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class CatImageService {
     private final String apiKey;
     private static final Logger logger = LoggerFactory.getLogger(CatImageService.class);
 
+    @Autowired
     public CatImageService(@Value("${catapi.key:}") String apiKey) {
         if (apiKey == null || apiKey.isBlank()) {
             logger.warn("No CATAPI_KEY provided – fallback image will be used.");
