@@ -55,8 +55,8 @@ public class AdminController {
     @GetMapping("/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         try {
-            UserOutputDTO userDTO = userService.getUserById(id);
-            UserUpdateDTO updateDTO = userMapper.toUserUpdateDTO(userMapper.toUser(userDTO));
+            User user = userService.findUserById(id);
+            UserUpdateDTO updateDTO = userMapper.toUserUpdateDTO(user);
             model.addAttribute("user", updateDTO);
             model.addAttribute("userId", id);
             return "admin/user-edit";
@@ -82,7 +82,7 @@ public class AdminController {
             log.error("Unexpected error during user update", e);
             model.addAttribute("error", "An unexpected error occurred.");
         }
-        model.addAttribute("userId", userUpdateDTO);
+        model.addAttribute("userId", userId);
         return "admin/user-edit";
     }
 
@@ -103,7 +103,7 @@ public class AdminController {
                                  @RequestParam String newRole,
                                  Authentication auth) {
         try {
-            User requestingUser = userService.getUserByUserName(auth.getName());
+            User requestingUser = userService.findUserByUserName(auth.getName());
             userService.changeUserRole(userId, newRole, requestingUser);
             return "redirect:/admin/settings?success=role-changed";
         } catch (Exception e) {
