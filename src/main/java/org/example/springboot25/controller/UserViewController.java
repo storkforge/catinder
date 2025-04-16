@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -59,7 +60,7 @@ public class UserViewController {
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "error-page";
+            return "error";
         }
     }
 
@@ -71,8 +72,83 @@ public class UserViewController {
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "error-page";
+            return "error";
         }
+    }
+
+    @GetMapping("/by-email/{userEmail}")
+    String getUserByUserEmail(@PathVariable String userEmail, Model model) {
+        try {
+            User user = userService.getUserByEmail(userEmail);
+            model.addAttribute("user", user);
+            return "user/user-details";
+        } catch (NotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "error";
+        }
+    }
+
+    @GetMapping("/by-username/{userName}")
+    String getUsersByUserName(@PathVariable String userName, Model model) {
+        List<User> users = userService.getAllUsersByUserName("%" + userName + "%");
+        if (users.isEmpty())
+            model.addAttribute("message", "No users found with username '" + userName + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-name/{userFullName}")
+    String getUsersByFullName(@PathVariable String userFullName, Model model) {
+        List<User> users = userService.getAllUsersByFullName("%" + userFullName + "%");
+        if (users.isEmpty())
+            model.addAttribute("message", "No users found for name '" + userFullName + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-location/{userLocation}")
+    String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
+        List<User> users = userService.getAllUsersByLocation(userLocation);
+        if (users.isEmpty())
+            model.addAttribute("message", "No users found for location '" + userLocation + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-role/{userRole}")
+    public String getUsersByUserRole(@PathVariable String userRole, Model model) {
+        List<User> users = userService.getAllUsersByRole(userRole);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for role '" + userRole + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-role-location")
+    String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
+        List<User> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for role '" + userRole + "' and location '" + userLocation + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-cat")
+    String getUsersByCatName(@RequestParam String catName, Model model) {
+        List<User> users = userService.getAllUsersByCatName(catName);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for cat '" + catName + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-search-term/{searchTerm}")
+    String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
+        List<User> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for search term '" + searchTerm + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
     }
 
     @GetMapping("/add")
@@ -91,8 +167,18 @@ public class UserViewController {
             model.addAttribute("error", "Failed to add user");
             return "user/user-add";
         }
+        //TODO:CHECK REDIRECT MALVA ^v
+//        try {
+//            userService.addUser(user);
+//            redirectAttributes.addFlashAttribute("success", "Account created!");
+//        } catch (AlreadyExistsException ex) {
+//            model.addAttribute("error", ex.getMessage());
+//            return "user/user-add";
+//        }
+//        return "redirect:/users/profile/id/" + user.getUserId();
     }
 
+    //@GetMapping("/{userId}/edit") TODO: OLD ENDPOINT, is new matched in html?
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         try {
@@ -101,10 +187,10 @@ public class UserViewController {
             model.addAttribute("user", updateDTO);
             model.addAttribute("userId", id);
             return "user/user-update";
-        } catch (Exception e) {
-            log.error("Could not load user {}", id, e);
+        } catch (NotFoundException ex) {
+            log.error("Could not load user {}", id, ex);
             model.addAttribute("error", "User not found");
-            return "error-page";
+            return "error";
         }
     }
 
@@ -130,26 +216,43 @@ public class UserViewController {
             return "user/user-update";
         }
     }
+    //TODO: CHECK NEW/OLD PUT
+//    @PutMapping("/{userId}/edit")
+//    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+//        if (bindingResult.hasErrors()) {
+//            return "user/user-update";
+//        }
+//        try {
+//            userService.updateUser(userId, user);
+//            redirectAttributes.addFlashAttribute("update_success", "Details saved!");
+//        } catch (AlreadyExistsException ex) {
+//            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+//            return "redirect:/users/" + userId + "/edit";
+//        }
+//        return "redirect:/users/{userId}/edit";
+//    }
 
-    /**
-     * Deletes a user from the user list (typically by an admin or moderator).
-     * <p>
-     * This method handles a POST request to delete a specific user by ID. If the deletion is successful,
-     * the user is redirected to the user list view with a success message. If any error occurs,
-     * the user is redirected back with an error flag.
-     *
-     * @param id the ID of the user to delete
-     * @return a redirect string to the user list page with query parameters indicating result
-     */
-
-    @PostMapping("/delete/{id}")
-    public String deleteUserFromList(@PathVariable Long id) {
+    @PatchMapping("/{userId}/edit")
+    public String updateUser(@PathVariable Long userId, @RequestParam Map<String, Object> updates, RedirectAttributes redirectAttributes, Model model) {
         try {
-            userService.deleteUserById(id);
-            return "redirect:/users/list?success=deleted";
-        } catch (Exception e) {
-            log.warn("Failed to delete user {}", id, e);
-            return "redirect:/users/list?error=delete-failed";
+            User updatedUser = userService.updateUser(userId, updates);
+            redirectAttributes.addFlashAttribute("update_success", "Details saved!");
+        } catch (AlreadyExistsException | NotFoundException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "error";
+        }
+        return "redirect:/users/" + userId + "/edit";
+    }
+
+    @GetMapping("/{userId}/delete")
+    String showDeleteForm(@PathVariable Long userId, Model model) {
+        try {
+            User user = userService.getUserById(userId);
+            model.addAttribute("user", user);
+            return "user/user-update";
+        } catch (NotFoundException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "error";
         }
     }
 
@@ -166,10 +269,8 @@ public class UserViewController {
      * @param model              the model for passing error information to the view
      * @return a redirect to the home page or an error page if deletion fails
      */
-
-    @DeleteMapping("/{userId}")
-    public String deleteOwnAccount(@PathVariable Long userId, HttpServletRequest request, RedirectAttributes
-            redirectAttributes, Model model) {
+    @DeleteMapping("/{userId}/delete")
+    String deleteOwnAccount(@PathVariable Long userId, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
         try {
             userService.deleteUserById(userId);
             redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
@@ -177,8 +278,29 @@ public class UserViewController {
             request.getSession().invalidate();
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "error-page";
+            return "error";
         }
         return "redirect:/";
+    }
+
+    /**
+     * Deletes a user from the user list (typically by an admin or moderator).
+     * <p>
+     * This method handles a POST request to delete a specific user by ID. If the deletion is successful,
+     * the user is redirected to the user list view with a success message. If any error occurs,
+     * the user is redirected back with an error flag.
+     *
+     * @param id the ID of the user to delete
+     * @return a redirect string to the user list page with query parameters indicating result
+     */
+    @DeleteMapping("/delete/{id}")
+    public String deleteUserFromList(@PathVariable Long id) {
+        try {
+            userService.deleteUserById(id);
+            return "redirect:/users/list?success=deleted";
+        } catch (Exception e) {
+            log.warn("Failed to delete user {}", id, e);
+            return "redirect:/users/list?error=delete-failed";
+        }
     }
 }
