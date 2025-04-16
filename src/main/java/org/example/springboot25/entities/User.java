@@ -33,7 +33,7 @@ public class User {
     @Column(unique = true)
     private String userEmail;
 
-    @NotBlank
+    //@NotBlank
     private String userLocation;
 
     @NotNull
@@ -43,8 +43,7 @@ public class User {
     @NotBlank
     private String userAuthProvider;
 
-    @NotBlank
-    @JsonIgnore
+    @Column(nullable = true)
     private String userPassword;
 
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -77,7 +76,13 @@ public class User {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        if (userName == null) {
+            this.userName = null;
+        } else if (!userName.startsWith("@")) {
+            this.userName = "@" + userName;
+        } else {
+            this.userName = userName;
+        }
     }
 
     public String getUserEmail() {
@@ -117,8 +122,11 @@ public class User {
     }
 
     public void setUserPassword(String userPassword) {
-        // Using a static encoder instance for consistency
-        this.userPassword = ENCODER.encode(userPassword);
+        if (userPassword != null && !userPassword.isEmpty()) {
+            this.userPassword = ENCODER.encode(userPassword);
+        } else {
+            this.userPassword = null;
+        }
     }
 
     /**
@@ -127,7 +135,6 @@ public class User {
      * @param rawPassword the password to check
      * @return true if the password matches, false otherwise
      */
-
     public boolean checkPassword(String rawPassword) {
         return ENCODER.matches(rawPassword, this.userPassword);
     }

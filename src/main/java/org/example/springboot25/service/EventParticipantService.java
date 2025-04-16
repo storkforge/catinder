@@ -64,7 +64,7 @@ public class EventParticipantService {
                 .orElseThrow(() -> new NotFoundException("Event not found: " + eventName));
 
         if (eventParticipantRepository.existsByUserAndEvent(user, event)) {
-            throw new ConflictException("User is already participating in this event.");
+            throw new ConflictException("You're already participating in this event.");
         }
 
         return eventParticipantRepository.save(new EventParticipant(user, event));
@@ -125,4 +125,3 @@ public class EventParticipantService {
 
 
 }
-
