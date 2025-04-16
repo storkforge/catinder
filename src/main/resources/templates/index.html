@@ -9,6 +9,23 @@
 <body>
 <div th:replace="fragments/header"></div>
 <div id="successMessage" class="success-message" th:if="${delete_success}" th:text="#{DeleteSuccessTranslated}"></div>
+
+<div class="slideshow-container">
+    <div class="mySlides fade" th:each="photo : ${catPhotos}">
+        <div class="image‐wrapper">
+            <img th:src="@{${photo.catPhotoUrl}}"
+                 th:alt="${photo.catPhotoCaption} ?: 'Cat photo'" />
+        </div>
+        <div class="cat-details">
+            <span th:text="'Name: ' + ${photo.catPhotoCat.catName}">Name</span>
+            <span th:text="'Personality: ' +${photo.catPhotoCat.catPersonality}">Personality</span>
+            <span th:text="'Age: ' +${photo.catPhotoCat.catAge}">Age</span>
+            <span th:text="'Breed: ' +${photo.catPhotoCat.catBreed}">Breed</span>
+        </div>
+    </div>
+    <a class="prev" onclick="plusSlides(-1)">❮</a>
+    <a class="next" onclick="plusSlides(1)">❯</a>
+</div>
 <p class="select-text" th:text="#{SectionSelection}">ADMIN:</p>
 <nav class="link-box">
     <ul role="menu">
@@ -17,6 +34,7 @@
         <li><a th:href="@{/reminders}" th:text="#{Reminders}">Reminders</a></li>
     </ul>
 </nav>
+
 <script>
     setTimeout(function () {
         var successMsg = document.getElementById('successMessage');
@@ -24,6 +42,32 @@
             successMsg.style.display = 'none';
         }
     }, 5000);
+    let slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        let dots = document.getElementsByClassName("dot");
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+    }
 </script>
 </body>
 </html>

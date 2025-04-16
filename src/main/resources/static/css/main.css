@@ -714,3 +714,72 @@ a:hover {
 }
 
 /*___ /HEADER RIGHT ___*/
+/* Cat image slideshow */
+.image‐wrapper {
+    width: 512px;
+    height: 512px;
+    overflow: hidden;
+    background-color:black;
+}
+
+.image‐wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+}
+.slideshow-container {
+    position: relative;
+    margin: 5% auto auto;
+    width: 512px;
+}
+.mySlides {
+    position: relative;
+    width: 512px;
+    height: 512px;
+}
+
+.mySlides img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 12px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s ease;
+    user-select: none;
+    z-index: 2;
+}
+
+.prev {
+    left: 10px;
+    border-radius: 0 3px 3px 0;
+}
+
+.next {
+    right: 10px;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev:hover, .next:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+.cat-details {
+    padding-top: 8px;
+}
+
+.cat-details span {
+    display: block;
+    margin-bottom: 4px;
+}

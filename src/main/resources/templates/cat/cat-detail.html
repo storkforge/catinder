@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Cat Detail - Catinder</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+
     <style>
         /* Reuse the same styles as above */
         html, body {
@@ -106,6 +108,9 @@
         <p><strong th:text="#{cat.gender}">Gender:</strong> <span th:text="${cat.catGender}"></span></p>
         <p><strong th:text="#{cat.age}">Age:</strong> <span th:text="${cat.catAge}"></span></p>
         <p><strong th:text="#{cat.personality}">Personality:</strong> <span th:text="${cat.catPersonality}"></span></p>
+        <p><strong th:text="#{cat.photo}">Photo:</strong> <span th:each="catPhoto, iterStat : ${cat.catPhotos}"></span>
+        </p>
+        <p ></p>
     </div>
     <a th:text="#{back.to.cats.list}" th:href="@{/cats}">Back to Cats List</a>
 </div>

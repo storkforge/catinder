@@ -1,10 +1,14 @@
 package org.example.springboot25.controller;
 
+import jakarta.validation.Valid;
 import org.example.springboot25.entities.Cat;
+import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -47,7 +51,9 @@ public class CatViewController {
 
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
-        model.addAttribute("cat", new Cat());
+        Cat cat = new Cat() ;
+        cat.getCatPhotos().add(new CatPhoto()) ;
+        model.addAttribute("cat",cat );
         return "cat/creating-a-new-cat-form";
     }
 
@@ -58,6 +64,9 @@ public class CatViewController {
             String email = oauth2User.getAttribute("email");
             User user = userService.findUserByEmail(email);
             cat.setUserCatOwner(user);
+            for (CatPhoto catPhoto : cat.getCatPhotos()) {
+                catPhoto.setCatPhotoCat(cat);
+            }
             catService.createCat(cat);
         } else {
             // Handle other types by throwing an exception
