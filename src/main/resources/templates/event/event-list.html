@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header"></div>
+
+<h2>All Events</h2>
+<div class="header-nav">
+    <a class="submit create-button" th:href="@{/events/add}">
+        <span>Create New Event</span>
+    </a>
+</div>
+<div class="table-container">
+    <table id="event-table" th:if="${events}">
+        <thead>
+        <tr class="header-row">
+            <th>Event Name</th>
+            <th>Location</th>
+            <th>Date &amp; Time</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterate over events -->
+        <tr class="data-row" th:each="event : ${events}">
+            <td th:text="${event.eventName}"></td>
+            <td th:text="${event.eventLocation}"></td>
+            <td th:text="${#temporals.format(event.eventDateTime, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <a th:href="@{/events/event-details/{eventId}(eventId=${event.eventId})}" class="lang-button" style="color: black">
+                    View Details
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
