@@ -12,11 +12,12 @@ input CommentInputDTO {
     postId: ID!
 }
 
-type Query {
+extend type Query {
     getCommentsByPost(postId: ID!): [CommentOutputDTO]
 }
 
-type Mutation {
+extend type Mutation {
     createComment(input: CommentInputDTO!): CommentOutputDTO
     deleteComment(commentId: ID!): Boolean
 }
+
