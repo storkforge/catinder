@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Post Details</title>
+</head>
+<body>
+
+<h1 th:text="${post.title}">Post Title</h1>
+<p th:text="${post.content}">Post content goes here...</p>
+<p><strong>By:</strong> <span th:text="${post.author.userName}">Author</span></p>
+
+<hr/>
+
+<h2>Comments</h2>
+
+<!-- If there are no comments -->
+<div th:if="${#lists.isEmpty(comments)}">
+    <p>No comments yet. Be the first to comment!</p>
+</div>
+
+<!-- List all comments -->
+<ul th:if="${!#lists.isEmpty(comments)}">
+    <li th:each="comment : ${comments}">
+        <p>
+            <strong th:text="${comment.authorName}">Username</strong>:
+            <span th:text="${comment.text}">Comment text</span>
+        </p>
+        <small th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+
+        <!-- Show delete button if current user is author or admin -->
+        <form th:if="${#authentication.name == comment.authorName or isAdmin}"
+              th:action="@{'/api/comments/' + ${comment.commentId}}"
+              method="post" onsubmit="return confirm('Delete this comment?')">
+            <input type="hidden" name="_method" value="delete"/>
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>
+
+<hr/>
+
+<!-- Add new comment form (only for authenticated users) -->
+<div th:if="${#authorization.expression('isAuthenticated()')}">
+    <h3>Add a comment</h3>
+    <form th:action="@{/api/comments}" method="post">
+        <input type="hidden" name="postId" th:value="${post.postId}"/>
+        <textarea name="text" rows="4" cols="50" placeholder="Write your comment..." required></textarea><br/>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<div th:if="${!#authorization.expression('isAuthenticated()')}">
+    <p><a th:href="@{/login}">Login</a> to comment.</p>
+</div>
+
+</body>
+</html>
