@@ -79,13 +79,13 @@ public class UserViewController {
     public String userList(Model model) {
         List<UserOutputDTO> users = userService.getAllUsers();
         model.addAttribute("users", users);
-        return "user-list";
+        return "user/user-list";
     }
 
     @GetMapping("/add")
     public String addUserForm(Model model) {
         model.addAttribute("user", new UserInputDTO());
-        return "user-add";
+        return "user/user-add";
     }
 
     @PostMapping("/add")
@@ -96,7 +96,7 @@ public class UserViewController {
         } catch (Exception e) {
             log.error("Failed to add user", e);
             model.addAttribute("error", "Failed to add user");
-            return "user-add";
+            return "user/user-add";
         }
     }
 
@@ -107,11 +107,11 @@ public class UserViewController {
             UserUpdateDTO updateDTO = userMapper.outputToUpdateDTO(userDTO);
             model.addAttribute("user", updateDTO);
             model.addAttribute("userId", id);
-            return "user-edit";
+            return "user/user-edit";
         } catch (Exception e) {
             log.error("Could not load user {}", id, e);
             model.addAttribute("error", "User not found");
-            return "user-error";
+            return "user/user-error";
         }
     }
 
@@ -123,7 +123,7 @@ public class UserViewController {
                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("userId", userId);
-            return "user-edit";
+            return "user/user-edit";
         }
 
         try {
@@ -134,7 +134,7 @@ public class UserViewController {
             log.error("Failed to update user {}", userId, e);
             model.addAttribute("error", "Update failed");
             model.addAttribute("userId", userId);
-            return "user-edit";
+            return "user/user-edit";
         }
     }
 
