@@ -1,0 +1,22 @@
+type CommentOutputDTO {
+    commentId: ID!
+    text: String!
+    authorId: ID!
+    authorName: String!
+    postId: ID!
+    createdAt: String!
+}
+
+input CommentInputDTO {
+    text: String!
+    postId: ID!
+}
+
+type Query {
+    getCommentsByPost(postId: ID!): [CommentOutputDTO]
+}
+
+type Mutation {
+    createComment(input: CommentInputDTO!): CommentOutputDTO
+    deleteComment(commentId: ID!): Boolean
+}
