@@ -8,7 +8,6 @@ import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
-import org.example.springboot25.exceptions.AlreadyExistsException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.example.springboot25.mapper.UserMapper;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -33,15 +31,15 @@ public class UserViewController {
     private final CatService catService;
     private final UserMapper userMapper;
 
-    public UserViewController(UserService userService, CatService catService) {
-    public UserViewController(UserService userService, UserMapper userMapper) {
+    public UserViewController(UserService userService, UserMapper userMapper, CatService catService) {
         this.userService = userService;
+        this.userMapper = userMapper;
         this.catService = catService;
     }
 
     @GetMapping
     public String getUsers(Model model) {
-        List<User> allUsers = userService.getAllUsers();
+        List<UserOutputDTO> allUsers = userService.getAllUsers();
         if (allUsers.isEmpty()) {
             model.addAttribute("usersError", "No users found.");
         }
@@ -52,7 +50,7 @@ public class UserViewController {
     @GetMapping("/profile/id/{userId}")
     public String getUserById(@PathVariable() Long userId, Model model) {
         try {
-            User user = userService.getUserById(userId);
+            UserOutputDTO user = userService.getUserById(userId);
             List<Cat> cats = catService.getAllCatsByUser(user);
             model.addAttribute("user", user);
             model.addAttribute("cats", cats);
@@ -74,7 +72,6 @@ public class UserViewController {
             model.addAttribute("error", e.getMessage());
             return "error-page";
         }
-        this.userMapper = userMapper;
     }
 
     @GetMapping("/list")
@@ -118,48 +115,51 @@ public class UserViewController {
     }
 
     @PutMapping("/{userId}/edit")
-    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String updateUser(@PathVariable Long userId,
+                             @Valid @ModelAttribute("user") UserUpdateDTO updateDTO,
+                             BindingResult bindingResult,
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "user/user-update";
+            model.addAttribute("userId", userId);
+            return "user-edit";
         }
-    @PostMapping("/edit")
-    public String updateUser(@RequestParam Long userId,
-                             @ModelAttribute("user") @Valid UserUpdateDTO updateDTO,
-                             Model model) {
+
         try {
             userService.updateUser(userId, updateDTO);
-            return "redirect:/user/list?success=updated";
+            redirectAttributes.addFlashAttribute("success", "User updated!");
+            return "redirect:/users/list";
         } catch (Exception e) {
             log.error("Failed to update user {}", userId, e);
             model.addAttribute("error", "Update failed");
             model.addAttribute("userId", userId);
             return "user-edit";
         }
-        return "redirect:/users/{userId}/edit";
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUserById(id);
-            return "redirect:/user/list?success=deleted";
-        } catch (Exception e) {
-            log.warn("Failed to delete user {}", id, e);
-            return "redirect:/user/list?error=delete-failed";
+        public String deleteUserFromList (@PathVariable Long id){
+            try {
+                userService.deleteUserById(id);
+                return "redirect:/user/list?success=deleted";
+            } catch (Exception e) {
+                log.warn("Failed to delete user {}", id, e);
+                return "redirect:/user/list?error=delete-failed";
+            }
         }
-    }
 
-    @DeleteMapping("/{userId}")
-    String deleteUser(@PathVariable Long userId, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
-        try {
-            userService.deleteUserById(userId);
-            redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
-            SecurityContextHolder.clearContext();
-            request.getSession().invalidate();
-        } catch (NotFoundException ex) {
-            model.addAttribute("error", ex.getMessage());
-            return "error-page";
-        }
+        @DeleteMapping("/{userId}")
+        String deleteOwnAccount (@PathVariable Long userId, HttpServletRequest request, RedirectAttributes
+        redirectAttributes, Model model){
+            try {
+                userService.deleteUserById(userId);
+                redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
+                SecurityContextHolder.clearContext();
+                request.getSession().invalidate();
+            } catch (NotFoundException ex) {
+                model.addAttribute("error", ex.getMessage());
+                return "error-page";
+            }
             return "redirect:/";
+        }
     }
-}
