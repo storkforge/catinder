@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class CatImageController {
 
-    private  final CatImageService catImageService;
+    private final CatImageService catImageService;
 
     public CatImageController(CatImageService catImageService) {
         this.catImageService = catImageService;
     }
 
     @GetMapping("/catimage")
-    public String getCatImages(Model model) {
+    public String getCatImage(Model model) {
         String imageUrl = catImageService.getCatImageUrl();
         model.addAttribute("catImageUrl", imageUrl);
         return "catimage/catimage";
