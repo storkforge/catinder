@@ -138,6 +138,17 @@ public class UserViewController {
         }
     }
 
+    /**
+     * Deletes a user from the user list (typically by an admin or moderator).
+     *
+     * This method handles a POST request to delete a specific user by ID. If the deletion is successful,
+     * the user is redirected to the user list view with a success message. If any error occurs,
+     * the user is redirected back with an error flag.
+     *
+     * @param id the ID of the user to delete
+     * @return a redirect string to the user list page with query parameters indicating result
+     */
+
     @PostMapping("/delete/{id}")
         public String deleteUserFromList (@PathVariable Long id){
             try {
@@ -149,6 +160,20 @@ public class UserViewController {
             }
         }
 
+    /**
+     * Deletes the currently authenticated user's own account.
+     *
+     * This method handles a DELETE request to allow a user to delete their own account.
+     * It invalidates the session and clears the security context upon success.
+     * If the user is not found, an error message is shown on a dedicated error page.
+     *
+     * @param userId the ID of the user to delete
+     * @param request the HTTP request used to invalidate the session
+     * @param redirectAttributes used to pass a success message to the redirect target
+     * @param model the model for passing error information to the view
+     * @return a redirect to the home page or an error page if deletion fails
+     */
+    
         @DeleteMapping("/{userId}")
         String deleteOwnAccount (@PathVariable Long userId, HttpServletRequest request, RedirectAttributes
         redirectAttributes, Model model){
