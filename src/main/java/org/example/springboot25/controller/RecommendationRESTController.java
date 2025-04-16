@@ -48,7 +48,7 @@ public class RecommendationRESTController {
     @ResponseStatus(HttpStatus.OK)
     public Recommendation getById(@PathVariable Long id, Authentication auth) {
         Recommendation rec = recommendationService.getRecommendationById(id);
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(rec, current)) {
             throw new AccessDeniedException("You can only access your own recommendations.");
@@ -61,7 +61,7 @@ public class RecommendationRESTController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Recommendation createRecommendation(@RequestBody @Valid Recommendation recommendation, Authentication auth) {
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
         recommendation.setUser(currentUser);
         return recommendationService.createRecommendation(recommendation);
     }
@@ -71,7 +71,7 @@ public class RecommendationRESTController {
     @ResponseStatus(HttpStatus.OK)
     public Recommendation patch(@PathVariable Long id, @RequestBody Map<String, Object> updates, Authentication auth) {
         Recommendation existing = recommendationService.getRecommendationById(id);
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(existing, current)) {
             throw new AccessDeniedException("You can only update your own recommendations.");
@@ -85,7 +85,7 @@ public class RecommendationRESTController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id, Authentication auth) {
         Recommendation rec = recommendationService.getRecommendationById(id);
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(rec, current)) {
             throw new AccessDeniedException("You can only delete your own recommendations.");
