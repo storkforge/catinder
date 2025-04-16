@@ -52,26 +52,19 @@ public class UserGraphQLController {
     @MutationMapping
     public UserOutputDTO createUser(@Argument("input") @Valid UserInputDTO input) {
         validateUserInput(input);
-        User user = userMapper.toUser(input);
-        return userMapper.toDto(userService.addUser(user));
+        return userService.addUser(input);
     }
 
     @MutationMapping
     public UserOutputDTO updateUser(@Argument Long userId, @Argument("input") UserUpdateDTO input) {
-        if(input == null) {
+        if (input == null) {
             throw new IllegalArgumentException("Input cannot be null");
         }
-        User userToUpdate = userService.getUserById(userId);
-        if(userToUpdate == null) {
-            throw new NotFoundException("User with id " + userId + " not found");
-        }
-        userMapper.updateUserFromDto(input, userToUpdate);
-        return userMapper.toDto(userService.updateUser(userId, userToUpdate));
+        return userService.updateUser(userId, input);
     }
 
     @MutationMapping
     public boolean deleteUser(@Argument Long userId) {
-
         try {
             userService.deleteUserById(userId);
             return true;
