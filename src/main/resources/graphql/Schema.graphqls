@@ -13,6 +13,13 @@ type Query {
 
     getAllReminders: [Reminder]
     getReminderById(id: ID!): Reminder
+
+    getAllEventParticipants: [EventParticipant]
+    getEventParticipantById(id: ID!): EventParticipant
+    getEventParticipantByUserName(userName: String!): EventParticipant
+
+    getAllPosts: [PostOutputDTO]
+    getPostById(id: ID!): PostOutputDTO
 }
 
 type Mutation {
@@ -31,6 +38,14 @@ type Mutation {
     createReminder(input: ReminderInput!): Reminder
     updateReminder(id: ID!, input: ReminderUpdate!): Reminder
     deleteReminder(id: ID!): Boolean!
+
+    createEventParticipant(input: EventParticipantInput!): EventParticipant
+    updateEventParticipant(id: ID!, update: EventParticipantUpdate!): EventParticipant
+    deleteEventParticipant(id: ID!): Boolean
+
+    createPost(input: PostInput!): PostOutputDTO
+    updatePost(id: ID!, input: PostUpdate!): PostOutputDTO
+    deletePost(id: ID!): Boolean!
 }
 
 scalar DateTime

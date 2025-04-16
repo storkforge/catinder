@@ -12,6 +12,7 @@ import org.example.springboot25.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -51,6 +52,11 @@ public class EventParticipantService {
                 .orElseThrow(() -> new NotFoundException("Participant not found"));
     }
 
+    public EventParticipant getParticipantById(Long eventParticipantId) {
+        return eventParticipantRepository.findById(eventParticipantId)
+                .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + eventParticipantId));
+    }
+
     public EventParticipant addParticipant(String userName, String eventName) {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new NotFoundException("User not found: " + userName));
@@ -77,8 +83,45 @@ public class EventParticipantService {
         return eventParticipantRepository.save(participant);
     }
 
+    public EventParticipant updateParticipant(Long eventParticipantId, String userName, String eventName) {
+        EventParticipant participant = eventParticipantRepository.findById(eventParticipantId)
+                .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + eventParticipantId));
+
+        User user = userRepository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User not found: " + userName));
+
+        Event event = eventRepository.findByEventName(eventName)
+                .orElseThrow(() -> new NotFoundException("Event not found: " + eventName));
+
+        Optional<EventParticipant> existingParticipant = eventParticipantRepository.findByUserAndEvent(user, event);
+        if (existingParticipant.isPresent() && !existingParticipant.get().getEventParticipantId().equals(eventParticipantId)) {
+            throw new ConflictException("User is already participating in this event.");
+        }
+
+        participant.setUser(user);
+        participant.setEvent(event);
+
+        return eventParticipantRepository.save(participant);
+    }
+
     public void deleteParticipant(String userName, String eventName) {
         EventParticipant participant = getParticipant(userName, eventName);
         eventParticipantRepository.delete(participant);
     }
+
+    public void deleteParticipantById(String eventParticipantId) {
+        try {
+            Long id = Long.parseLong(eventParticipantId);
+
+            EventParticipant participant = eventParticipantRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("EventParticipant not found with ID: " + id));
+
+            eventParticipantRepository.delete(participant);
+
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid event participant ID format: " + eventParticipantId, e);
+        }
+    }
+
+
 }

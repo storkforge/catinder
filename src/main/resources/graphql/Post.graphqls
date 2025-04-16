@@ -1,0 +1,18 @@
+type PostOutputDTO {
+    id: ID!
+    postText: String!
+    postImageUrl: String
+    postCreatedAt: DateTime
+    userPostAuthorId: ID!
+}
+
+input PostInput {
+    postText: String!
+    postImageUrl: String!
+    userPostAuthorId: ID!
+}
+
+input PostUpdate {
+    postText: String
+    postImageUrl: String
+}
