@@ -51,7 +51,8 @@ public class UserViewController {
     public String getUserById(@PathVariable() Long userId, Model model) {
         try {
             UserOutputDTO user = userService.getUserDtoById(userId);
-            List<Cat> cats = catService.getAllCatsByUser(user);
+            User userEntity = userMapper.toUser(user);
+            List<Cat> cats = catService.getAllCatsByUser(userEntity);
             model.addAttribute("user", user);
             model.addAttribute("cats", cats);
 
