@@ -23,6 +23,7 @@ public class Recommendation {
     @NotBlank
     private String recommendationProductLink;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "recommendation_user_id", nullable = false)
     private User user;
