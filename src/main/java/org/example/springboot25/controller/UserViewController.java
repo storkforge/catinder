@@ -50,7 +50,7 @@ public class UserViewController {
     @GetMapping("/profile/id/{userId}")
     public String getUserById(@PathVariable() Long userId, Model model) {
         try {
-            UserOutputDTO user = userService.getUserById(userId);
+            UserOutputDTO user = userService.getUserDtoById(userId);
             List<Cat> cats = catService.getAllCatsByUser(user);
             model.addAttribute("user", user);
             model.addAttribute("cats", cats);
@@ -65,7 +65,7 @@ public class UserViewController {
     @GetMapping("/profile/{userName}")
     String getUserByUserName(@PathVariable String userName, Model model) {
         try {
-            User user = userService.getUserByUserName(userName);
+            User user = userService.findUserByUserName(userName);
             model.addAttribute("user", user);
             return "user/user-details";
         } catch (NotFoundException e) {
@@ -102,7 +102,7 @@ public class UserViewController {
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
         try {
-            UserOutputDTO userDTO = userService.getUserById(id);
+            UserOutputDTO userDTO = userService.getUserDtoById(id);
             UserUpdateDTO updateDTO = userMapper.outputToUpdateDTO(userDTO);
             model.addAttribute("user", updateDTO);
             model.addAttribute("userId", id);
