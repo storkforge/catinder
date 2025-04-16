@@ -8,12 +8,12 @@ import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
-import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.UserMapper;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +28,48 @@ public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    // ==========================
+    // INTERNAL METHODS (Entity)
+    // ==========================
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+    }
+
+    public User findUserByUserName(String userName) {
+        return userRepository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByUserEmail(email)
+                .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+    }
+
+    // ==========================
+    // EXTERNAL METHODS (DTO)
+    // ==========================
+
+    public UserOutputDTO getUserDtoById(Long userId) {
+        return userMapper.toDto(findUserById(userId));
+    }
+
+    public UserOutputDTO getUserDtoByUserName(String userName) {
+        return userMapper.toDto(findUserByUserName(userName));
+    }
+
+    public UserOutputDTO getUserDtoByEmail(String email) {
+        return userMapper.toDto(findUserByEmail(email));
     }
 
     public List<UserOutputDTO> getAllUsers() {
@@ -42,47 +79,13 @@ public class UserService {
                 .toList();
     }
 
-    public UserOutputDTO getUserById(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
-        return userMapper.toDto(user);
-    }
-
-    public User getUserByUserName(String userName) {
-        return userRepository.findByUserName(userName)
-                .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
-    }
-
-    public UserOutputDTO getUserDtoByUserName(String userName) {
-        return userMapper.toDto(getUserByUserName(userName));
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findByUserEmail(email)
-                .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
-    }
-
-    public UserOutputDTO getUserDtoByEmail(String email) {
-        return userMapper.toDto(getUserByEmail(email));
-    }
-
-    /**
-     * Creates a new user after validating uniqueness of email and username.
-     *
-     * @param userInputDTO DTO containing user registration data
-     * @return UserOutputDTO of the saved user
-     * @throws AlreadyExistsException if username or email already exists
-     */
-
     public UserOutputDTO addUser(UserInputDTO userInputDTO) {
         if (userRepository.existsByUserEmail(userInputDTO.getUserEmail())) {
             throw new AlreadyExistsException("Email is already in use.");
         }
-
         if (userRepository.existsByUserName(userInputDTO.getUserName())) {
             throw new AlreadyExistsException("Username is already taken.");
         }
-
         try {
             log.info("Creating user: {}", userInputDTO.getUserName());
             User user = userMapper.toUser(userInputDTO);
@@ -98,9 +101,8 @@ public class UserService {
             throw new AlreadyExistsException("Account with given email already exists.");
         if (userRepository.existsByUserName(user.getUserName()))
             throw new AlreadyExistsException("Username is taken.");
-        log.info("Creating new user: {}", user.getUserName());
 
-        // 🔒 Hash password before saving
+        log.info("Creating new user: {}", user.getUserName());
         if (user.getUserPassword() != null && !user.getUserPassword().isEmpty()) {
             String hashedPassword = passwordEncoder.encode(user.getUserPassword());
             user.setUserPassword(hashedPassword);
@@ -110,43 +112,23 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    /**
-     * Updates a user using values from UserUpdateDTO.
-     *
-     * This method first ensures the user exists. Field-level validation (e.g., email format)
-     * is delegated to UserMapper.updateUserFromDto(). Only non-null fields in the DTO will be applied,
-     * allowing for partial updates.
-     *
-     * @param userId         The ID of the user to update.
-     * @param userUpdateDTO  The DTO containing update fields (can be partial).
-     * @return               The updated user as a UserOutputDTO.
-     * @throws NotFoundException         If the user with the given ID is not found.
-     * @throws IllegalArgumentException If validation fails inside the mapper.
-     */
     public UserOutputDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        User user = findUserById(userId);
 
-        Optional<User> userByUserName = userRepository.findByUserName(user.getUserName());
-        if (userByUserName.isPresent() && !userByUserName.get().getUserId().equals(userId)) {
-            throw new AlreadyExistsException("Username is taken.");
+        if (userUpdateDTO.getUserName() != null) {
+            Optional<User> existingUser = userRepository.findByUserName(userUpdateDTO.getUserName());
+            if (existingUser.isPresent() && !existingUser.get().getUserId().equals(userId)) {
+                throw new AlreadyExistsException("Username is taken.");
+            }
         }
+
         log.info("Updating user: {}", user.getUserName());
-        oldUser.setUserName(user.getUserName());
-        oldUser.setUserFullName(user.getUserFullName());
-        oldUser.setUserEmail(user.getUserEmail());
-        oldUser.setUserLocation(user.getUserLocation());
-        oldUser.setUserRole(user.getUserRole());
-        oldUser.setUserAuthProvider(user.getUserAuthProvider());
-        return userRepository.save(oldUser);
+        userMapper.updateUserFromDto(userUpdateDTO, user);
+        return userMapper.toDto(userRepository.save(user));
     }
 
-    /**
-     * Partially updates a user based on provided field changes.
-     */
     public User updateUser(Long userId, Map<String, Object> updates) {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
+        User existingUser = findUserById(userId);
 
         if (updates.containsKey("userEmail")) {
             String newEmail = updates.get("userEmail").toString();
@@ -188,6 +170,7 @@ public class UserService {
         if (updates.containsKey("userAuthProvider")) {
             existingUser.setUserAuthProvider((String) updates.get("userAuthProvider"));
         }
+
         return userRepository.save(existingUser);
     }
 
@@ -204,9 +187,7 @@ public class UserService {
             throw new SecurityException("Only ADMIN users can change roles.");
         }
 
-        User user = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new NotFoundException("User with id " + targetUserId + " not found"));
-
+        User user = findUserById(targetUserId);
         user.setUserRole(UserRole.valueOf(newRole.toUpperCase()));
         userRepository.save(user);
     }
