@@ -3,6 +3,14 @@ type Query {
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
 
+    getAllCats: [CatOutputDTO]
+    getCatById(catId: ID!): CatOutputDTO
+    getCatByName(catName: String!): CatOutputDTO
+
+    getAllEvents: [EventOutputDTO]
+    getEventById(eventId: ID!): EventOutputDTO
+    getEventByName(eventName: String!): EventOutputDTO
+
     getAllReminders: [Reminder]
     getReminderById(id: ID!): Reminder
 }
@@ -11,6 +19,14 @@ type Mutation {
     createUser(input: UserInput!): UserOutputDTO
     updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
     deleteUser(userId: ID!): Boolean
+
+    createCat(input: CatInput!): CatOutputDTO
+    updateCat(catId: ID!, input: CatUpdate!): CatOutputDTO
+    deleteCat(catId: ID!): Boolean
+
+    createEvent(input: EventInput!): EventOutputDTO
+    updateEvent(eventId: ID!, input: EventUpdate!): EventOutputDTO
+    deleteEvent(eventId: ID!): Boolean
 
     createReminder(input: ReminderInput!): Reminder
     updateReminder(id: ID!, input: ReminderUpdate!): Reminder

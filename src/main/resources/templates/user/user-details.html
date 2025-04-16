@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Catinder - User</title>
@@ -16,8 +16,15 @@
     <p><strong th:text="#{email}">Email:</strong> <span th:text="${user.userEmail}"></span></p>
     <p><strong th:text="#{location}">Location:</strong> <span th:text="${user.userLocation}"></span></p>
     <!-- Cats -->
-    <p><strong th:text="#{household}">Household:</strong> <span th:text="${user.userCats}"></span></p>
-
+    <p><strong th:text="#{household}">Household:</strong>
+        <span th:if="${#lists.isEmpty(cats)}">No cats found.</span>
+        <span th:if="${!#lists.isEmpty(cats)}">
+    <span th:each="cat, iterStat : ${cats}">
+      <span th:text="${cat.catName}">Cat Name</span>
+      <span th:if="${!iterStat.last}">, </span>
+    </span>
+  </span>
+    </p>
 </div>
 </body>
 </html>
