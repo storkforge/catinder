@@ -1,10 +1,14 @@
 package org.example.springboot25.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
+import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,9 +22,11 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserViewController {
     private final UserService userService;
+    private final CatService catService;
 
-    public UserViewController(UserService userService) {
+    public UserViewController(UserService userService, CatService catService) {
         this.userService = userService;
+        this.catService = catService;
     }
 
     @GetMapping
@@ -37,7 +43,10 @@ public class UserViewController {
     public String getUserById(@PathVariable() Long userId, Model model) {
         try {
             User user = userService.getUserById(userId);
+            List<Cat> cats = catService.getAllCatsByUser(user);
             model.addAttribute("user", user);
+            model.addAttribute("cats", cats);
+
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
@@ -167,8 +176,8 @@ public class UserViewController {
         }
     }
 
-    @PutMapping("/{userId}")
-    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    @PutMapping("/{userId}/edit")
+    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/user-update";
         }
@@ -179,7 +188,7 @@ public class UserViewController {
             redirectAttributes.addFlashAttribute("error", ex.getMessage());
             return "redirect:/users/" + userId + "/edit";
         }
-        return "redirect:/users/" + userId + "/edit";
+        return "redirect:/users/{userId}/edit";
     }
 
     @PatchMapping("/{userId}")
@@ -195,10 +204,12 @@ public class UserViewController {
     }
 
     @DeleteMapping("/{userId}")
-    String deleteUser(@PathVariable Long userId, RedirectAttributes redirectAttributes, Model model) {
+    String deleteUser(@PathVariable Long userId, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
         try {
             userService.deleteUserById(userId);
             redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
+            SecurityContextHolder.clearContext();
+            request.getSession().invalidate();
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
             return "error-page";

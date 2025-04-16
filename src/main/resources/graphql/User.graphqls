@@ -24,4 +24,5 @@ type UserOutputDTO {
     userLocation: String
     userRole: String
     userAuthProvider: String
+    postIds: [ID]
 }

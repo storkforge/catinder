@@ -61,7 +61,7 @@ public class EventRESTController {
     public Event createEvent(@RequestBody @Valid Event event, Authentication auth) {
         User currentUser = userService.getUserByUserName(auth.getName());
         event.setUserEventPlanner(currentUser);
-        event.setEventDateTime(LocalDateTime.now());
+        // event.setEventDateTime(LocalDateTime.now());
         return eventService.createEvent(event);
     }
 
