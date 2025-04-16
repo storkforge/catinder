@@ -23,19 +23,14 @@ public class Comment {
 
     private LocalDateTime createdAt;
 
-    // Getters & setters
     public Long getCommentId() { return commentId; }
     public void setCommentId(Long commentId) { this.commentId = commentId; }
-
     public String getText() { return text; }
     public void setText(String text) { this.text = text; }
-
     public User getAuthor() { return author; }
     public void setAuthor(User author) { this.author = author; }
-
     public Post getPost() { return post; }
     public void setPost(Post post) { this.post = post; }
-
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
