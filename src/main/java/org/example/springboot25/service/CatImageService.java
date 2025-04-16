@@ -14,15 +14,23 @@ import java.net.http.HttpResponse;
 
 @Service
 public class CatImageService {
+
     private final String apiKey;
     private static final Logger logger = LoggerFactory.getLogger(CatImageService.class);
 
     public CatImageService(@Value("${catapi.key:}") String apiKey) {
+        if (apiKey == null || apiKey.isBlank()) {
+            logger.warn("No CATAPI_KEY provided – fallback image will be used.");
+        }
         this.apiKey = apiKey;
     }
 
     public String getCatImageUrl() {
         String apiUrl = "https://api.thecatapi.com/v1/images/search";
+
+        if (apiKey == null || apiKey.isBlank()) {
+            return getFallbackImageUrl();
+        }
 
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -39,19 +47,20 @@ public class CatImageService {
             }
 
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.body()); // Cannot resolve method 'readTree(Object)'
+            JsonNode root = mapper.readTree(response.body());
 
-            if (root.isArray() && root.size() > 0) {
+            if (root.isArray() && root.size() > 0 && root.get(0).has("url")) {
                 return root.get(0).get("url").asText();
             }
         } catch (Exception e) {
             logger.error("Failed to fetch cat image from API", e);
         }
+
         return getFallbackImageUrl();
     }
 
     private String getFallbackImageUrl() {
         return "https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg";
     }
-
 }
+
