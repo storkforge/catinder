@@ -6,6 +6,7 @@ import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.UserMapper;
@@ -13,10 +14,12 @@ import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -90,6 +93,23 @@ public class UserService {
         }
     }
 
+    public User addUser(User user) {
+        if (userRepository.existsByUserEmail(user.getUserEmail()))
+            throw new AlreadyExistsException("Account with given email already exists.");
+        if (userRepository.existsByUserName(user.getUserName()))
+            throw new AlreadyExistsException("Username is taken.");
+        log.info("Creating new user: {}", user.getUserName());
+
+        // 🔒 Hash password before saving
+        if (user.getUserPassword() != null && !user.getUserPassword().isEmpty()) {
+            String hashedPassword = passwordEncoder.encode(user.getUserPassword());
+            user.setUserPassword(hashedPassword);
+        } else {
+            user.setUserPassword(null);
+        }
+        return userRepository.save(user);
+    }
+
     /**
      * Updates a user using values from UserUpdateDTO.
      *
@@ -107,8 +127,68 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        userMapper.updateUserFromDto(userUpdateDTO, user);
-        return userMapper.toDto(userRepository.save(user));
+        Optional<User> userByUserName = userRepository.findByUserName(user.getUserName());
+        if (userByUserName.isPresent() && !userByUserName.get().getUserId().equals(userId)) {
+            throw new AlreadyExistsException("Username is taken.");
+        }
+        log.info("Updating user: {}", user.getUserName());
+        oldUser.setUserName(user.getUserName());
+        oldUser.setUserFullName(user.getUserFullName());
+        oldUser.setUserEmail(user.getUserEmail());
+        oldUser.setUserLocation(user.getUserLocation());
+        oldUser.setUserRole(user.getUserRole());
+        oldUser.setUserAuthProvider(user.getUserAuthProvider());
+        return userRepository.save(oldUser);
+    }
+
+    /**
+     * Partially updates a user based on provided field changes.
+     */
+    public User updateUser(Long userId, Map<String, Object> updates) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found."));
+
+        if (updates.containsKey("userEmail")) {
+            String newEmail = updates.get("userEmail").toString();
+            Optional<User> userByEmail = userRepository.findByUserEmail(newEmail);
+            if (userByEmail.isPresent() && !userByEmail.get().getUserId().equals(userId)) {
+                throw new AlreadyExistsException("Account with given email already exists.");
+            }
+        }
+
+        if (updates.containsKey("userName")) {
+            String newUserName = updates.get("userName").toString();
+            Optional<User> userByName = userRepository.findByUserName(newUserName);
+            if (userByName.isPresent() && !userByName.get().getUserId().equals(userId)) {
+                throw new AlreadyExistsException("Username is taken.");
+            }
+        }
+
+        log.info("Partially updating user: {}", existingUser.getUserName());
+        if (updates.containsKey("userFullName")) {
+            existingUser.setUserFullName((String) updates.get("userFullName"));
+        }
+        if (updates.containsKey("userName")) {
+            existingUser.setUserName((String) updates.get("userName"));
+        }
+        if (updates.containsKey("userEmail")) {
+            existingUser.setUserEmail((String) updates.get("userEmail"));
+        }
+        if (updates.containsKey("userLocation")) {
+            existingUser.setUserLocation((String) updates.get("userLocation"));
+        }
+        if (updates.containsKey("userRole")) {
+            Object roleObj = updates.get("userRole");
+            if (roleObj instanceof String roleStr) {
+                existingUser.setUserRole(UserRole.valueOf(roleStr));
+            } else if (roleObj instanceof UserRole roleEnum) {
+                existingUser.setUserRole(roleEnum);
+            }
+        }
+        if (updates.containsKey("userAuthProvider")) {
+            existingUser.setUserAuthProvider((String) updates.get("userAuthProvider"));
+        }
+        return userRepository.save(existingUser);
     }
 
     public void deleteUserById(Long userId) {

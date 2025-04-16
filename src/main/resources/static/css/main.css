@@ -11,7 +11,6 @@ body {
     background-size: cover;
 }
 
-
 header {
     display: flex;
     justify-content: space-between;
@@ -26,6 +25,13 @@ header {
     align-items: center;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 20px;
+}
+
 h1 {
     text-align: left;
     font-size: 45px;
@@ -36,6 +42,21 @@ h1 {
     0 3px 6px rgba(255, 104, 15, 0.5),
     0 10px 20px rgba(255, 255, 255, 0.1);
     cursor: default;
+}
+
+h1 a,
+h1 a:visited,
+h1 a:hover,
+h1 a:active {
+    color: #e79a6f !important;
+    text-shadow: 0 1px 2px rgba(255, 0, 0, 0.7),
+    0 3px 6px rgba(255, 104, 15, 0.5),
+    0 10px 20px rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.logo:hover {
+    color: inherit;
 }
 
 .cat-emoji {
@@ -55,10 +76,6 @@ h1 {
 
 .about-link:hover {
     color: rgba(255, 255, 255, 0.3);
-}
-
-.header-right {
-    margin-right: 20px;
 }
 
 .lang-button {
@@ -133,10 +150,6 @@ a:hover {
     cursor: pointer;
 }
 
-a:active {
-    text-shadow: 0 1px 2px rgba(255, 0, 0, 0.3);
-}
-
 .form-container {
     max-width: 600px;
     margin: 30px auto;
@@ -168,7 +181,7 @@ a:active {
 }
 
 .form-row button {
-    margin-left: auto;
+    margin: auto;
     background-color: #dc6b24;
     color: #fff;
     border: none;
@@ -184,9 +197,54 @@ a:active {
     padding: 8px 16px;
 }
 
+/*___ EVENT ___*/
+#event-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Header row styling */
+#event-table thead tr {
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+}
+
+/* Table header and cell styling */
+#event-table th,
+#event-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Optional zebra-striping on the data rows */
+#event-table tbody tr:nth-child(even) {
+    background-color: #c0c0c0;
+}
+
+#event-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+#event-table tr.data-row td:first-child,
+#event-table tr.header-row th:first-child{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+}
+
+#event-table tr.data-row td:last-child,
+#event-table tr.header-row th:last-child{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* --/EVENT-- */
+
 .delete-button {
-    display: inline-block;  /* Size to content */
-    margin-top: 20px;       /* Adds space above the button */
+    display: inline-block;
+    margin-top: 20px;
     background-color: #dc2424;
     color: #fff;
     border: none;
@@ -206,6 +264,13 @@ a:active {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+}
+
+/*___ MESSAGE ___*/
+
+#successMessage {
+    min-height: 15px;
+    padding-bottom: 10px;
 }
 
 .success-message {
@@ -228,6 +293,312 @@ a:active {
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
     color: #c41717;
 }
+
+/*___ /MESSAGE ___*/
+
+/*___ NAVIGATION ___*/
+
+.header-nav {
+    flex: 1;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 0 1rem;
+    color: rgb(100,100,100);
+}
+
+.nav-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+    text-decoration: none;
+    color: inherit;
+    padding: 0.5rem;
+    max-width: 100px;
+}
+
+.settings-button {
+    scale: 60%;
+}
+
+.nav-button img.header-choice {
+    width: 40px;
+    height: auto;
+    margin-bottom: 0.2rem;
+}
+
+.nav-button:hover {
+    color: #de7a3b;
+}
+
+.nav-button span {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/*___ /NAVIGATION ___*/
+
+/*___ DROP-DOWN ___*/
+
+.about-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    background-color: transparent;
+    border: none;
+    padding: 5px 15px;
+    font-size: 16px;
+    color: #fffaef;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.dropdown-toggle:hover {
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: transparent;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 4px;
+}
+
+.about-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: rgba(10, 10, 10, 0.9);
+    min-width: 160px;
+    padding: 0.5rem 0;
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+.about-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.about-dropdown .dropdown-menu .dropdown-item {
+    color: #fffaef;
+    font-size: 16px;
+    padding: 0.5rem 1rem;
+    display: block;
+}
+
+.about-content {
+    max-width: 800px;
+    width: 90%;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    line-height: 1.6;
+}
+
+.about-dropdown .dropdown-menu .dropdown-item:hover {
+    color: #de7a3b;
+}
+
+/*___ /DROP-DOWN ___*/
+
+/*___ CREATE-BUTTON ___*/
+
+.create-button {
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 8px;
+    outline: rgba(0,0,0,0.3);
+    margin: 20px    ;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-button:hover {
+    background-color: rgb(246, 200, 97);
+    color: white;
+    transition: background-color 0.15s, color 0.15s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.create-button:active {
+    border: none;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/*___ /CREATE-BUTTON ___*/
+
+/*___ POST ___*/
+
+.posts-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.post-card {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.post-image {
+    text-align: center;
+    margin: 10px 0;
+}
+
+/*___ /POST ___*/
+
+/*___ Remove list-bullets ___*/
+.no-bullets {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+/*___ /Remove list-bullets ___*/
+
+
+.text-limited {
+    max-width: 60ch;
+    overflow-wrap: break-word;
+    text-align: left;
+    margin-left: 40px;
+
+}
+
+.post-meta-inline {
+    margin-left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/*___ USER-TABLE ___*/
+#user-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#user-table .header-row {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+}
+
+/* Zebra striping for data rows */
+#user-table tr:not(.header-row):nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+#user-table tr:not(.header-row):nth-child(odd) {
+    background-color: rgba(100, 100, 100, 0.5);
+}
+
+#user-table th,
+#user-table td {
+    border: none;
+    padding: 10px;
+}
+
+#user-table tr.data-row td {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-right: none;
+    border-left: none;
+}
+
+#user-table tr.data-row td:first-child,
+#user-table tr.header-row th:first-child{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+}
+
+#user-table tr.data-row td:last-child,
+#user-table tr.header-row th:last-child{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/*___ /USER-TABLE ___*/
+
+
+
+
+
+/*___ TABLE ___*/
+.table-container {
+    /*text-align: center;*/
+    max-width: 50%;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/*___ /TABLE ___*/
+
+/*___ CAT-LIST ___*/
+
+/* Use separate border collapsing for the table so cell radii are respected */
+#cats-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Header row styling */
+#cats-table thead tr {
+    background-color: #e79a6f;
+    color: white;
+}
+
+/* Table header and cell styling */
+#cats-table th,
+#cats-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+
+/* Optional zebra-striping on data rows */
+#cats-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+#cats-table tbody tr:nth-child(odd) {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
+#cats-table tr.data-row td:first-child,
+#cats-table tr.header-row th:first-child{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+}
+
+#cats-table tr.data-row td:last-child,
+#cats-table tr.header-row th:last-child{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/*___ /CAT-LIST ___*/
 
 .header-button {
     background-color: transparent;

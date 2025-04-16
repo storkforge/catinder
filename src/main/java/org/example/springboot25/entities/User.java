@@ -1,10 +1,12 @@
 package org.example.springboot25.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
 @Table(name = "app_user")
 public class User {
 
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -20,13 +24,16 @@ public class User {
     @NotBlank
     private String userFullName;
 
-    @Column(unique = true)
-    private String userEmail;
-
+    @NotBlank
     @Column(unique = true)
     private String userName;
 
+    @Email
     @NotBlank
+    @Column(unique = true)
+    private String userEmail;
+
+    //@NotBlank
     private String userLocation;
 
     @NotNull
@@ -35,6 +42,9 @@ public class User {
 
     @NotBlank
     private String userAuthProvider;
+
+    @Column(nullable = true)
+    private String userPassword;
 
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cat> userCats = new ArrayList<>();
@@ -66,7 +76,13 @@ public class User {
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        if (userName == null) {
+            this.userName = null;
+        } else if (!userName.startsWith("@")) {
+            this.userName = "@" + userName;
+        } else {
+            this.userName = userName;
+        }
     }
 
     public String getUserEmail() {
@@ -99,6 +115,28 @@ public class User {
 
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
+    }
+
+    public String getUserPassword() {
+        return null; // To not expose even the hashed password
+    }
+
+    public void setUserPassword(String userPassword) {
+        if (userPassword != null && !userPassword.isEmpty()) {
+            this.userPassword = ENCODER.encode(userPassword);
+        } else {
+            this.userPassword = null;
+        }
+    }
+
+    /**
+     * Verifies if the provided raw password matches the stored hashed password
+     *
+     * @param rawPassword the password to check
+     * @return true if the password matches, false otherwise
+     */
+    public boolean checkPassword(String rawPassword) {
+        return ENCODER.matches(rawPassword, this.userPassword);
     }
 
     public List<Cat> getUserCats() {

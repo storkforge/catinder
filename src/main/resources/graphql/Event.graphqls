@@ -1,0 +1,23 @@
+type EventOutputDTO {
+    eventId: ID
+    eventName: String
+    eventDescription: String
+    eventLocation: String
+    eventDateTime: DateTime
+    userEventPlanner: UserOutputDTO
+}
+
+input EventInput {
+    eventName: String!
+    eventDescription: String!
+    eventLocation: String!
+    eventDateTime: DateTime!
+    userId: ID!
+}
+
+input EventUpdate {
+    eventName: String
+    eventDescription: String
+    eventLocation: String
+    eventDateTime: DateTime
+}

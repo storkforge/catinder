@@ -1,7 +1,9 @@
 package org.example.springboot25.dto;
 
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+
 import org.example.springboot25.entities.UserRole;
 
 public class UserInputDTO {
@@ -73,4 +75,5 @@ public class UserInputDTO {
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
     }
+
 }
