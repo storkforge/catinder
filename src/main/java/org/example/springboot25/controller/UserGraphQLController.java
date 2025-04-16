@@ -28,7 +28,7 @@ public class UserGraphQLController {
 
     @QueryMapping
     public UserOutputDTO getUserById(@Argument Long userId) {
-        return userService.getUserById(userId);
+        return userService.getUserDtoById(userId);
     }
 
     @QueryMapping
