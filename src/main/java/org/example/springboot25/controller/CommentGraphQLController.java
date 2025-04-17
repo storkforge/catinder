@@ -32,12 +32,18 @@ public class CommentGraphQLController {
 
     @MutationMapping
     public CommentOutputDTO createComment(@Argument @Valid CommentInputDTO input, Authentication auth) {
+        if (auth == null) {
+            throw new IllegalArgumentException("Authentication is required");
+        }
         User currentUser = userService.findUserByUserName(auth.getName());
         return commentService.createComment(input, currentUser);
     }
 
     @MutationMapping
     public boolean deleteComment(@Argument Long commentId, Authentication auth) {
+        if (auth == null) {
+            throw new IllegalArgumentException("Authentication is required");
+        }
         try {
             User currentUser = userService.findUserByUserName(auth.getName());
             commentService.deleteComment(commentId, currentUser);
