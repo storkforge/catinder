@@ -10,16 +10,19 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.CatPhotoMapper;
 import org.example.springboot25.service.CatPhotoService;
 import org.example.springboot25.service.CatService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class CatPhotoGraphQLController {
+
+    private static final Logger log = LoggerFactory.getLogger(CatPhotoGraphQLController.class);
 
     private final CatPhotoService catPhotoService;
     private final CatPhotoMapper catPhotoMapper;
@@ -45,50 +48,39 @@ public class CatPhotoGraphQLController {
         return catPhotoMapper.toDTO(catPhoto);
     }
 
-
     @MutationMapping
     public CatPhotoOutputDTO createCatPhoto(@Argument("input") @Valid CatPhotoInputDTO input) {
-        Cat cat = catService.getCatById(input.getCatPhotoCatId())
-                .orElseThrow(() -> new NotFoundException("Cat with ID: " + input.getCatPhotoCatId() + " not found"));
+        Cat cat = catService.findCatById(input.getCatPhotoCatId());
 
-        CatPhoto catPhoto = catPhotoService.saveCatPhoto(catPhotoMapper.toEntityInput(input, cat));
+        CatPhoto catPhoto = catPhotoService.saveCatPhoto(
+                catPhotoMapper.toEntityInput(input, cat)
+        );
+
         return catPhotoMapper.toDTO(catPhoto);
     }
 
     @MutationMapping
-    public CatPhotoOutputDTO updateCatPhoto(@Argument Long id, @Argument("input") CatPhotoUpdateDTO input) {
-        Optional<CatPhoto> optionalExisting = catPhotoService.getCatPhotoById(id);
-        if (optionalExisting.isEmpty()) {
-            throw new NotFoundException("CatPhoto with ID " + id + " not found");
-        }
-        CatPhoto existing = optionalExisting.get();
+    public CatPhotoOutputDTO updateCatPhoto(@Argument Long id, @Argument("input") @Valid CatPhotoUpdateDTO input) {
+        CatPhoto existing = catPhotoService.getCatPhotoById(id)
+                .orElseThrow(() -> new NotFoundException("CatPhoto with ID " + id + " not found"));
 
         Cat cat = existing.getCatPhotoCat();
         if (input.getCatPhotoCatId() != null) {
-            Optional<Cat> optionalCat = catService.getCatById(input.getCatPhotoCatId());
-            if (optionalCat.isEmpty()) {
-                throw new NotFoundException("Cat with ID " + input.getCatPhotoCatId() + " not found");
-            }
-            cat = optionalCat.get();
+            cat = catService.findCatById(input.getCatPhotoCatId());
         }
 
         CatPhoto updated = catPhotoMapper.toEntityUpdate(existing, input, cat);
 
-        Optional<CatPhoto> optionalUpdated = catPhotoService.updateCatPhoto(id, updated);
-        if (optionalUpdated.isEmpty()) {
-            throw new NotFoundException("Failed to update CatPhoto with ID " + id);
-        }
-
-        return catPhotoMapper.toDTO(optionalUpdated.get());
+        return catPhotoService.updateCatPhoto(id, updated)
+                .map(catPhotoMapper::toDTO)
+                .orElseThrow(() -> new NotFoundException("Failed to update CatPhoto with ID " + id));
     }
-
-
 
     @MutationMapping
     public boolean deleteCatPhoto(@Argument Long id) {
         catPhotoService.getCatPhotoById(id)
-                .orElseThrow(() -> new NotFoundException("CatPhoto with ID: " + id  + " not found"));
+                .orElseThrow(() -> new NotFoundException("CatPhoto with ID: " + id + " not found"));
+
         return catPhotoService.deleteCatPhoto(id);
     }
 }
-

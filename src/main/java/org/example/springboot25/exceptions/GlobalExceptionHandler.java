@@ -3,6 +3,7 @@ package org.example.springboot25.exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,5 +53,10 @@ public class GlobalExceptionHandler {
         return Map.of("error", ex.getMessage());
     }
 
-
+    @ExceptionHandler(InvalidInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInvalidInputException(InvalidInputException ex) {
+        logger.warn("InvalidInputException: {}", ex.getMessage());
+        return Map.of("error", "Invalid input: " + ex.getMessage());
+    }
 }

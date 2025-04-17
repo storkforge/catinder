@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface CatRepository extends JpaRepository<Cat, Long> {
     List<Cat> findAllByUserCatOwner(User user);
+    List<Cat> findByCatNameContainingIgnoreCase(String name);
 }
