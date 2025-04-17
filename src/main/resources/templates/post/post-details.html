@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Post Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div th:replace="fragments/header"></div>
+
+<div class="post-container">
+    <h2 th:text="${post.userPostAuthor.userName} + ' says:'">UserName</h2>
+    <p th:text="${post.postText}">Post text goes here...</p>
+    <img th:if="${post.postImageUrl}" th:src="${post.postImageUrl}" alt="Post image" class="post-image"/>
+
+    <div class="comments-section">
+        <h3>Comments</h3>
+
+        <!-- Om det inte finns några kommentarer -->
+        <p th:if="${#lists.isEmpty(comments)}">No comments yet. Be the first to comment!</p>
+
+        <!-- Lista av kommentarer -->
+        <ul th:if="${!#lists.isEmpty(comments)}">
+            <li th:each="comment : ${comments}">
+                <p>
+                    <strong th:text="${comment.authorName}">Username</strong>:
+                    <span th:text="${comment.text}">Comment text</span>
+                </p>
+                <small th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></small>
+
+                <!-- Ta bort knapp endast för author eller admin -->
+                <form th:if="${#authentication.name == comment.authorName or #authorization.expression('hasAuthority(''ADMIN'')')}"
+                      th:action="@{/api/comments/{id}(id=${comment.commentId})}"
+                      method="post"
+                      onsubmit="return confirm('Delete this comment?')">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        </ul>
+
+        <!-- Formulär för att lägga till en kommentar -->
+        <div class="comment-form" th:if="${#authorization.expression('isAuthenticated()')}">
+            <form th:action="@{/api/comments}" th:object="${newComment}" method="post">
+                <input type="hidden" th:name="postId" th:value="${post.postId}"/>
+                <label for="text">Write a comment:</label>
+                <textarea id="text" name="text" rows="3" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
