@@ -689,7 +689,6 @@ a:hover {
     cursor: pointer;
 }
 
-/* Initially hide the dropdown menu */
 .custom-dropdown-menu {
     display: none;
     position: absolute;
@@ -705,7 +704,6 @@ a:hover {
     margin: 0;
 }
 
-/* Show the menu when hovering over the custom-dropdown */
 .custom-dropdown:hover .custom-dropdown-menu {
     display: block;
 }
@@ -722,7 +720,8 @@ a:hover {
 }
 
 /*___ /HEADER RIGHT ___*/
-/* Cat image slideshow */
+/* ___ SLIDESHOW ___ */
+
 .image‐wrapper {
     width: 512px;
     height: 512px;
@@ -738,31 +737,72 @@ a:hover {
     display: block;
 }
 
-.slideshow-container {
+.catPhotos-container {
+    max-width: 50%;
+    padding: 30px 30px 40px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.5rem;
+}
+
+.slideshow-container{
     position: relative;
-    margin: 5% auto auto;
+    margin: auto auto 100px;
+    padding-left: 72px;
+    padding-right: 72px;
     width: 512px;
 }
 
-.mySlides {
-    position: relative;
+.mySlides{
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-wrapper{
     width: 512px;
     height: 512px;
+    overflow: hidden;
+    background:#000;
 }
 
-.mySlides img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
+.image-wrapper img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
 }
+
+/* ___ /SLIDESHOW ___ */
+/*___ CAT PHOTO ___*/
+
+.cat-details{
+    padding: 8px 16px;
+    text-align:left;
+    background:transparent;
+}
+
+.cat-details p {
+    display: block;
+    margin: 1rem 0;
+}
+
+.cat-details span {
+    display: block;
+    margin-bottom: 4px;
+}
+
+/*____ /CAT PHOTO ___*/
+/*___ SLIDESHOW ARROWS ___*/
 
 .prev, .next {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     padding: 12px;
-    font-size: 28px;
+    font-size: 56px;
     font-weight: bold;
     color: #fff;
     cursor: pointer;
@@ -773,30 +813,15 @@ a:hover {
 
 .prev {
     left: 10px;
-    border-radius: 0 3px 3px 0;
+    border-radius: 8px;
 }
 
 .next {
     right: 10px;
-    border-radius: 3px 0 0 3px;
+    border-radius: 8px;
 }
 
 .prev:hover, .next:hover {
     background: rgba(0, 0, 0, 0.8);
 }
-
-.cat-details {
-    padding-top: 8px;
-    padding-left: 16px;
-    text-align: left;
-}
-
-.cat-details p {
-    display: block; /* each <p> on its own line */
-    margin: 1rem 0; /* vertical gap between them */
-}
-
-.cat-details span {
-    display: block;
-    margin-bottom: 4px;
-}
+/*___ /SLIDESHOW ARROWS ___*/

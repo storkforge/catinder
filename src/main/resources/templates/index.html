@@ -16,22 +16,25 @@
 <!--TO ADMIN DASHBOARD-->
 <a sec:authorize="hasRole('ADMIN')"
    th:href="@{/admin/dashboard}"
-   class="nav-button admin-button" >
+   class="nav-button admin-button">
     <img class="header-choice" src="/images/security.png" alt="Admin"/>
     <span>Admin Dashboard</span>
 </a>
-
-<div sec:authorize="isAuthenticated()" class="slideshow-container">
+<div sec:authorize="isAuthenticated()" class="slideshow-container catPhotos-container">
     <div class="mySlides fade" th:each="photo : ${catPhotos}">
         <div class="image‐wrapper">
             <img th:src="@{${photo.catPhotoUrl}}"
-                 th:alt="${photo.catPhotoCaption} ?: 'Cat photo'" />
+                 th:alt="${photo.catPhotoCaption} ?: 'Cat photo'"/>
         </div>
         <div class="cat-details">
-            <p style="font-size: 22px"><strong> <span th:text="${photo.catPhotoCat.catName} + ', ' + ${photo.catPhotoCat.catAge}"></span></strong></p>
-            <p><strong th:text="#{cat.breed} + ': '">Breed:</strong> <span th:text="${photo.catPhotoCat.catBreed}"></span></p>
-            <p><strong th:text="#{cat.gender} + ': '">Gender:</strong> <span th:text="${photo.catPhotoCat.catGender}"></span></p>
-            <p><strong th:text="#{cat.personality} + ': '">Personality:</strong> <span th:text="${photo.catPhotoCat.catPersonality}"></span></p>
+            <p style="font-size: 22px"><strong> <span
+                    th:text="${photo.catPhotoCat.catName} + ', ' + ${photo.catPhotoCat.catAge}"></span></strong></p>
+            <p><strong th:text="#{cat.breed} + ': '">Breed:</strong> <span
+                    th:text="${photo.catPhotoCat.catBreed}"></span></p>
+            <p><strong th:text="#{cat.gender} + ': '">Gender:</strong> <span
+                    th:text="${photo.catPhotoCat.catGender}"></span></p>
+            <p><strong th:text="#{cat.personality} + ': '">Personality:</strong> <span
+                    th:text="${photo.catPhotoCat.catPersonality}"></span></p>
         </div>
     </div>
     <a class="prev" onclick="plusSlides(-1)">❮</a>
@@ -64,16 +67,20 @@
         let i;
         let slides = document.getElementsByClassName("mySlides");
         let dots = document.getElementsByClassName("dot");
-        if (n > slides.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = slides.length}
+        if (n > slides.length) {
+            slideIndex = 1
+        }
+        if (n < 1) {
+            slideIndex = slides.length
+        }
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
         for (i = 0; i < dots.length; i++) {
             dots[i].className = dots[i].className.replace(" active", "");
         }
-        slides[slideIndex-1].style.display = "block";
-        dots[slideIndex-1].className += " active";
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
     }
 </script>
 </body>

@@ -3,10 +3,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
-<h1>Välkommen till Admin Dashboard</h1>
-<p>Bygget funkar!</p>
+<div th:replace="fragments/header"></div>
+
+<h2>Välkommen till Admin Dashboard!</h2>
 <p class="select-text" th:text="#{SectionSelection}">ADMIN:</p>
 <nav class="link-box">
     <ul role="menu">
