@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUserName(username)
-                .map(CustomUserDetails::new) // CustomUserDetails implements UserDetails
+                .map(CustomUserDetails::new)
                 .orElseThrow(() -> {
                     logger.warn("Login attempt with unknown username: {}", username);
                     return new UsernameNotFoundException("No user found with username: " + username);

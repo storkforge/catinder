@@ -47,7 +47,7 @@ public class EventService {
         existing.setEventName(updatedEvent.getEventName());
         existing.setEventDescription(updatedEvent.getEventDescription());
         existing.setEventLocation(updatedEvent.getEventLocation());
-        existing.setEventDateTime(updatedEvent.getEventDateTime());
+        //existing.setEventDateTime(updatedEvent.getEventDateTime());
 
         return eventRepository.save(existing);
     }
@@ -68,13 +68,13 @@ public class EventService {
             existing.setEventLocation(location);
         }
 
-        if (updates.get("eventDateTime") instanceof String dateTimeStr) {
-            try {
-                existing.setEventDateTime(LocalDateTime.parse(dateTimeStr));
-            } catch (DateTimeParseException e) {
-                throw new IllegalArgumentException("Invalid format for 'eventDateTime'. Use ISO 8601, e.g. 2025-04-01T14:00");
-            }
-        }
+//        if (updates.get("eventDateTime") instanceof String dateTimeStr) {
+//            try {
+//                existing.setEventDateTime(LocalDateTime.parse(dateTimeStr));
+//            } catch (DateTimeParseException e) {
+//                throw new IllegalArgumentException("Invalid format for 'eventDateTime'. Use ISO 8601, e.g. 2025-04-01T14:00");
+//            }
+//        }
 
         return eventRepository.save(existing);
     }

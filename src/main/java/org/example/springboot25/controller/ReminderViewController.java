@@ -19,6 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
         @GetMapping
         public String getRemindersView(Model model) {
             model.addAttribute("reminder", reminderService.getAllReminders());
-            return "reminder";
+            return "reminder/reminder";
         }
     }

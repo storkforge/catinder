@@ -1,34 +1,18 @@
 package org.example.springboot25.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.example.springboot25.entities.UserRole;
 
 public class UserOutputDTO {
 
-    @NotNull
     private Long userId;
-
-    @NotBlank
     private String userFullName;
-
-    @NotBlank
     private String userName;
-
-    @Email
-    @NotBlank
     private String userEmail;
-
-    @NotBlank
     private String userLocation;
-
-    @NotBlank
     private UserRole userRole;
-
-    @NotBlank
     private String userAuthProvider;
 
+    // Getters and Setters
     public Long getUserId() {
         return userId;
     }

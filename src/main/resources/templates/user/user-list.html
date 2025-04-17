@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Catinder - Users</title>
@@ -9,17 +9,36 @@
 <body>
 <div th:replace="fragments/header"></div>
 <h2 th:text="#{Users}">Users:</h2>
-<!-- If there is a message (e.g., no users found), display it -->
 <div th:if="${message}">
     <p th:text="${message}"></p>
 </div>
-
-<!-- Otherwise, display the list of users KOLLA ÖVERSÄTTNING-->
-<div th:text="#{Users}" th:if="${users}">
-    <ul>
-        <li th:each="user : ${users}"
-            th:text="|${user.userName} - ${user.userFullName}|"></li>
-    </ul>
+<div class="table-container">
+    <table id="user-table" th:if="${users}">
+        <tr class="header-row">
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Full name</th>
+        </tr>
+        <tr class="data-row" th:each="user, iterStat : ${users}">
+            <td>
+                <a th:href="@{/users/profile/id/{id}(id=${user.userId})}"
+                   th:text="${user.userId}">User Details</a>
+            </td>
+            <td>
+                <a th:href="@{/users/profile/id/{id}(id=${user.userId})}"
+                   th:text="${user.userName}">User Details</a>
+            </td>
+            <td>
+                <a th:href="@{/users/profile/id/{id}(id=${user.userId})}"
+                   th:text="${user.userEmail}">User Details</a>
+            </td>
+            <td>
+                <a th:href="@{/users/profile/id/{id}(id=${user.userId})}"
+                   th:text="${user.userFullName}">User Details</a>
+            </td>
+        </tr>
+    </table>
 </div>
 
 </body>
