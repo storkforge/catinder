@@ -112,7 +112,7 @@ public class CatService {
                     cat.setCatAge(Integer.parseInt(str));
                 }
             } catch (NumberFormatException e) {
-                throw new NotFoundException("Invalid catAge value.");
+                throw new IllegalArgumentException("Invalid catAge value.");
             }
         }
 
