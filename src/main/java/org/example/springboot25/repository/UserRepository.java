@@ -1,6 +1,7 @@
 package org.example.springboot25.repository;
 
 import org.example.springboot25.entities.User;
+import org.example.springboot25.entities.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUserName(String userName);
     Optional<User> findByUserEmail(String userEmail);
+    List<User> findAllByUserNameContainingIgnoreCase(String userName);
+    List<User> findAllByUserFullNameContainingIgnoreCase(String fullName);
+    List<User> findAllByUserLocationIgnoreCase(String location);
+    List<User> findAllByUserRole(UserRole role);
 
     @Query("SELECT u FROM User u WHERE u.userName LIKE %:userName%")
     List<User> findAllByUserName(String userName);
@@ -35,7 +40,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN u.userCats c " +
             "WHERE u.userName LIKE %:searchTerm% OR c.catName LIKE %:searchTerm%")
-    List<User> findUsersByUsernameOrCatName(@Param("searchTerm") String searchTerm);
-
-
+    List<User> findByUserNameOrCatName(@Param("searchTerm") String searchTerm);
 }

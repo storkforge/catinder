@@ -5,7 +5,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 public record CustomUserDetails(User user) implements UserDetails {
 
@@ -16,7 +17,7 @@ public record CustomUserDetails(User user) implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getUserPassword(); // om du har lösenord (annars null)
+        return null; // OAuth, no password
     }
 
     @Override

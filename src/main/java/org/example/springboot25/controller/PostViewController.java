@@ -35,9 +35,9 @@ public class PostViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            currentUser = userService.getUserByEmail(email);
+            currentUser = userService.findUserByEmail(email);
         } else if (principal != null) {
-            currentUser = userService.getUserByUserName(principal.getName());
+            currentUser = userService.findUserByUserName(principal.getName());
         }
 
         model.addAttribute("posts", postService.getAllPostsOrderByDate());
@@ -59,7 +59,7 @@ public class PostViewController {
             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            User user = userService.getUserByEmail(email);
+            User user = userService.findUserByEmail(email);
             post.setUserPostAuthor(user);
             post.setPostCreatedAt(LocalDateTime.now());
             postService.createPost(post);
