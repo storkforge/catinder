@@ -5,6 +5,7 @@ import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.InvalidInputException;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.CatMapper;
 import org.example.springboot25.repository.CatRepository;
@@ -112,7 +113,7 @@ public class CatService {
                     cat.setCatAge(Integer.parseInt(str));
                 }
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid catAge value.");
+                throw new InvalidInputException("Invalid catAge value:" + catAgeObj);
             }
         }
 
