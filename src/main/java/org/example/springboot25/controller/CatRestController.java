@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
-import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.service.CatService;
@@ -31,6 +30,11 @@ public class CatRestController {
         this.userService = userService;
     }
 
+    private boolean isNotOwnerOrAdmin(CatOutputDTO catDTO, User currentUser) {
+        return !catDTO.getUserId().equals(currentUser.getUserId())
+                && currentUser.getUserRole() != UserRole.ADMIN;
+    }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public List<CatOutputDTO> getAllCats(Authentication auth) {
@@ -44,9 +48,8 @@ public class CatRestController {
         User currentUser = userService.findUserByUserName(auth.getName());
         CatOutputDTO catDTO = catService.getCatDtoById(catId);
 
-        User current = userService.findUserByUserName(auth.getName());
-        if (isNotOwnerOrAdmin(cat, current)) {
-        if (!catDTO.getUserId().equals(currentUser.getUserId()) && currentUser.getUserRole() != UserRole.ADMIN) {
+        if (!catDTO.getUserId().equals(currentUser.getUserId()) &&
+                currentUser.getUserRole() != UserRole.ADMIN) {
             throw new AccessDeniedException("You can only access your own cats.");
         }
 
@@ -57,11 +60,7 @@ public class CatRestController {
     @PostMapping
     public ResponseEntity<CatOutputDTO> createCat(@RequestBody @Valid CatInputDTO inputDTO, Authentication auth) {
         User currentUser = userService.findUserByUserName(auth.getName());
-        inputDTO.setUserId(currentUser.getUserId()); // Tilldela ägaren
-    public ResponseEntity<Cat> createCat(@RequestBody Cat cat, Authentication auth) {
-        User currentUser = userService.findUserByUserName(auth.getName());
-        cat.setUser(currentUser);
-        Cat createdCat = catService.createCat(cat);
+        inputDTO.setUserId(currentUser.getUserId());
 
         CatOutputDTO createdCat = catService.addCat(inputDTO);
         return ResponseEntity.created(URI.create("/api/cats/" + createdCat.getCatId())).body(createdCat);
@@ -75,7 +74,7 @@ public class CatRestController {
         User currentUser = userService.findUserByUserName(auth.getName());
         CatOutputDTO existingCat = catService.getCatDtoById(catId);
 
-        if (!existingCat.getUserId().equals(currentUser.getUserId()) && currentUser.getUserRole() != UserRole.ADMIN) {
+        if (isNotOwnerOrAdmin(existingCat, currentUser)) {
             throw new AccessDeniedException("You can only update your own cats.");
         }
 
@@ -90,9 +89,7 @@ public class CatRestController {
         User currentUser = userService.findUserByUserName(auth.getName());
         CatOutputDTO existingCat = catService.getCatDtoById(catId);
 
-        if (!existingCat.getUserId().equals(currentUser.getUserId()) && currentUser.getUserRole() != UserRole.ADMIN) {
-        User current = userService.findUserByUserName(auth.getName());
-        if (isNotOwnerOrAdmin(existing, current)) {
+        if (isNotOwnerOrAdmin(existingCat, currentUser)) {
             throw new AccessDeniedException("You can only update your own cats.");
         }
 
@@ -106,9 +103,7 @@ public class CatRestController {
         User currentUser = userService.findUserByUserName(auth.getName());
         CatOutputDTO catDTO = catService.getCatDtoById(catId);
 
-        if (!catDTO.getUserId().equals(currentUser.getUserId()) && currentUser.getUserRole() != UserRole.ADMIN) {
-        User current = userService.findUserByUserName(auth.getName());
-        if (isNotOwnerOrAdmin(cat, current)) {
+        if (isNotOwnerOrAdmin(catDTO, currentUser)) {
             throw new AccessDeniedException("You can only delete your own cats.");
         }
 

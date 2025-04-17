@@ -62,17 +62,17 @@ public class CatViewController {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
             User user = userService.findUserByEmail(email);
-            cat.setUserCatOwner(user);
-            catService.createCat(cat);
-            User user = userService.findUserByEmail(email);
+
             catDTO.setUserId(user.getUserId());
             catService.addCat(catDTO);
+
             redirectAttributes.addFlashAttribute("create_success", "Cat created!");
         } else {
             throw new IllegalStateException("Unsupported principal type: " + principal.getClass());
         }
         return "redirect:/cats";
     }
+
 
     @GetMapping("/{catId}/edit")
     public String showEditCatForm(@PathVariable Long catId, Model model) {
