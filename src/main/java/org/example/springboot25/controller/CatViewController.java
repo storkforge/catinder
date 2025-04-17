@@ -16,7 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.List;
 
-
 @Controller
 @RequestMapping("/cats")
 public class CatViewController {
@@ -57,7 +56,7 @@ public class CatViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            User user = userService.getUserByEmail(email);
+            User user = userService.findUserByEmail(email);
             cat.setUserCatOwner(user);
             catService.createCat(cat);
         } else {

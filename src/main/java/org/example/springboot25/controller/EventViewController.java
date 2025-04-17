@@ -45,8 +45,8 @@ public class EventViewController {
         Event selectedEvent = eventService.getEventById(eventId);
 
         User currentUser = principal instanceof OAuth2AuthenticationToken
-                ? userService.getUserByEmail(((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email"))
-                : userService.getUserByUserName(principal.getName());
+                ? userService.findUserByEmail(((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email"))
+                : userService.findUserByUserName(principal.getName());
 
         model.addAttribute("events", events);
         model.addAttribute("selectedEvent", selectedEvent);
@@ -61,9 +61,9 @@ public class EventViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            currentUser = userService.getUserByEmail(email);
+            currentUser = userService.findUserByEmail(email);
         } else {
-            currentUser = userService.getUserByUserName(principal.getName());
+            currentUser = userService.findUserByEmail(principal.getName());
         }
         try {
             eventParticipantService.deleteParticipant(currentUser.getUserName(), event.getEventName());
@@ -81,9 +81,9 @@ public class EventViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            currentUser = userService.getUserByEmail(email);
+            currentUser = userService.findUserByEmail(email);
         } else {
-            currentUser = userService.getUserByUserName(principal.getName());
+            currentUser = userService.findUserByEmail(principal.getName());
         }
 
         try {
@@ -110,10 +110,10 @@ public class EventViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            User user = userService.getUserByEmail(email);
+            User user = userService.findUserByEmail(email);
             event.setUserEventPlanner(user);
         } else if (principal != null) {
-            User user = userService.getUserByUserName(principal.getName());
+            User user = userService.findUserByUserName(principal.getName());
             event.setUserEventPlanner(user);
         } else {
             throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());

@@ -59,7 +59,7 @@ public class ReminderGraphQLController {
             throw new ValidationException("User ID is required");
         }
 
-        User user = userService.getUserById(input.getUserId());
+        User user = userService.findUserById(input.getUserId());
         Cat cat = catService.getCatById(input.getCatId())
                 .orElseThrow(() -> new NotFoundException("Cat with ID: " + input.getCatId() + " not found"));
         Reminder reminder = reminderService.createReminder(reminderMapper.toEntityInput(input, user, cat));
@@ -72,7 +72,7 @@ public class ReminderGraphQLController {
 
         User user;
         if (input.getUserId() != null) {
-            user = userService.getUserById(input.getUserId());
+            user = userService.findUserById(input.getUserId());
         } else {
             user = existing.getUser();
         }
@@ -91,7 +91,6 @@ public class ReminderGraphQLController {
         );
         return reminderMapper.toDTO(updated);
     }
-
 
     @MutationMapping
     public boolean deleteReminder(@Argument Long id) {

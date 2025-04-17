@@ -17,6 +17,12 @@ type Query {
     getAllEventParticipants: [EventParticipant]
     getEventParticipantById(id: ID!): EventParticipant
     getEventParticipantByUserName(userName: String!): EventParticipant
+
+    getAllPosts: [PostOutputDTO]
+    getPostById(id: ID!): PostOutputDTO
+
+    getAllCatPhotos: [CatPhoto]
+    getCatPhotoById(catPhotoId: ID!): CatPhoto
 }
 
 type Mutation {
@@ -39,6 +45,14 @@ type Mutation {
     createEventParticipant(input: EventParticipantInput!): EventParticipant
     updateEventParticipant(id: ID!, update: EventParticipantUpdate!): EventParticipant
     deleteEventParticipant(id: ID!): Boolean
+
+    createPost(input: PostInput!): PostOutputDTO
+    updatePost(id: ID!, input: PostUpdate!): PostOutputDTO
+    deletePost(id: ID!): Boolean!
+
+    createCatPhoto(input: CatPhotoInput!): CatPhoto
+    updateCatPhoto(id: ID!, input: CatPhotoUpdate!): CatPhoto
+    deleteCatPhoto(id: ID!): Boolean
 }
 
 scalar DateTime

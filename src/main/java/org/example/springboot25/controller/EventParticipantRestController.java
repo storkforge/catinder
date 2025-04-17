@@ -34,14 +34,14 @@ public class EventParticipantRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public List<EventParticipant> getAllParticipants(Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
         return service.getParticipantsByUserName(current.getUserName());
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user")
     public List<EventParticipant> getParticipantsByUserName(@RequestParam String userName, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(userName, current)) {
             throw new AccessDeniedException("You can only view your own participation data.");
         }
@@ -57,7 +57,7 @@ public class EventParticipantRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/specific")
     public EventParticipant getParticipant(@RequestParam String userName, @RequestParam String eventName, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(userName, current)) {
             throw new AccessDeniedException("You can only view your own participation data.");
@@ -69,7 +69,7 @@ public class EventParticipantRestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventParticipant addParticipant(@RequestParam String userName, @RequestParam String eventName, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(userName, current)) {
             throw new AccessDeniedException("You can only view your own participation data.");
@@ -80,7 +80,7 @@ public class EventParticipantRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PatchMapping
     public EventParticipant patchEventForParticipant(@RequestParam String userName, @RequestParam String newUserName, @RequestParam String eventName, @RequestParam String newEventName, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(userName, current)) {
             throw new AccessDeniedException("You can only view your own participation data.");
@@ -92,7 +92,7 @@ public class EventParticipantRestController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteParticipant(@RequestParam String userName, @RequestParam String eventName, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(userName, current)) {
             throw new AccessDeniedException("You can only remove your own participation.");

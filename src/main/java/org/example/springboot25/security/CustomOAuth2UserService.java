@@ -1,5 +1,6 @@
 package org.example.springboot25.security;
 
+import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.exceptions.NotFoundException;
@@ -39,12 +40,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("Email not found from OAuth2 provider");
         }
         try {
-            User user = userService.getUserByEmail(email);
+            User user = userService.findUserByEmail(email);
             String newFullName = oAuth2User.getAttribute("name");
             if (!newFullName.equals(user.getUserFullName())) {
                 user.setUserFullName(newFullName);
             }
-            userService.updateUser(user.getUserId(), user);
+            UserUpdateDTO updateDTO = new UserUpdateDTO();
+            updateDTO.setUserFullName(newFullName);
+            userService.updateUser(user.getUserId(), updateDTO);
             logger.info("Updated existing user: {}", email);
         } catch (NotFoundException e) {
             User user = new User();
@@ -58,7 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userService.addUser(user);
             logger.info("Provisioned new user: {}", email);
         }
-        User finalUser = userService.getUserByEmail(email);
+        User finalUser = userService.findUserByEmail(email);
         return new DefaultOAuth2User(
                 Collections.singleton(() -> "ROLE_" + finalUser.getUserRole().name()),
                 oAuth2User.getAttributes(),

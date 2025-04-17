@@ -46,9 +46,11 @@ public class User {
     @Column(nullable = true)
     private String userPassword;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "userCatOwner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cat> userCats = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "userEventPlanner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Event> userPlannedEvents = new ArrayList<>();
 
@@ -56,6 +58,7 @@ public class User {
     @JsonManagedReference
     private List<EventParticipant> userEventParticipants = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
@@ -170,4 +173,6 @@ public class User {
     public void setUserPost(List<Post> userPost) {
         this.userPost = userPost;
     }
+
+    public void setUserId(Long userId) { this.userId = userId; }
 }

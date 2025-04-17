@@ -44,7 +44,7 @@ public class CatRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public List<Cat> getAllCats(Authentication auth) {
-        User currentUser = (User) auth.getPrincipal();
+        User currentUser = userService.findUserByUserName(auth.getName());
         return catService.getAllCatsByUser(currentUser);
     }
 
@@ -54,7 +54,7 @@ public class CatRestController {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
 
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(cat, current)) {
             throw new AccessDeniedException("You can only access your own cats.");
         }
@@ -65,7 +65,7 @@ public class CatRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM')")
     @PostMapping
     public ResponseEntity<Cat> createCat(@RequestBody Cat cat, Authentication auth) {
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
         cat.setUser(currentUser);
         Cat createdCat = catService.createCat(cat);
 
@@ -80,7 +80,7 @@ public class CatRestController {
         Cat existing = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
 
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(catDetails, currentUser)) {
             throw new AccessDeniedException("You can only access your own cats.");
         }
@@ -94,7 +94,7 @@ public class CatRestController {
         Cat existing = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
 
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(existing, current)) {
             throw new AccessDeniedException("You can only update your own cats.");
         }
@@ -109,7 +109,7 @@ public class CatRestController {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found"));
 
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(cat, current)) {
             throw new AccessDeniedException("You can only delete your own cats.");
         }
