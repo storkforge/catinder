@@ -1,0 +1,19 @@
+type CatPhoto {
+    id: ID!
+    catPhotoUrl: String!
+    catPhotoCaption: String
+    catPhotoCreatedAt: DateTime
+    # catPhotoCat: Cat
+}
+
+input CatPhotoInput {
+    catPhotoUrl: String!
+    catPhotoCaption: String
+    catPhotoCatId: ID!
+}
+
+input CatPhotoUpdate {
+    catPhotoUrl: String
+    catPhotoCaption: String
+    catPhotoCatId: ID
+}
