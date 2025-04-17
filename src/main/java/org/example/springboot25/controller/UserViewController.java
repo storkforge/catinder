@@ -1,6 +1,7 @@
 package org.example.springboot25.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
@@ -8,12 +9,20 @@ import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.exceptions.AlreadyExistsException;
+import org.example.springboot25.security.CustomUserDetails;
+import org.example.springboot25.security.CustomUserDetailsService;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.example.springboot25.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,13 +38,18 @@ public class UserViewController {
 
     private static final Logger log = LoggerFactory.getLogger(UserViewController.class);
     private final UserService userService;
+    private final CustomUserDetailsService uds;
     private final CatService catService;
     private final UserMapper userMapper;
 
-    public UserViewController(UserService userService, UserMapper userMapper, CatService catService) {
+    public UserViewController(UserService userService,
+                              CatService catService,
+                              CustomUserDetailsService uds,
+                              UserMapper userMapper) {
         this.userService = userService;
-        this.userMapper = userMapper;
         this.catService = catService;
+        this.uds = uds;
+        this.userMapper = userMapper;
     }
 
     @GetMapping
@@ -79,7 +93,7 @@ public class UserViewController {
     @GetMapping("/by-email/{userEmail}")
     String getUserByUserEmail(@PathVariable String userEmail, Model model) {
         try {
-            User user = userService.getUserByEmail(userEmail);
+            User user = userService.findUserByEmail(userEmail);
             model.addAttribute("user", user);
             return "user/user-details";
         } catch (NotFoundException e) {
@@ -194,29 +208,54 @@ public class UserViewController {
         }
     }
 
-    @PutMapping("/{userId}/edit")
-    public String updateUser(@PathVariable Long userId,
-                             @Valid @ModelAttribute("user") UserUpdateDTO updateDTO,
-                             BindingResult bindingResult,
-                             Model model,
-                             RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("userId", userId);
-            return "user/user-update";
-        }
+@PutMapping("/{userId}/edit")
+public String updateUser(@PathVariable Long userId,
+                         @Valid @ModelAttribute("user") UserUpdateDTO updateDTO,
+                         BindingResult bindingResult,
+                         Model model,
+                         RedirectAttributes redirectAttributes) {
 
-        try {
-            userService.updateUser(userId, updateDTO);
-            redirectAttributes.addFlashAttribute("success", "User updated!");
-            return "redirect:/users/list";
-        } catch (Exception e) {
-            log.error("Failed to update user {}", userId, e);
-            model.addAttribute("error", "Update failed");
-            model.addAttribute("userId", userId);
-            return "user/user-update";
-        }
+    if (bindingResult.hasErrors()) {
+        model.addAttribute("userId", userId);
+        return "user/user-update";
     }
-    //TODO: CHECK NEW/OLD PUT
+
+    try {
+        userService.updateUser(userId, updateDTO);
+        redirectAttributes.addFlashAttribute("update_success", "Saved!");
+
+        // Refresh Authentication so new role is live
+        // Refresh SecurityContext with updated role
+        Authentication old = SecurityContextHolder.getContext().getAuthentication();
+        OAuth2AuthenticationToken oldOauth = (OAuth2AuthenticationToken) old;
+
+
+        //TODO: Map updateDTO to user?
+        UserDetails freshDetails = new CustomUserDetails(updateDTO);
+
+        OAuth2AuthenticationToken newAuth =
+                new OAuth2AuthenticationToken(
+                        oldOauth.getPrincipal(),
+                        freshDetails.getAuthorities(),
+                        oldOauth.getAuthorizedClientRegistrationId());
+
+        newAuth.setAuthenticated(true); // Mark as logged‑in
+        newAuth.setDetails(((AbstractAuthenticationToken) old).getDetails());
+
+        // Store
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+    } catch (Exception ex) {
+        log.error("Failed to update user {}", userId, ex);
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+//        model.addAttribute("error", "Update failed");
+//        model.addAttribute("userId", userId);
+        return "redirect:/users/" + userId + "/edit";
+    }
+
+    return "redirect:/users/{userId}/edit";
+}
+
+//TODO: CHECK NEW/OLD PUT
 //    @PutMapping("/{userId}/edit")
 //    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 //        if (bindingResult.hasErrors()) {

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+      th:lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Catinder - Home</title>
@@ -8,32 +10,37 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
+
 <div id="successMessage" class="success-message" th:if="${delete_success}" th:text="#{DeleteSuccessTranslated}"></div>
 
-<div class="slideshow-container">
+<!--TO ADMIN DASHBOARD-->
+<a sec:authorize="hasRole('ADMIN')"
+   th:href="@{/admin/dashboard}"
+   class="nav-button admin-button" >
+    <img class="header-choice" src="/images/security.png" alt="Admin"/>
+    <span>Admin Dashboard</span>
+</a>
+
+<div sec:authorize="isAuthenticated()" class="slideshow-container">
     <div class="mySlides fade" th:each="photo : ${catPhotos}">
         <div class="image‐wrapper">
             <img th:src="@{${photo.catPhotoUrl}}"
                  th:alt="${photo.catPhotoCaption} ?: 'Cat photo'" />
         </div>
         <div class="cat-details">
-            <span th:text="'Name: ' + ${photo.catPhotoCat.catName}">Name</span>
-            <span th:text="'Personality: ' +${photo.catPhotoCat.catPersonality}">Personality</span>
-            <span th:text="'Age: ' +${photo.catPhotoCat.catAge}">Age</span>
-            <span th:text="'Breed: ' +${photo.catPhotoCat.catBreed}">Breed</span>
+            <p style="font-size: 22px"><strong> <span th:text="${photo.catPhotoCat.catName} + ', ' + ${photo.catPhotoCat.catAge}"></span></strong></p>
+            <p><strong th:text="#{cat.breed} + ': '">Breed:</strong> <span th:text="${photo.catPhotoCat.catBreed}"></span></p>
+            <p><strong th:text="#{cat.gender} + ': '">Gender:</strong> <span th:text="${photo.catPhotoCat.catGender}"></span></p>
+            <p><strong th:text="#{cat.personality} + ': '">Personality:</strong> <span th:text="${photo.catPhotoCat.catPersonality}"></span></p>
         </div>
     </div>
     <a class="prev" onclick="plusSlides(-1)">❮</a>
     <a class="next" onclick="plusSlides(1)">❯</a>
 </div>
-<p class="select-text" th:text="#{SectionSelection}">ADMIN:</p>
-<nav class="link-box">
-    <ul role="menu">
-        <li><a th:href="@{/users}" th:text="#{Users}">Users</a></li>
-        <li><a th:href="@{/participants}" th:text="#{Participants}">Participants</a></li>
-        <li><a th:href="@{/reminders}" th:text="#{Reminders}">Reminders</a></li>
-    </ul>
-</nav>
+<div sec:authorize="!isAuthenticated()" style="margin-top: 8%">
+    <h2>Welcome!</h2>
+    <p>Please click the login-button to sign in/create an account!</p>
+</div>
 
 <script>
     setTimeout(function () {

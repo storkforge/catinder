@@ -8,10 +8,6 @@
     </div>
 
     <nav class="header-nav">
-        <a class="nav-button" aria-label="Cats" th:href="@{/cats}" title="Cats">
-            <img class="header-choice" th:src="@{/images/paw_white.png}" alt="Cats"/>
-            <span>Cats</span>
-        </a>
         <a class="nav-button" aria-label="Posts" th:href="@{/posts}" title="Posts">
             <img class="header-choice" th:src="@{/images/post_white.png}" alt="Posts"/>
             <span>Posts</span>
@@ -24,6 +20,10 @@
             <img class="header-choice" th:src="@{/images/recommendation_white.png}" alt="Recommendations"/>
             <span>Recommendations</span>
         </a>
+        <a class="nav-button" aria-label="Cats" th:href="@{/reminders}" title="Notifications">
+            <img class="header-choice" th:src="@{/images/reminder_white.png}" alt="Notifications"/>
+            <span>Notifications</span>
+        </a>
     </nav>
 
     <!-- Right: Settings, Login/Logout, Menu, and Language -->
@@ -34,7 +34,6 @@
                 <a th:if="user" sec:authorize="isAuthenticated()" class="nav-button settings-button"
                    th:href="@{/users/{userId}/edit(userId=${currentUser.userId})}" title="Settings">
                     <img class="header-choice" th:src="@{/images/profilesettings_white.png}" alt="Settings"/>
-                    <span>Settings</span>
                 </a>
             </div>
             <div sec:authorize="!isAuthenticated()">
