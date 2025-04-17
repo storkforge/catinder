@@ -20,6 +20,9 @@ type Query {
 
     getAllPosts: [PostOutputDTO]
     getPostById(id: ID!): PostOutputDTO
+
+    getAllCatPhotos: [CatPhoto]
+    getCatPhotoById(catPhotoId: ID!): CatPhoto
 }
 
 type Mutation {
@@ -46,6 +49,10 @@ type Mutation {
     createPost(input: PostInput!): PostOutputDTO
     updatePost(id: ID!, input: PostUpdate!): PostOutputDTO
     deletePost(id: ID!): Boolean!
+
+    createCatPhoto(input: CatPhotoInput!): CatPhoto
+    updateCatPhoto(id: ID!, input: CatPhotoUpdate!): CatPhoto
+    deleteCatPhoto(id: ID!): Boolean
 }
 
 scalar DateTime
