@@ -19,13 +19,15 @@ public class CatMapper {
     }
 
     public Cat toCat(CatInputDTO dto) {
+        if (dto == null) throw new IllegalArgumentException("CatInputDTO cannot be null");
+
         Cat cat = new Cat();
-        cat.setCatName(trimOrNull(dto.getCatName()));
-        cat.setCatProfilePicture(trimOrNull(dto.getCatProfilePicture()));
-        cat.setCatBreed(trimOrNull(dto.getCatBreed()));
-        cat.setCatGender(trimOrNull(dto.getCatGender()));
+        cat.setCatName(dto.getCatName());
+        cat.setCatProfilePicture(dto.getCatProfilePicture());
+        cat.setCatBreed(dto.getCatBreed());
+        cat.setCatGender(dto.getCatGender());
         cat.setCatAge(dto.getCatAge());
-        cat.setCatPersonality(trimOrNull(dto.getCatPersonality()));
+        cat.setCatPersonality(dto.getCatPersonality());
 
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new NotFoundException("User with ID " + dto.getUserId() + " not found"));
@@ -34,16 +36,20 @@ public class CatMapper {
         return cat;
     }
 
-    public void updateCatFromDTO(CatUpdateDTO dto, Cat cat) {
-        if (dto.getCatName() != null) cat.setCatName(trimOrNull(dto.getCatName()));
-        if (dto.getCatProfilePicture() != null) cat.setCatProfilePicture(trimOrNull(dto.getCatProfilePicture()));
-        if (dto.getCatBreed() != null) cat.setCatBreed(trimOrNull(dto.getCatBreed()));
-        if (dto.getCatGender() != null) cat.setCatGender(trimOrNull(dto.getCatGender()));
+    public void updateCatFromDto(CatUpdateDTO dto, Cat cat) {
+        if (dto == null || cat == null) throw new IllegalArgumentException("DTO or Cat cannot be null");
+
+        if (dto.getCatName() != null) cat.setCatName(dto.getCatName());
+        if (dto.getCatProfilePicture() != null) cat.setCatProfilePicture(dto.getCatProfilePicture());
+        if (dto.getCatBreed() != null) cat.setCatBreed(dto.getCatBreed());
+        if (dto.getCatGender() != null) cat.setCatGender(dto.getCatGender());
         if (dto.getCatAge() != null) cat.setCatAge(dto.getCatAge());
-        if (dto.getCatPersonality() != null) cat.setCatPersonality(trimOrNull(dto.getCatPersonality()));
+        if (dto.getCatPersonality() != null) cat.setCatPersonality(dto.getCatPersonality());
     }
 
-    public CatOutputDTO toDTO(Cat cat) {
+    public CatOutputDTO toDto(Cat cat) {
+        if (cat == null) throw new IllegalArgumentException("Cat cannot be null");
+
         CatOutputDTO dto = new CatOutputDTO();
         dto.setCatId(cat.getCatId());
         dto.setCatName(cat.getCatName());
@@ -52,14 +58,10 @@ public class CatMapper {
         dto.setCatGender(cat.getCatGender());
         dto.setCatAge(cat.getCatAge());
         dto.setCatPersonality(cat.getCatPersonality());
+
         if (cat.getUserCatOwner() != null) {
             dto.setUserId(cat.getUserCatOwner().getUserId());
         }
         return dto;
-    }
-
-    // Helper för att slippa skriva trim() + null-check hela tiden
-    private String trimOrNull(String str) {
-        return (str == null || str.isBlank()) ? null : str.trim();
     }
 }
