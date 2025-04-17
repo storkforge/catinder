@@ -44,6 +44,8 @@ public class CatRestController {
         User currentUser = userService.findUserByUserName(auth.getName());
         CatOutputDTO catDTO = catService.getCatDtoById(catId);
 
+        User current = userService.findUserByUserName(auth.getName());
+        if (isNotOwnerOrAdmin(cat, current)) {
         if (!catDTO.getUserId().equals(currentUser.getUserId()) && currentUser.getUserRole() != UserRole.ADMIN) {
             throw new AccessDeniedException("You can only access your own cats.");
         }
@@ -56,6 +58,10 @@ public class CatRestController {
     public ResponseEntity<CatOutputDTO> createCat(@RequestBody @Valid CatInputDTO inputDTO, Authentication auth) {
         User currentUser = userService.findUserByUserName(auth.getName());
         inputDTO.setUserId(currentUser.getUserId()); // Tilldela ägaren
+    public ResponseEntity<Cat> createCat(@RequestBody Cat cat, Authentication auth) {
+        User currentUser = userService.findUserByUserName(auth.getName());
+        cat.setUser(currentUser);
+        Cat createdCat = catService.createCat(cat);
 
         CatOutputDTO createdCat = catService.addCat(inputDTO);
         return ResponseEntity.created(URI.create("/api/cats/" + createdCat.getCatId())).body(createdCat);
@@ -85,6 +91,8 @@ public class CatRestController {
         CatOutputDTO existingCat = catService.getCatDtoById(catId);
 
         if (!existingCat.getUserId().equals(currentUser.getUserId()) && currentUser.getUserRole() != UserRole.ADMIN) {
+        User current = userService.findUserByUserName(auth.getName());
+        if (isNotOwnerOrAdmin(existing, current)) {
             throw new AccessDeniedException("You can only update your own cats.");
         }
 
@@ -99,6 +107,8 @@ public class CatRestController {
         CatOutputDTO catDTO = catService.getCatDtoById(catId);
 
         if (!catDTO.getUserId().equals(currentUser.getUserId()) && currentUser.getUserRole() != UserRole.ADMIN) {
+        User current = userService.findUserByUserName(auth.getName());
+        if (isNotOwnerOrAdmin(cat, current)) {
             throw new AccessDeniedException("You can only delete your own cats.");
         }
 

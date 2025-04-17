@@ -100,11 +100,11 @@ public class UserViewController {
             UserUpdateDTO updateDTO = userMapper.outputToUpdateDTO(userDTO);
             model.addAttribute("user", updateDTO);
             model.addAttribute("userId", id);
-            return "user/user-edit";
+            return "user/user-update";
         } catch (Exception e) {
             log.error("Could not load user {}", id, e);
             model.addAttribute("error", "User not found");
-            return "user/user-error";
+            return "error-page";
         }
     }
 
@@ -116,10 +116,18 @@ public class UserViewController {
                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("userId", userId);
-            return "user/user-edit";
+            return "user/user-update";
         }
 
         try {
+            userService.updateUser(userId, updateDTO);
+            redirectAttributes.addFlashAttribute("success", "User updated!");
+            return "redirect:/users/list";
+        } catch (Exception e) {
+            log.error("Failed to update user {}", userId, e);
+            model.addAttribute("error", "Update failed");
+            model.addAttribute("userId", userId);
+            return "user/user-update";
             userService.updateUser(userId, updateDTO);
             redirectAttributes.addFlashAttribute("success", "User updated!");
             return "redirect:/users/list";
