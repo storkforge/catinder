@@ -2,6 +2,9 @@ package org.example.springboot25.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,11 @@ public class CatImageService {
             logger.warn("No CATAPI_KEY provided – fallback image will be used.");
         }
         this.apiKey = apiKey;
+    }
+
+    @PostConstruct
+    public void logApiKeyPresence() {
+        logger.info("🐾 CATAPI_KEY loaded: {}", !apiKey.isBlank());
     }
 
     public String getCatImageUrl() {
@@ -61,7 +69,8 @@ public class CatImageService {
         return getFallbackImageUrl();
     }
 
-    private String getFallbackImageUrl() {
+    @Contract(pure = true)
+    private @NotNull String getFallbackImageUrl() {
         return "https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg";
     }
 }

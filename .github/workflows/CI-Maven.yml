@@ -9,7 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      CATAPI_KEY: ${{ secrets.CATAPI_KEY }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 24

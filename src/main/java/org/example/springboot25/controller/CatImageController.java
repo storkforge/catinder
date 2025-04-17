@@ -4,8 +4,10 @@ import org.example.springboot25.service.CatImageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/catimage")
 public class CatImageController {
 
     private final CatImageService catImageService;
@@ -20,5 +22,4 @@ public class CatImageController {
         model.addAttribute("catImageUrl", imageUrl);
         return "catimage/catimage";
     }
-
 }
