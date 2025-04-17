@@ -54,9 +54,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidInputException.class)
-    public ResponseEntity<String> handleInvalidInputException(InvalidInputException ex) {
-        return ResponseEntity
-                .badRequest()
-                .body("Invalid input: " + ex.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInvalidInputException(InvalidInputException ex) {
+        logger.warn("InvalidInputException: {}", ex.getMessage());
+        return Map.of("error", "Invalid input: " + ex.getMessage());
     }
 }
