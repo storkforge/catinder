@@ -14,6 +14,7 @@ import org.example.springboot25.security.CustomUserDetailsService;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.example.springboot25.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -196,45 +197,48 @@ public class UserViewController {
         }
     }
 
-@PutMapping("/{userId}/edit")
-public String updateUser(@PathVariable Long userId,
-                         @Valid @ModelAttribute("user") UserUpdateDTO updateDTO,
-                         BindingResult bindingResult,
-                         Model model,
-                         RedirectAttributes redirectAttributes) {
-    if (bindingResult.hasErrors()) {
-        model.addAttribute("userId", userId);
-        return "user/user-update";
-    }
-    try {
-        userService.updateUser(userId, updateDTO);
-        redirectAttributes.addFlashAttribute("update_success", "Saved!");
+    @PutMapping("/{userId}/edit")
+    public String updateUser(@PathVariable Long userId,
+                             @Valid @ModelAttribute("user") UserUpdateDTO updateDTO,
+                             BindingResult bindingResult,
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userId", userId);
+            return "user/user-update";
+        }
+        try {
+            userService.updateUser(userId, updateDTO);
+            redirectAttributes.addFlashAttribute("update_success", "Saved!");
 
-        // Refresh Authentication so new role is live
-        // Refresh SecurityContext with updated role
-        Authentication old = SecurityContextHolder.getContext().getAuthentication();
-        OAuth2AuthenticationToken oldOauth = (OAuth2AuthenticationToken) old;
+            // Refresh Authentication so new role is live
+            // Refresh SecurityContext with updated role
+            Authentication oldAuth = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails freshDetails = new CustomUserDetails(userMapper.toUser(updateDTO));
 
-        UserDetails freshDetails = new CustomUserDetails(userMapper.toUser(updateDTO));
-
-        OAuth2AuthenticationToken newAuth =
-                new OAuth2AuthenticationToken(
-                        oldOauth.getPrincipal(),
+            Authentication newAuth;
+            if (oldAuth instanceof OAuth2AuthenticationToken oauth) {
+                newAuth = new OAuth2AuthenticationToken(
+                        oauth.getPrincipal(),
                         freshDetails.getAuthorities(),
-                        oldOauth.getAuthorizedClientRegistrationId());
+                        oauth.getAuthorizedClientRegistrationId());
+            } else {
+                newAuth = new UsernamePasswordAuthenticationToken(
+                        freshDetails,
+                        oldAuth.getCredentials(),
+                        freshDetails.getAuthorities());
+            }
+            ((AbstractAuthenticationToken) newAuth)
+                    .setDetails(((AbstractAuthenticationToken) oldAuth).getDetails());
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+        } catch (Exception ex) {
+            log.error("Failed to update user {}", userId, ex);
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/users/" + userId + "/edit";
+        }
 
-        newAuth.setAuthenticated(true);
-        newAuth.setDetails(((AbstractAuthenticationToken) old).getDetails());
-
-        SecurityContextHolder.getContext().setAuthentication(newAuth);
-    } catch (Exception ex) {
-        log.error("Failed to update user {}", userId, ex);
-        redirectAttributes.addFlashAttribute("error", ex.getMessage());
         return "redirect:/users/" + userId + "/edit";
     }
-
-    return "redirect:/users/{userId}/edit";
-}
 
     @PatchMapping("/{userId}/edit")
     public String updateUser(@PathVariable Long userId, @RequestParam Map<String, Object> updates, RedirectAttributes redirectAttributes, Model model) {
@@ -290,7 +294,7 @@ public String updateUser(@PathVariable Long userId,
     /**
      * Deletes a user from the user list (typically by an admin or moderator).
      * <p>
-     * This method handles a POST request to delete a specific user by ID. If the deletion is successful,
+     * This method handles a DELETE request to delete a specific user by ID. If the deletion is successful,
      * the user is redirected to the user list view with a success message. If any error occurs,
      * the user is redirected back with an error flag.
      *
