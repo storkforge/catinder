@@ -11,6 +11,18 @@ public class UserUpdateDTO {
     private UserRole userRole;
     private String userAuthProvider;
 
+    public UserUpdateDTO() {}
+
+    public UserUpdateDTO(String userFullName, String userName, String userEmail,
+                         String userLocation, UserRole userRole, String userAuthProvider) {
+        this.userFullName = userFullName;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userLocation = userLocation;
+        this.userRole = userRole;
+        this.userAuthProvider = userAuthProvider;
+    }
+
     // Getters and Setters
     public String getUserFullName() {
         return userFullName;
