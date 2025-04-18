@@ -37,9 +37,8 @@
                 <a th:text="#{view}" th:href="@{'/cats/' + ${cat.catId}}">View</a> |
                 <a th:text="#{edit}" th:href="@{'/cats/' + ${cat.catId} + '/edit'}">Edit</a> |
                 <!-- Use a form for deletion -->
-                <form th:action="@{/cats/{catId}/delete(catId=${cat.catId})}" th:method="delete"
-                      style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this cat?');">
-                    <button type="submit" th:text="#{delete}">Delete</button>
+                <form th:action="@{/cats/{catId}/delete(catId=${cat.catId})}" th:method="delete" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this cat?');">
+                    <button type="submit" class="delete-button" th:text="#{delete}">Delete</button>
                 </form>
             </td>
 
