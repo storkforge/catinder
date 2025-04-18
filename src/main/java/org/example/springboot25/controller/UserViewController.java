@@ -104,7 +104,7 @@ public class UserViewController {
 
     @GetMapping("/by-username/{userName}")
     String getUsersByUserName(@PathVariable String userName, Model model) {
-        List<User> users = userService.getAllUsersByUserName("%" + userName + "%");
+        List<UserOutputDTO> users = userService.getAllUsersByUserName("%" + userName + "%");
         if (users.isEmpty())
             model.addAttribute("message", "No users found with username '" + userName + "'.");
         model.addAttribute("users", users);
@@ -113,7 +113,7 @@ public class UserViewController {
 
     @GetMapping("/by-name/{userFullName}")
     String getUsersByFullName(@PathVariable String userFullName, Model model) {
-        List<User> users = userService.getAllUsersByFullName("%" + userFullName + "%");
+        List<UserOutputDTO> users = userService.getAllUsersByFullName("%" + userFullName + "%");
         if (users.isEmpty())
             model.addAttribute("message", "No users found for name '" + userFullName + "'.");
         model.addAttribute("users", users);
@@ -122,7 +122,7 @@ public class UserViewController {
 
     @GetMapping("/by-location/{userLocation}")
     String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
-        List<User> users = userService.getAllUsersByLocation(userLocation);
+        List<UserOutputDTO> users = userService.getAllUsersByLocation(userLocation);
         if (users.isEmpty())
             model.addAttribute("message", "No users found for location '" + userLocation + "'.");
         model.addAttribute("users", users);
@@ -131,7 +131,7 @@ public class UserViewController {
 
     @GetMapping("/by-role/{userRole}")
     public String getUsersByUserRole(@PathVariable String userRole, Model model) {
-        List<User> users = userService.getAllUsersByRole(userRole);
+        List<UserOutputDTO> users = userService.getAllUsersByRole(userRole);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for role '" + userRole + "'.");
         model.addAttribute("users", users);
@@ -140,7 +140,7 @@ public class UserViewController {
 
     @GetMapping("/by-role-location")
     String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
-        List<User> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
+        List<UserOutputDTO> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for role '" + userRole + "' and location '" + userLocation + "'.");
         model.addAttribute("users", users);
@@ -149,7 +149,7 @@ public class UserViewController {
 
     @GetMapping("/by-cat")
     String getUsersByCatName(@RequestParam String catName, Model model) {
-        List<User> users = userService.getAllUsersByCatName(catName);
+        List<UserOutputDTO> users = userService.getAllUsersByCatName(catName);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for cat '" + catName + "'.");
         model.addAttribute("users", users);
@@ -158,7 +158,7 @@ public class UserViewController {
 
     @GetMapping("/by-search-term/{searchTerm}")
     String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
-        List<User> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
+        List<UserOutputDTO> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for search term '" + searchTerm + "'.");
         model.addAttribute("users", users);
@@ -192,17 +192,17 @@ public class UserViewController {
 //        return "redirect:/users/profile/id/" + user.getUserId();
     }
 
-    //@GetMapping("/{userId}/edit") TODO: OLD ENDPOINT, is new matched in html?
-    @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable Long id, Model model) {
+    @GetMapping("/{userId}/edit") //TODO: OLD ENDPOINT, is new matched in html?
+    //@GetMapping("/edit/{id}")
+    public String editUserForm(@PathVariable Long userId, Model model) {
         try {
-            UserOutputDTO userDTO = userService.getUserDtoById(id);
+            UserOutputDTO userDTO = userService.getUserDtoById(userId);
             UserUpdateDTO updateDTO = userMapper.outputToUpdateDTO(userDTO);
             model.addAttribute("user", updateDTO);
-            model.addAttribute("userId", id);
+            model.addAttribute("userId", userId);
             return "user/user-update";
         } catch (NotFoundException ex) {
-            log.error("Could not load user {}", id, ex);
+            log.error("Could not load user {}", userId, ex);
             model.addAttribute("error", "User not found");
             return "error";
         }
@@ -229,9 +229,7 @@ public String updateUser(@PathVariable Long userId,
         Authentication old = SecurityContextHolder.getContext().getAuthentication();
         OAuth2AuthenticationToken oldOauth = (OAuth2AuthenticationToken) old;
 
-
-        //TODO: Map updateDTO to user?
-        UserDetails freshDetails = new CustomUserDetails(updateDTO);
+        UserDetails freshDetails = new CustomUserDetails(userMapper.toUser(updateDTO));
 
         OAuth2AuthenticationToken newAuth =
                 new OAuth2AuthenticationToken(
@@ -286,7 +284,7 @@ public String updateUser(@PathVariable Long userId,
     @GetMapping("/{userId}/delete")
     String showDeleteForm(@PathVariable Long userId, Model model) {
         try {
-            User user = userService.getUserById(userId);
+            User user = userService.findUserById(userId);
             model.addAttribute("user", user);
             return "user/user-update";
         } catch (NotFoundException ex) {

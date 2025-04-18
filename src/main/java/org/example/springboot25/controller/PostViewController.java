@@ -80,7 +80,7 @@ public class PostViewController {
     }
 
     @PutMapping("/{postId}")
-    public String updatePost(@PathVariable Long postId, @Valid @ModelAttribute Post post, RedirectAttributes redirectAttributes) {
+    public String updatePost(@PathVariable Long postId, @ModelAttribute Post post, RedirectAttributes redirectAttributes) {
         try {
             postService.updatePost(postId, post);
             redirectAttributes.addFlashAttribute("update_success", "Post Updated!");

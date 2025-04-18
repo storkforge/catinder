@@ -40,7 +40,7 @@ public class CatViewController {
     public String listCats(Model model,
                            @AuthenticationPrincipal OAuth2User principal,
                            Authentication authentication) {
-        User me = userService.getUserByEmail(principal.getAttribute("email"));
+        User me = userService.findUserByEmail(principal.getAttribute("email"));
 
         // ADMIN sees all cats, others only their own
         List<Cat> cats = catService.getCatsVisibleTo(authentication, me);
