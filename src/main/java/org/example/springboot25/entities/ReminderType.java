@@ -9,7 +9,6 @@ public enum ReminderType {
         return switch (this) {
             case VET_APPOINTMENT -> "Veterinary Appointment";
             case EVENT -> "Event";
-            default -> name();
         };
     }
 }
