@@ -1,10 +1,14 @@
 package org.example.springboot25.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import org.example.springboot25.entities.UserRole;
 
 public class UserUpdateDTO {
 
+    private Long userId;
     private String userFullName;
+
+    @NotBlank
     private String userName;
     private String userEmail;
     private String userLocation;
@@ -24,6 +28,8 @@ public class UserUpdateDTO {
     }
 
     // Getters and Setters
+    public Long getUserId() {return userId;}
+
     public String getUserFullName() {
         return userFullName;
     }
