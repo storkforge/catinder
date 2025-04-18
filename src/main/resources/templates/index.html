@@ -20,6 +20,14 @@
     <img class="header-choice" src="/images/security.png" alt="Admin"/>
     <span>Admin Dashboard</span>
 </a>
+<!--HANDLE CATS BUTTON-->
+<div sec:authorize="isAuthenticated()" class="header-nav">
+    <a class="submit create-button" th:href="@{/cats}">
+        <span th:text="#{handle.your.cats}">Handle cats</span>
+    </a>
+</div>
+
+
 <div sec:authorize="isAuthenticated()" class="slideshow-container catPhotos-container">
     <div class="mySlides fade" th:each="photo : ${catPhotos}">
         <div class="image‐wrapper">

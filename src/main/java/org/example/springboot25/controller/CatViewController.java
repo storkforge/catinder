@@ -10,6 +10,8 @@ import org.example.springboot25.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -32,28 +34,36 @@ public class CatViewController {
 
         this.catService = catService;
         this.userService = userService;
-        }
+    }
 
     @GetMapping
-    public String showAllCats(Model model) {
-            List<Cat> cats = catService.getAllCats();
-            model.addAttribute("cats", cats);
-            return "cat/cats-list";
-        }
+    public String listCats(Model model,
+                           @AuthenticationPrincipal OAuth2User principal,
+                           Authentication authentication) {
+        User me = userService.getUserByEmail(principal.getAttribute("email"));
+
+        // ADMIN sees all cats, others only their own
+        List<Cat> cats = catService.getCatsVisibleTo(authentication, me);
+
+        model.addAttribute("cats", cats);
+        return "cat/cats-list";
+    }
+
+
 
     @GetMapping("/{catId}")
     public String showCatDetail(@PathVariable Long catId, Model model) {
         Cat cat = catService.getCatById(catId)
-                .orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
         model.addAttribute("cat", cat);
         return "cat/cat-detail";
     }
 
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
-        Cat cat = new Cat() ;
-        cat.getCatPhotos().add(new CatPhoto()) ;
-        model.addAttribute("cat",cat );
+        Cat cat = new Cat();
+        cat.getCatPhotos().add(new CatPhoto());
+        model.addAttribute("cat", cat);
         return "cat/creating-a-new-cat-form";
     }
 
@@ -78,7 +88,7 @@ public class CatViewController {
     @GetMapping("/{catId}/edit")
     public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
         Cat cat = catService.getCatById(catId)
-                .orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
         model.addAttribute("cat", cat);
         return "cat/existing-edit-cat-form";
     }
