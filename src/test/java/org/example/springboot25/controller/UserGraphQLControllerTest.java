@@ -30,7 +30,8 @@ class UserGraphQLControllerTest {
     @DisplayName("Should fetch all users")
     void shouldFetchAllUsers() {
         UserOutputDTO userOutputDTO = new UserOutputDTO(
-                1L, "Name", "@user", "mail@test.com", "City", UserRole.BASIC, "LOCAL"
+                1L, "Name", "@user", "mail@test.com",
+                "City", UserRole.BASIC, "LOCAL"
         );
 
         when(userService.getAllUsers()).thenReturn(List.of(userOutputDTO));
