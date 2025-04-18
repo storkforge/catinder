@@ -75,7 +75,8 @@ class UserMapperTest {
     @Test
     @DisplayName("Should map OutputDTO to UpdateDTO")
     void shouldMapOutputDTOToUpdateDTO() {
-        UserOutputDTO userOutputDTO = new UserOutputDTO(1L, "Name", "@user", "email@test.com", "City", UserRole.ADMIN, "LOCAL");
+        UserOutputDTO userOutputDTO = new UserOutputDTO(1L, "Name",
+                "@user", "email@test.com", "City", UserRole.ADMIN, "LOCAL");
         UserUpdateDTO userUpdateDTO = userMapper.outputToUpdateDTO(userOutputDTO);
 
         assertEquals(userOutputDTO.getUserName(), userUpdateDTO.getUserName());
