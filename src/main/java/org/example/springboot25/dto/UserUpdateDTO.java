@@ -10,6 +10,7 @@ public class UserUpdateDTO {
     private String userLocation;
     private UserRole userRole;
     private String userAuthProvider;
+    private Long userId;
 
     // Getters and Setters
     public String getUserFullName() {
@@ -58,5 +59,14 @@ public class UserUpdateDTO {
 
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
+    }
+
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

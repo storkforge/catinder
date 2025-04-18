@@ -10,9 +10,7 @@
 <div th:replace="fragments/header"></div>
 <div class="form-container">
     <h2 th:text="#{new.user}">New user:</h2>
-    <form th:if="${user.userId == null}"
-          th:action="@{/users/add}"
-          th:object="${user}" method="post">
+    <form th:if="${user.userId == null}" th:action="@{/users/add}" th:object="${user}" th:method="post">
 
         <div class="form-row">
             <label for="userName" th:text="#{username}">Username:</label>

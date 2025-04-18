@@ -1,11 +1,14 @@
 package org.example.springboot25.controller;
 
 import org.example.springboot25.entities.Cat;
+import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -28,26 +31,36 @@ public class CatViewController {
 
         this.catService = catService;
         this.userService = userService;
-        }
+    }
 
     @GetMapping
-    public String showAllCats(Model model) {
-            List<Cat> cats = catService.getAllCats();
-            model.addAttribute("cats", cats);
-            return "cat/cats-list";
-        }
+    public String listCats(Model model,
+                           @AuthenticationPrincipal OAuth2User principal,
+                           Authentication authentication) {
+        User me = userService.findUserByEmail(principal.getAttribute("email"));
+
+        // ADMIN sees all cats, others only their own
+        List<Cat> cats = catService.getCatsVisibleTo(authentication, me);
+
+        model.addAttribute("cats", cats);
+        return "cat/cats-list";
+    }
+
+
 
     @GetMapping("/{catId}")
     public String showCatDetail(@PathVariable Long catId, Model model) {
         Cat cat = catService.getCatById(catId)
-                .orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
         model.addAttribute("cat", cat);
         return "cat/cat-detail";
     }
 
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
-        model.addAttribute("cat", new Cat());
+        Cat cat = new Cat();
+        cat.getCatPhotos().add(new CatPhoto());
+        model.addAttribute("cat", cat);
         return "cat/creating-a-new-cat-form";
     }
 
@@ -58,9 +71,11 @@ public class CatViewController {
             String email = oauth2User.getAttribute("email");
             User user = userService.findUserByEmail(email);
             cat.setUserCatOwner(user);
+            for (CatPhoto catPhoto : cat.getCatPhotos()) {
+                catPhoto.setCatPhotoCat(cat);
+            }
             catService.createCat(cat);
         } else {
-            // Handle other types by throwing an exception
             throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
         }
         return "redirect:/cats";
@@ -69,7 +84,7 @@ public class CatViewController {
     @GetMapping("/{catId}/edit")
     public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
         Cat cat = catService.getCatById(catId)
-                .orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
         model.addAttribute("cat", cat);
         return "cat/existing-edit-cat-form";
     }
@@ -86,7 +101,6 @@ public class CatViewController {
         return "redirect:/cats";
     }
 
-    //Todo: ????Move delete from cat-list to cat-details
     @DeleteMapping("/{catId}/delete")
     public String deleteCat(@PathVariable Long catId, RedirectAttributes redirectAttributes) {
         try {

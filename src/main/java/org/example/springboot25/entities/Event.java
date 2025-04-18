@@ -2,6 +2,7 @@ package org.example.springboot25.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -28,12 +29,12 @@ public class Event {
     private String eventLocation;
 
     @NotNull
-    @PastOrPresent
+    @FutureOrPresent
     private LocalDateTime eventDateTime;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "event_planner_user_id")
+    @JoinColumn(name = "event_planner_user_id", nullable = false)
     private User userEventPlanner;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

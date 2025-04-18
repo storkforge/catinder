@@ -11,9 +11,6 @@
 <div class="form-container">
     <h2>Update event</h2>
     <form th:action="@{/events/{eventId}(eventId=${event.eventId})}" th:method="put" th:object="${event}">
-        <!-- CSRF token if using Spring Security -->
-        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
-
         <div class="form-row">
             <label for="eventName">Event Name:</label>
             <input type="text" id="eventName" th:field="*{eventName}" placeholder="Enter event name" required class="form-control"/>

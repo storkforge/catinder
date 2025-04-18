@@ -8,6 +8,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
+    public User toUser(UserUpdateDTO dto) {
+        if (dto == null) throw new IllegalArgumentException("UserInputDTO cannot be null");
+
+        User user = new User();
+        user.setUserFullName(dto.getUserFullName());
+        user.setUserName(dto.getUserName());
+        user.setUserEmail(dto.getUserEmail());
+        user.setUserLocation(dto.getUserLocation());
+        user.setUserRole(dto.getUserRole());
+        user.setUserAuthProvider(dto.getUserAuthProvider());
+        return user;
+    }
 
     public User toUser(UserInputDTO dto) {
         if (dto == null) throw new IllegalArgumentException("UserInputDTO cannot be null");
@@ -67,6 +79,7 @@ public class UserMapper {
         if (dto == null) throw new IllegalArgumentException("UserOutputDTO cannot be null");
 
         UserUpdateDTO updateDTO = new UserUpdateDTO();
+        updateDTO.setUserId(dto.getUserId());
         updateDTO.setUserFullName(dto.getUserFullName());
         updateDTO.setUserName(dto.getUserName());
         updateDTO.setUserEmail(dto.getUserEmail());

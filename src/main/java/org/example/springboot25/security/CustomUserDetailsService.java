@@ -19,6 +19,16 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+
+        return userRepository.findByUserEmail(email)
+                .map(CustomUserDetails::new)
+                .orElseThrow(() -> {
+                    logger.warn("Login attempt with unknown email: {}", email);
+                    return new UsernameNotFoundException("No user found with email: " + email);
+                });
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUserName(username)

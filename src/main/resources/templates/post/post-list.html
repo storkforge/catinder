@@ -37,7 +37,7 @@
                     </div>
                     <!-- Delete Button: Shown only if the post belongs to the current user -->
                     <div th:if="${post.user.userName == currentUser.userName}">
-                        <form th:action="@{'/posts/' + ${post.postId}}" th:method="delete">
+                        <form th:action="@{'/posts/' + ${post.postId} + '/delete'}" th:method="delete">
                             <button type="submit" class="delete-button" onclick="return confirm('Delete this post?');">
                                 Delete
                             </button>

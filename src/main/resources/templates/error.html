@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Error</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header"></div>
+
+<h2 th:text="#{oops.something.went.wrong}">
+    Oops! Something went wrong.
+</h2>
+<div th:text="#{unexpected.error}" class="error-message" style="font-weight: bold">
+    <p th:text="${error}">
+        An unexpected error occurred. Please try again later.
+    </p>
+</div>
+<div  style="margin-top: 5%;">
+    <a th:text="#{back.to.homepage}" th:href="@{/}" class="create-button">
+        Back to Homepage
+    </a>
+</div>
+</body>
+</html>

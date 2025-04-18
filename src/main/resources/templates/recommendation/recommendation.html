@@ -9,10 +9,10 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 <h2>AI-Powered Recommendations</h2>
-<div th:if="${recommendations}">
-    <table>
+<div class="table-container" th:if="${recommendations}">
+    <table id="event-table">
         <thead>
-        <tr>
+        <tr class="header-row">
             <th>Category</th>
             <th>Product</th>
             <th>Description</th>
@@ -20,7 +20,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="rec : ${recommendations}">
+        <tr class="header-row" th:each="rec : ${recommendations}">
             <td th:text="${rec.recommendationCategory}">Category</td>
             <td th:text="${rec.recommendationProductName}">Product</td>
             <td th:text="${rec.recommendationProductDescription}">Description</td>

@@ -40,7 +40,7 @@
     </div>
 </div>
 <div>
-    <form th:action="@{/posts/{postId}(postId=${post.postId})}" th:method="delete">
+    <form th:action="@{'/posts/' + ${post.postId} + '/delete'}" th:method="delete">
         <input type="hidden" name="postId" th:value="${post.postId}"/>
         <div>
             <button class="delete-button" type="submit"
