@@ -1,17 +1,11 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Event;
-import org.example.springboot25.entities.Reminder;
-import org.example.springboot25.entities.ReminderType;
-import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.EventRepository;
-import org.example.springboot25.repository.ReminderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 

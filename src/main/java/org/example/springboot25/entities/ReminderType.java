@@ -6,13 +6,10 @@ public enum ReminderType {
 //visar alternativ namn
     @Override
     public String toString() {
-        switch (this) {
-            case VET_APPOINTMENT:
-                return "Veterinary Appointment";
-            case EVENT:
-                return "Event";
-            default:
-                return name();
-        }
+        return switch (this) {
+            case VET_APPOINTMENT -> "Veterinary Appointment";
+            case EVENT -> "Event";
+            default -> name();
+        };
     }
 }
