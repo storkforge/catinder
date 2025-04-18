@@ -92,5 +92,7 @@ public class ReminderService {
     }
 
 
-
+    public List<Reminder> getRemindersByUserAndType(User user, ReminderType type) {
+        return reminderRepository.findAllByUserAndReminderType(user, type);
+    }
 }

@@ -13,9 +13,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reminders")
@@ -120,6 +124,21 @@ public class ReminderRESTController {
     @ResponseStatus(HttpStatus.OK)
     public List<Reminder> getRemindersByType(@PathVariable ReminderType type, Authentication auth) {
         User current = userService.findUserByUserName(auth.getName());
-        return reminderRepository.findAllByUserAndReminderType(current, type);
+        return reminderService.getRemindersByUserAndType(current, type);
     }
+
+@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public Map<String, String> handleInvalidReminderType(MethodArgumentTypeMismatchException ex) {
+            Map<String, String> error = new HashMap<>();
+            if (ex.getParameter().getParameterType().equals(ReminderType.class)) {
+                    error.put("error", "Invalid reminder type. Valid values are: " +
+                                      Arrays.stream(ReminderType.values())
+                                            .map(Enum::name)
+                                            .collect(Collectors.joining(", ")));
+                } else {
+                    error.put("error", ex.getMessage());
+                }
+            return error;
+        }
 }
