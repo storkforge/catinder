@@ -11,7 +11,7 @@
 <body>
 <div th:replace="fragments/header"></div>
 
-<div id="successMessage" class="success-message" th:if="${delete_success}" th:text="#{DeleteSuccessTranslated}"></div>
+<div id="successMessage" class="success-message" th:if="${delete_success}" th:text="#{UserDeleteSuccessTranslated}"></div>
 
 <!--TO ADMIN DASHBOARD-->
 <a sec:authorize="hasRole('ADMIN')"

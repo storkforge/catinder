@@ -1,7 +1,6 @@
 package org.example.springboot25.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
@@ -15,7 +14,6 @@ import org.example.springboot25.security.CustomUserDetailsService;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.example.springboot25.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -181,19 +179,9 @@ public class UserViewController {
             model.addAttribute("error", "Failed to add user");
             return "user/user-add";
         }
-        //TODO:CHECK REDIRECT MALVA ^v
-//        try {
-//            userService.addUser(user);
-//            redirectAttributes.addFlashAttribute("success", "Account created!");
-//        } catch (AlreadyExistsException ex) {
-//            model.addAttribute("error", ex.getMessage());
-//            return "user/user-add";
-//        }
-//        return "redirect:/users/profile/id/" + user.getUserId();
     }
 
-    @GetMapping("/{userId}/edit") //TODO: OLD ENDPOINT, is new matched in html?
-    //@GetMapping("/edit/{id}")
+    @GetMapping("/{userId}/edit")
     public String editUserForm(@PathVariable Long userId, Model model) {
         try {
             UserOutputDTO userDTO = userService.getUserDtoById(userId);
@@ -214,12 +202,10 @@ public String updateUser(@PathVariable Long userId,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes redirectAttributes) {
-
     if (bindingResult.hasErrors()) {
         model.addAttribute("userId", userId);
         return "user/user-update";
     }
-
     try {
         userService.updateUser(userId, updateDTO);
         redirectAttributes.addFlashAttribute("update_success", "Saved!");
@@ -237,37 +223,18 @@ public String updateUser(@PathVariable Long userId,
                         freshDetails.getAuthorities(),
                         oldOauth.getAuthorizedClientRegistrationId());
 
-        newAuth.setAuthenticated(true); // Mark as logged‑in
+        newAuth.setAuthenticated(true);
         newAuth.setDetails(((AbstractAuthenticationToken) old).getDetails());
 
-        // Store
         SecurityContextHolder.getContext().setAuthentication(newAuth);
     } catch (Exception ex) {
         log.error("Failed to update user {}", userId, ex);
         redirectAttributes.addFlashAttribute("error", ex.getMessage());
-//        model.addAttribute("error", "Update failed");
-//        model.addAttribute("userId", userId);
         return "redirect:/users/" + userId + "/edit";
     }
 
     return "redirect:/users/{userId}/edit";
 }
-
-//TODO: CHECK NEW/OLD PUT
-//    @PutMapping("/{userId}/edit")
-//    public String updateUser(@PathVariable Long userId, @Valid @ModelAttribute User user, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-//        if (bindingResult.hasErrors()) {
-//            return "user/user-update";
-//        }
-//        try {
-//            userService.updateUser(userId, user);
-//            redirectAttributes.addFlashAttribute("update_success", "Details saved!");
-//        } catch (AlreadyExistsException ex) {
-//            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-//            return "redirect:/users/" + userId + "/edit";
-//        }
-//        return "redirect:/users/{userId}/edit";
-//    }
 
     @PatchMapping("/{userId}/edit")
     public String updateUser(@PathVariable Long userId, @RequestParam Map<String, Object> updates, RedirectAttributes redirectAttributes, Model model) {

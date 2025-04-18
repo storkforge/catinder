@@ -1,14 +1,11 @@
 package org.example.springboot25.controller;
 
-import jakarta.validation.Valid;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -79,7 +76,6 @@ public class CatViewController {
             }
             catService.createCat(cat);
         } else {
-            // Handle other types by throwing an exception
             throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
         }
         return "redirect:/cats";
@@ -105,7 +101,6 @@ public class CatViewController {
         return "redirect:/cats";
     }
 
-    //Todo: ????Move delete from cat-list to cat-details
     @DeleteMapping("/{catId}/delete")
     public String deleteCat(@PathVariable Long catId, RedirectAttributes redirectAttributes) {
         try {

@@ -1,6 +1,5 @@
 package org.example.springboot25.controller;
 
-import jakarta.validation.Valid;
 import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
