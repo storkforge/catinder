@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Recommendation Result</title>
+</head>
+<body>
+<h2>Recommendation for <span th:text="${breed}"></span>:</h2>
+<p th:text="${recommendation}"></p>
+<a href="/ai-recommendations">Try another</a>
+</body>
+</html>

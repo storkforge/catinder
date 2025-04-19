@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>AI Recommendation</title>
+</head>
+<body>
+<h1>Cat AI Recommendation</h1>
+<form action="#" th:action="@{/ai-recommendations}" method="post">
+    <label for="breed">Cat Breed:</label>
+    <input type="text" id="breed" name="breed" required>
+    <button type="submit">Get Recommendation</button>
+</form>
+</body>
+</html>
