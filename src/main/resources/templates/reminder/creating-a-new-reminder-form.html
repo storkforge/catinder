@@ -6,12 +6,13 @@
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
 <body>
-<header th:replace="fragments/header :: header"></header>
+<header th:replace="~{fragments/header :: header}"></header>
 
 <h2>Create Reminder</h2>
 
 <div class="form-container">
   <form th:action="@{/reminders}" method="post">
+    <input type="hidden" name="userId" th:value="${currentUser.userId}" />
 
     <div class="form-row">
       <label for="reminderType">Reminder Type:</label>
