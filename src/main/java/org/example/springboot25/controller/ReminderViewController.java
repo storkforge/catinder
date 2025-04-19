@@ -46,9 +46,7 @@ public class ReminderViewController {
 
     @GetMapping
     public String showAllReminders(Model model) {
-        User current = userService.findUserByEmail(
-                ((OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication())
-                        .getPrincipal().getAttribute("email"));
+        User current = getCurrentUser(SecurityContextHolder.getContext().getAuthentication());
         model.addAttribute("reminders", reminderService.getRemindersByUser(current));
         return "reminder/list-reminder";
     }
