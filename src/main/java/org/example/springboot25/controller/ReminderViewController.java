@@ -35,6 +35,15 @@ public class ReminderViewController {
 
     }
 
+    private User getCurrentUser(Principal principal) {
+        if (principal instanceof OAuth2AuthenticationToken oauth) {
+            OAuth2User oauthUser = oauth.getPrincipal();
+            String email = oauthUser.getAttribute("email");
+            return userService.findUserByEmail(email);
+        }
+        throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
+    }
+
     @GetMapping
     public String showAllReminders(Model model) {
         User current = userService.findUserByEmail(
@@ -60,8 +69,7 @@ public class ReminderViewController {
     @GetMapping("/{reminderId}/edit")
     public String showEditReminder(@PathVariable Long reminderId, Model model, Principal principal) {
         Reminder reminder = reminderService.getReminderById(reminderId);
-        User current = userService.findUserByEmail(((OAuth2AuthenticationToken) principal)
-                .getPrincipal().getAttribute("email"));
+        User current = getCurrentUser(principal);
         if (!reminder.getUser().getUserId().equals(current.getUserId())) {
             throw new AccessDeniedException("You can only edit your own reminder");
         }
@@ -76,8 +84,7 @@ public class ReminderViewController {
     public String updateReminder(@PathVariable Long reminderId, @ModelAttribute("reminder") Reminder reminder, Principal principal) {
         Reminder persistedReminder = reminderService.getReminderById(reminderId);
 
-        User currentUser = userService.findUserByEmail(((OAuth2AuthenticationToken) principal)
-                .getPrincipal().getAttribute("email"));
+        User currentUser = getCurrentUser(principal);
 
         if (!persistedReminder.getUser().getUserId().equals(currentUser.getUserId())
                 && currentUser.getUserRole() != UserRole.ADMIN) {
@@ -95,8 +102,7 @@ public class ReminderViewController {
     @GetMapping("/new")
     public String showCreateNewReminderForm(Model model, Principal principal) {
         model.addAttribute("reminder", new Reminder());
-        User current = userService.findUserByEmail(((OAuth2AuthenticationToken) principal)
-                .getPrincipal().getAttribute("email"));
+        User current = getCurrentUser(principal);
         List<Cat> cats = catService.getAllCatsByUser(current);
         model.addAttribute("cats", cats);
         return "reminder/creating-a-new-reminder-form";
@@ -105,39 +111,34 @@ public class ReminderViewController {
     @PostMapping
     public String processCreateNewReminderForm(@ModelAttribute("reminder") Reminder reminder,
                                                @RequestParam Long catId, Principal principal) {
-        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
-            OAuth2User oauthUser = oauthToken.getPrincipal();
-            String email = oauthUser.getAttribute("email");
-            User user = userService.findUserByEmail(email);
-            reminder.setUser(user);
 
-            Cat cat = catService.getCatById(catId)
-                    .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
-            if (!cat.getUser().getUserId().equals(user.getUserId())) {
-                throw new AccessDeniedException("You do not own this cat");
-            }
-            reminder.setCatReminderCat(cat);
+        User user = getCurrentUser(principal);
+        reminder.setUser(user);
 
-            reminderService.createReminder(reminder);
-        } else {
-            throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
+        Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with."));
+
+        if(!cat.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("You do not own this cat");
         }
+        reminder.setCatReminderCat(cat);
+
+        reminderService.createReminder(reminder);
+
         return "redirect:/reminders";
     }
 
     @DeleteMapping("/{reminderId}/delete")
     public String deleteReminder(@PathVariable Long reminderId, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            Reminder reminder = reminderService.getReminderById(reminderId);
 
-        Reminder reminder = reminderService.getReminderById(reminderId);
+            User currentUser = getCurrentUser(principal);
 
-        User currentUser = userService.findUserByEmail(((OAuth2AuthenticationToken) principal)
-                .getPrincipal().getAttribute("email"));
-
-        if (!reminder.getUser().getUserId().equals(currentUser.getUserId())
+            if (!reminder.getUser().getUserId().equals(currentUser.getUserId())
                 && currentUser.getUserRole() != UserRole.ADMIN) {
             throw new AccessDeniedException("You can only delete your own reminders");
-        }
-        try {
+            }
+
             reminderService.deleteReminder(reminderId);
             redirectAttributes.addFlashAttribute("delete_success", "Reminder deleted successfully!");
 
