@@ -1,10 +1,8 @@
 package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
-import org.example.springboot25.entities.Cat;
-import org.example.springboot25.entities.Reminder;
-import org.example.springboot25.entities.User;
-import org.example.springboot25.entities.UserRole;
+import org.example.springboot25.dto.ReminderInputDTO;
+import org.example.springboot25.entities.*;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.ReminderService;
@@ -74,13 +72,14 @@ public class ReminderViewController {
         model.addAttribute("reminder", reminder);
         List<Cat> cats = catService.getAllCatsByUser(current);
         model.addAttribute("cats", cats);
+        model.addAttribute("currentUser", current);
         return "reminder/edit-reminder-details-form";
     }
 
 
     @PostMapping("/{reminderId}")
-    public String updateReminder(@PathVariable Long reminderId, @Valid @ModelAttribute("reminder") Reminder reminder,
-                                 Principal principal, BindingResult bindingResult) {
+    public String updateReminder(@PathVariable Long reminderId, @Valid @ModelAttribute("reminder") ReminderInputDTO reminderInput,
+                                 BindingResult bindingResult, Principal principal) {
         Reminder persistedReminder = reminderService.getReminderById(reminderId);
 
         User currentUser = getCurrentUser(principal);
@@ -94,9 +93,9 @@ public class ReminderViewController {
             return "reminder/edit-reminder-details-form";
         }
 
-        persistedReminder.setReminderType(reminder.getReminderType());
-        persistedReminder.setReminderDate(reminder.getReminderDate());
-        persistedReminder.setReminderInfo(reminder.getReminderInfo());
+        persistedReminder.setReminderType(ReminderType.valueOf(reminderInput.getReminderType()));
+        persistedReminder.setReminderDate(reminderInput.getReminderDate());
+        persistedReminder.setReminderInfo(reminderInput.getReminderInfo());
 
         reminderService.updateReminder(reminderId, persistedReminder);
         return "redirect:/reminders/" + reminderId;
@@ -108,32 +107,39 @@ public class ReminderViewController {
         User current = getCurrentUser(principal);
         List<Cat> cats = catService.getAllCatsByUser(current);
         model.addAttribute("cats", cats);
+        model.addAttribute("currentUser", current);
         return "reminder/creating-a-new-reminder-form";
     }
 
     @PostMapping
-    public String processCreateNewReminderForm(@Valid @ModelAttribute("reminder") Reminder reminder,
+    public String processCreateNewReminderForm(@Valid @ModelAttribute("reminder") ReminderInputDTO reminderInput,
                                                BindingResult bindingResult,
                                                @RequestParam Long catId, Principal principal, Model model) {
+        User user = getCurrentUser(principal);
         if (bindingResult.hasErrors()) {
             User current = getCurrentUser(principal);
             List<Cat> cats = catService.getAllCatsByUser(current);
             model.addAttribute("cats", cats);
             return "reminder/creating-a-new-reminder-form";
         }
-        User user = getCurrentUser(principal);
-        reminder.setUser(user);
 
+
+
+//        reminder.setUser(user);
         Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
 
         if (!cat.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException("You do not own this cat");
         }
 
+        Reminder reminder = new Reminder();
+        reminder.setReminderType(ReminderType.valueOf(reminderInput.getReminderType()));
+        reminder.setReminderInfo(reminderInput.getReminderInfo());
+        reminder.setReminderDate(reminderInput.getReminderDate());
+        reminder.setUser(user);
         reminder.setCatReminderCat(cat);
 
         reminderService.createReminder(reminder);
-
         return "redirect:/reminders";
     }
 

@@ -1,5 +1,6 @@
 package org.example.springboot25.dto;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,14 +9,17 @@ import java.time.LocalDateTime;
 
 public class ReminderInputDTO {
 
+    @NotNull
     @NotBlank(message = "Reminder type is required")
     @Size(max = 255, message = "Reminder type must be less than 255 characters")
     private String reminderType;
 
+    @NotNull
     @NotBlank(message = "Reminder info is required")
     @Size(max = 1000, message = "Reminder info must be less than 1000 characters")
     private String reminderInfo;
 
+    @FutureOrPresent
     @NotNull(message = "Reminder date is required")
     private LocalDateTime reminderDate;
 
