@@ -10,6 +10,13 @@
 <div th:replace="fragments/header"></div>
 
 <h2>All Events</h2>
+<div class="search-bar">
+    <form th:action="@{/events}" method="get">
+        <input type="text" name="q" placeholder="Search for events..."
+               th:value="${searchQuery}" />
+        <button type="submit">Search</button>
+    </form>
+</div>
 <div class="header-nav">
     <a class="submit create-button" th:href="@{/events/add}">
         <span>Create New Event</span>

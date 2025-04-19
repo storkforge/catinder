@@ -33,14 +33,20 @@ public class EventViewController {
     }
 
     @GetMapping
-    public String showAllEvents(Model model) {
-        model.addAttribute("events", eventService.getAllEvents());
+    public String showAllEvents(@RequestParam(value = "q", required = false) String query,Model model) {
+        List<Event> events;
+        if (query != null && !query.trim().isEmpty()) {
+            events = eventService.searchEvents(query);
+            model.addAttribute("searchQuery", query);
+        } else {
+            events = eventService.getAllEvents();
+        }
+        model.addAttribute("events", events);
         return "event/event-list";
     }
 
     @GetMapping("/event-details/{eventId}")
     public String showEventDetails(@PathVariable Long eventId, Principal principal, Model model) {
-        // Retrieve all events if needed for navigation or sidebar
         List<Event> events = eventService.getAllEvents();
         Event selectedEvent = eventService.getEventById(eventId);
 
