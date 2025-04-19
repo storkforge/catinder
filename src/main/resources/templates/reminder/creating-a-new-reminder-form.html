@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Catinder - Reminder Edit</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<h2>Create Reminder</h2>
+
+<div class="form-container">
+  <form th:action="@{/reminders}" method="post">
+    <input type="hidden" name="userId" th:value="${currentUser.userId}" />
+
+    <div class="form-row">
+      <label for="reminderType">Reminder Type:</label>
+      <select id="reminderType" name="reminderType" required>
+        <option value="">-- Select Type --</option>
+        <option value="VET_APPOINTMENT">Veterinary Appointment</option>
+        <option value="EVENT">Event</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="reminderInfo">Reminder Info:</label>
+      <input type="text" id="reminderInfo" name="reminderInfo" required/>
+    </div>
+
+    <div class="form-row">
+      <label for="reminderDate">Reminder Date &amp; Time:</label>
+      <input type="datetime-local" id="reminderDate" name="reminderDate" required/>
+    </div>
+
+    <div class="form-row">
+      <label for="catId">Select Your Cat:</label>
+      <select id="catId" name="catId" required>
+        <option value="">-- Select Your Cat --</option>
+        <option th:each="cat : ${cats}"
+                th:value="${cat.catId}"
+                th:text="${cat.catName}">
+        </option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <button type="submit">Create Reminder</button>
+      <a class="create-button" th:href="@{/reminders}">Cancel</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>
