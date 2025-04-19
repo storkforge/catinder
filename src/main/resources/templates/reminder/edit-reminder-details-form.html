@@ -12,6 +12,7 @@
 
 <div class="form-container">
     <form th:action="@{'/reminders/' + ${reminder.reminderId}}" method="post">
+        <input type="hidden" name="userId" th:value="${currentUser.userId}" />
         <!-- If needed for HTTP method override, uncomment the hidden field below -->
         <!-- <input type="hidden" name="_method" value="put" /> -->
 
