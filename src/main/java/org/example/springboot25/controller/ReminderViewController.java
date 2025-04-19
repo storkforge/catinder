@@ -10,7 +10,6 @@ import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.ReminderService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -126,7 +125,6 @@ public class ReminderViewController {
         reminder.setUser(user);
 
         Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
-        ;
 
         if (!cat.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException("You do not own this cat");
