@@ -47,8 +47,8 @@ public class ReminderViewController {
     }
 
     @GetMapping
-    public String showAllReminders(Model model) {
-        User current = getCurrentUser(SecurityContextHolder.getContext().getAuthentication());
+    public String showAllReminders(Model model, Principal principal) {
+        User current = getCurrentUser(principal);
         model.addAttribute("reminders", reminderService.getRemindersByUser(current));
         return "reminder/list-reminder";
     }
@@ -57,8 +57,7 @@ public class ReminderViewController {
     @GetMapping("/{reminderId}")
     public String showASpecificReminder(@PathVariable Long reminderId, Model model, Principal principal) {
         Reminder reminder = reminderService.getReminderById(reminderId);
-        User current = userService.findUserByEmail(((OAuth2AuthenticationToken) principal)
-                .getPrincipal().getAttribute("email"));
+        User current = getCurrentUser(principal);
         if (!reminder.getUser().getUserId().equals(current.getUserId())) {
             throw new AccessDeniedException("You can only view your own reminders");
         }
@@ -92,7 +91,7 @@ public class ReminderViewController {
             throw new AccessDeniedException("You can only update your own reminders");
         }
 
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "reminder/edit-reminder-details-form";
         }
 
@@ -114,10 +113,10 @@ public class ReminderViewController {
     }
 
     @PostMapping
-    public String processCreateNewReminderForm(@ModelAttribute("reminder") Reminder reminder,
-                                               @RequestParam Long catId, Principal principal,
-                                               BindingResult bindingResult, Model model) {
-        if(bindingResult.hasErrors()) {
+    public String processCreateNewReminderForm(@Valid @ModelAttribute("reminder") Reminder reminder,
+                                               BindingResult bindingResult,
+                                               @RequestParam Long catId, Principal principal, Model model) {
+        if (bindingResult.hasErrors()) {
             User current = getCurrentUser(principal);
             List<Cat> cats = catService.getAllCatsByUser(current);
             model.addAttribute("cats", cats);
@@ -126,9 +125,10 @@ public class ReminderViewController {
         User user = getCurrentUser(principal);
         reminder.setUser(user);
 
-        Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with."));
+        Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+        ;
 
-        if(!cat.getUser().getUserId().equals(user.getUserId())) {
+        if (!cat.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException("You do not own this cat");
         }
 
@@ -147,8 +147,8 @@ public class ReminderViewController {
             User currentUser = getCurrentUser(principal);
 
             if (!reminder.getUser().getUserId().equals(currentUser.getUserId())
-                && currentUser.getUserRole() != UserRole.ADMIN) {
-            throw new AccessDeniedException("You can only delete your own reminders");
+                    && currentUser.getUserRole() != UserRole.ADMIN) {
+                throw new AccessDeniedException("You can only delete your own reminders");
             }
 
             reminderService.deleteReminder(reminderId);
