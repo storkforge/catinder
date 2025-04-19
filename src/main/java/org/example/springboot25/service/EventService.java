@@ -25,6 +25,11 @@ public class EventService {
         return eventRepository.findAll();
     }
 
+    public List<Event> searchEvents(String query) {
+        return eventRepository.findByEventNameContainingIgnoreCase(query);
+    }
+
+
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Event with id " + id + " not found"));
