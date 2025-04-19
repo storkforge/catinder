@@ -1,5 +1,6 @@
 package org.example.springboot25.controller;
 
+import jakarta.validation.Valid;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.Reminder;
 import org.example.springboot25.entities.User;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -79,7 +81,8 @@ public class ReminderViewController {
 
 
     @PostMapping("/{reminderId}")
-    public String updateReminder(@PathVariable Long reminderId, @ModelAttribute("reminder") Reminder reminder, Principal principal) {
+    public String updateReminder(@PathVariable Long reminderId, @Valid @ModelAttribute("reminder") Reminder reminder,
+                                 Principal principal, BindingResult bindingResult) {
         Reminder persistedReminder = reminderService.getReminderById(reminderId);
 
         User currentUser = getCurrentUser(principal);
@@ -87,6 +90,10 @@ public class ReminderViewController {
         if (!persistedReminder.getUser().getUserId().equals(currentUser.getUserId())
                 && currentUser.getUserRole() != UserRole.ADMIN) {
             throw new AccessDeniedException("You can only update your own reminders");
+        }
+
+        if(bindingResult.hasErrors()) {
+            return "reminder/edit-reminder-details-form";
         }
 
         persistedReminder.setReminderType(reminder.getReminderType());
@@ -108,8 +115,14 @@ public class ReminderViewController {
 
     @PostMapping
     public String processCreateNewReminderForm(@ModelAttribute("reminder") Reminder reminder,
-                                               @RequestParam Long catId, Principal principal) {
-
+                                               @RequestParam Long catId, Principal principal,
+                                               BindingResult bindingResult, Model model) {
+        if(bindingResult.hasErrors()) {
+            User current = getCurrentUser(principal);
+            List<Cat> cats = catService.getAllCatsByUser(current);
+            model.addAttribute("cats", cats);
+            return "reminder/creating-a-new-reminder-form";
+        }
         User user = getCurrentUser(principal);
         reminder.setUser(user);
 
@@ -118,6 +131,7 @@ public class ReminderViewController {
         if(!cat.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException("You do not own this cat");
         }
+
         reminder.setCatReminderCat(cat);
 
         reminderService.createReminder(reminder);
