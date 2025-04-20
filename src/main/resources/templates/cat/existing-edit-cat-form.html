@@ -67,7 +67,14 @@
     <input type="text" id="catName" th:field="*{catName}" required />
 
     <label th:text="#{cat.breed}" for="catBreed">Breed:</label>
-    <input type="text" id="catBreed" th:field="*{catBreed}" />
+    <select id="catBreed" th:field="*{catBreed}">
+      <option value="">-- Select Breed --</option>
+      <option th:each="breed : ${breeds}"
+              th:value="${breed}"
+              th:text="${breed}"
+              th:selected="${breed == cat.catBreed}">
+      </option>
+    </select>
 
     <label th:text="#{cat.gender}" for="catGender">Gender:</label>
     <input type="text" id="catGender" th:field="*{catGender}" />

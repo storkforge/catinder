@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -61,6 +62,9 @@ public class CatViewController {
         Cat cat = new Cat();
         cat.getCatPhotos().add(new CatPhoto());
         model.addAttribute("cat", cat);
+        List<String> breeds = Arrays.asList("Siamese", "Persian", "Maine Coon", "Ragdoll", "Bengal",
+                "British Shorthair", "Scottish Fold", "Sphynx", "Abyssinian", "Birman");
+        model.addAttribute("breeds", breeds);
         return "cat/creating-a-new-cat-form";
     }
 
