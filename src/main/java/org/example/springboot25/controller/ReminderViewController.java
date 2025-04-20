@@ -7,6 +7,8 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.ReminderService;
 import org.example.springboot25.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -26,6 +28,8 @@ public class ReminderViewController {
     private final ReminderService reminderService;
     private final UserService userService;
     private final CatService catService;
+    private static final Logger logger = LoggerFactory.getLogger(ReminderViewController.class);
+
 
     public ReminderViewController(ReminderService reminderService, UserService userService, CatService catService) {
         this.reminderService = reminderService;
@@ -124,7 +128,6 @@ public class ReminderViewController {
         }
 
 
-
 //        reminder.setUser(user);
         Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
 
@@ -147,11 +150,12 @@ public class ReminderViewController {
     public String deleteReminder(@PathVariable Long reminderId, Principal principal, RedirectAttributes redirectAttributes) {
         try {
             Reminder reminder = reminderService.getReminderById(reminderId);
-
             User currentUser = getCurrentUser(principal);
 
             if (!reminder.getUser().getUserId().equals(currentUser.getUserId())
                     && currentUser.getUserRole() != UserRole.ADMIN) {
+                logger.warn("Access denied: User {} attempted to update reminder {} owned by {}",
+                currentUser.getUserId(), reminderId, reminder.getUser().getUserId());
                 throw new AccessDeniedException("You can only delete your own reminders");
             }
 
