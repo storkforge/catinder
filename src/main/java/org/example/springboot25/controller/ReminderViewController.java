@@ -131,7 +131,6 @@ public class ReminderViewController {
         }
 
 
-//        reminder.setUser(user);
         Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
 
         if (!cat.getUser().getUserId().equals(user.getUserId())) {
