@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder – Passkey Demo</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="form-container">
+    <h2>Register a Passkey</h2>
+    <button onclick="registerPasskey()" class="submit">Create Passkey</button>
+    <p id="statusMessage" style="margin-top: 1em;"></p>
+</div>
+
+<script>
+    async function registerPasskey() {
+        const publicKeyOptions = {
+            challenge: Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(32))),
+            rp: { name: "Catinder" },
+            user: {
+                id: Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(16))),
+                name: "demo@catinder.com",
+                displayName: "Demo Cat User"
+            },
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+            authenticatorSelection: { userVerification: "preferred" },
+            timeout: 60000,
+            attestation: "direct"
+        };
+
+        try {
+            const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
+            const json = JSON.stringify(credential, replacer);
+
+            const res = await fetch("/passkey/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: json
+            });
+
+            document.getElementById("statusMessage").innerText = await res.text();
+
+        } catch (e) {
+            console.error(e);
+            document.getElementById("statusMessage").innerText = "❌ Error: " + e.message;
+        }
+    }
+
+    // Replace binary with base64 for transport
+    function replacer(key, value) {
+        if (value instanceof ArrayBuffer) {
+            return btoa(String.fromCharCode(...new Uint8Array(value)));
+        }
+        return value;
+    }
+</script>
+
+</body>
+</html>
