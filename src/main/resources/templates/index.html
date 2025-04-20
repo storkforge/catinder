@@ -53,6 +53,52 @@
     <p>Please click the login-button to sign in/create an account!</p>
 </div>
 
+<!-- Eva testar en grej -->
+<div class="login-test-buttons"
+     style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+
+    <button class="login-button google-login"
+            onclick="location.href='/oauth2/authorization/google'">
+        Login with Google
+    </button>
+
+    <button id="passkey-login-btn" class="login-button passkey-login">
+        Login with Passkey
+    </button>
+</div>
+
+<script>
+    document.getElementById("passkey-login-btn").addEventListener("click", async () => {
+        try {
+            const startResp = await fetch("/webauthn/login/start", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+
+            const options = await startResp.json();
+            const credential = await navigator.credentials.get({
+                publicKey: options.publicKeyCredentialRequestOptions
+            });
+
+            const finishResp = await fetch("/webauthn/login/finish", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(credential)
+            });
+
+            if (finishResp.ok) {
+                window.location.href = "/dashboard";
+            } else {
+                alert("Passkey authentication failed.");
+            }
+        } catch (err) {
+            console.error("Passkey login error:", err);
+            alert("An error occurred during Passkey login.");
+        }
+    });
+</script>
+<!-- Slut på Eva testar en grej -->
+
 <script>
     setTimeout(function () {
         var successMsg = document.getElementById('successMessage');
