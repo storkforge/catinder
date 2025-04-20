@@ -192,5 +192,4 @@ class UserViewControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
     }
-
 }
