@@ -51,6 +51,4 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleNotFoundException(NotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
-
-
 }
