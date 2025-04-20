@@ -19,7 +19,6 @@
         <thead>
         <!-- Add a specific class (header-row) for styling the header row -->
         <tr class="header-row">
-            <th>ID</th>
             <th th:text="#{cat.name}">Name</th>
             <th th:text="#{cat.breed}">Breed</th>
             <th th:text="#{cat.age}">Age</th>
@@ -28,7 +27,6 @@
         </thead>
         <tbody>
         <tr class="data-row" th:each="cat : ${cats}">
-            <td th:text="${cat.catId}">1</td>
             <td th:text="${cat.catName}">Cat Name</td>
             <td th:text="${cat.catBreed}">Breed</td>
             <td th:text="${cat.catAge}">Age</td>
