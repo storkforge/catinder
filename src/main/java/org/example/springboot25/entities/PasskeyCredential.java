@@ -1,9 +1,16 @@
 package org.example.springboot25.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+
+@Entity
 public class PasskeyCredential {
 
     private String userName;
+    @Id
     private String credentialId;
+    @Column(columnDefinition = "TEXT")
     private String publicKey;
     private long signatureCount;
 

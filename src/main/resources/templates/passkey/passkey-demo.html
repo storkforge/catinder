@@ -15,6 +15,13 @@
 </div>
 
 <script>
+    // Check if WebAuthn is supported by this browser
+    if (!window.PublicKeyCredential) {
+        document.getElementById("statusMessage").innerHTML =
+            "<strong>WebAuthn is not supported by this browser.</strong><br>" +
+            "Please use a modern browser like Chrome, Firefox, Safari, or Edge.";
+        document.querySelector("button").disabled = true;
+    }
     async function registerPasskey() {
         const publicKeyOptions = {
             challenge: Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(32))),
