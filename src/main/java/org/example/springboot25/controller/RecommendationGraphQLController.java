@@ -50,8 +50,7 @@ public class RecommendationGraphQLController {
     @MutationMapping
     public RecommendationOutputDTO createRecommendation(@Argument("input") RecommendationInputDTO input) {
         User user = userService.findUserById(input.getUserId());
-        Cat cat = catService.getCatById(input.getCatId())
-                .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatId()));
+        Cat cat = catService.findCatById(input.getCatId());
 
         Recommendation recommendation = recommendationService.createRecommendation
                 (recommendationMapper.toEntityInput(input, user, cat));
@@ -61,8 +60,7 @@ public class RecommendationGraphQLController {
     @MutationMapping
     public RecommendationOutputDTO updateRecommendation(@Argument Long id, @Argument("input") RecommendationUpdateDTO input) {
         User user = userService.findUserById(input.getUserId());
-        Cat cat = catService.getCatById(input.getCatId())
-                .orElseThrow(() -> new NotFoundException("Cat not found with ID: " + input.getCatId()));
+        Cat cat = catService.findCatById(input.getCatId());
 
         Recommendation updatedRecommendation = recommendationService.updateRecommendation(id, recommendationMapper.toEntityUpdate(input, recommendationService.getRecommendationById(id), user, cat));
         return recommendationMapper.toDTO(updatedRecommendation);
