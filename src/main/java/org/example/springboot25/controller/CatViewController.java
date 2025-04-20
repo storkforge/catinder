@@ -89,6 +89,9 @@ public class CatViewController {
     public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+        List<String> breeds = Arrays.asList("Siamese", "Persian", "Maine Coon", "Ragdoll", "Bengal",
+                "British Shorthair", "Scottish Fold", "Sphynx", "Abyssinian", "Birman");
+        model.addAttribute("breeds", breeds);
         model.addAttribute("cat", cat);
         return "cat/existing-edit-cat-form";
     }
