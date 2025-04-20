@@ -1,6 +1,7 @@
 package org.example.springboot25.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.example.springboot25.exceptions.BadRequestException;
 import org.example.springboot25.service.PasskeyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
