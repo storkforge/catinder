@@ -59,9 +59,9 @@ public class EventRESTController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Event createEvent(@RequestBody @Valid Event event, Authentication auth) {
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
         event.setUserEventPlanner(currentUser);
-        event.setEventDateTime(LocalDateTime.now());
+        // event.setEventDateTime(LocalDateTime.now());
         return eventService.createEvent(event);
     }
 
@@ -71,7 +71,7 @@ public class EventRESTController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEvent(@PathVariable Long id, Authentication auth) {
         Event event = eventService.getEventById(id);
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(event, currentUser)) {
             throw new AccessDeniedException("You can only delete your own events");
@@ -85,7 +85,7 @@ public class EventRESTController {
     @ResponseStatus(HttpStatus.OK)
     public Event updateEvent(@PathVariable Long id, @RequestBody @Valid Event event, Authentication auth) {
         Event existing = eventService.getEventById(id);
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(existing, currentUser)) {
             throw new AccessDeniedException("You can only update your own events");

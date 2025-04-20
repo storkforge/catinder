@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-//@Transactional
+@Transactional
 @ApplicationScope
 public class CatService {
 
@@ -40,7 +40,6 @@ public class CatService {
 
     //TODO: ADD BACK NOT NULL FOR USER IN SCHEMA, USER, CAT, CHECK CATRESTCONTROLLER AND CATVIEWCONTROLLER
 
-    @Transactional
     public Cat createCat(Cat cat) {
         return catRepository.save(cat);
     }

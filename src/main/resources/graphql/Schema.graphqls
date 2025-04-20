@@ -2,12 +2,57 @@ type Query {
     getAllUsers: [UserOutputDTO]
     getUserById(userId: ID!): UserOutputDTO
     getUserByUserName(userName: String!): UserOutputDTO
+
+    getAllCats: [CatOutputDTO]
+    getCatById(catId: ID!): CatOutputDTO
+    getCatByName(catName: String!): CatOutputDTO
+
+    getAllEvents: [EventOutputDTO]
+    getEventById(eventId: ID!): EventOutputDTO
+    getEventByName(eventName: String!): EventOutputDTO
+
+    getAllReminders: [Reminder]
+    getReminderById(id: ID!): Reminder
+
+    getAllEventParticipants: [EventParticipant]
+    getEventParticipantById(id: ID!): EventParticipant
+    getEventParticipantByUserName(userName: String!): EventParticipant
+
+    getAllPosts: [PostOutputDTO]
+    getPostById(id: ID!): PostOutputDTO
+
+    getAllCatPhotos: [CatPhoto]
+    getCatPhotoById(catPhotoId: ID!): CatPhoto
 }
 
 type Mutation {
     createUser(input: UserInput!): UserOutputDTO
     updateUser(userId: ID!, input: UserUpdate!): UserOutputDTO
     deleteUser(userId: ID!): Boolean
+
+    createCat(input: CatInput!): CatOutputDTO
+    updateCat(catId: ID!, input: CatUpdate!): CatOutputDTO
+    deleteCat(catId: ID!): Boolean
+
+    createEvent(input: EventInput!): EventOutputDTO
+    updateEvent(eventId: ID!, input: EventUpdate!): EventOutputDTO
+    deleteEvent(eventId: ID!): Boolean
+
+    createReminder(input: ReminderInput!): Reminder
+    updateReminder(id: ID!, input: ReminderUpdate!): Reminder
+    deleteReminder(id: ID!): Boolean!
+
+    createEventParticipant(input: EventParticipantInput!): EventParticipant
+    updateEventParticipant(id: ID!, update: EventParticipantUpdate!): EventParticipant
+    deleteEventParticipant(id: ID!): Boolean
+
+    createPost(input: PostInput!): PostOutputDTO
+    updatePost(id: ID!, input: PostUpdate!): PostOutputDTO
+    deletePost(id: ID!): Boolean!
+
+    createCatPhoto(input: CatPhotoInput!): CatPhoto
+    updateCatPhoto(id: ID!, input: CatPhotoUpdate!): CatPhoto
+    deleteCatPhoto(id: ID!): Boolean
 }
 
 scalar DateTime

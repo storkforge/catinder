@@ -28,7 +28,7 @@ public class CatPhoto {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "cat_photo_cat_id", nullable = false)
+    @JoinColumn(name = "cat_photo_cat_id")
     private Cat catPhotoCat;
 
     public CatPhoto() {}

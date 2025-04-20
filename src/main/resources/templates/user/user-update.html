@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Catinder - Update User</title>
@@ -9,56 +9,73 @@
 <body>
 <div th:replace="fragments/header"></div>
 <div class="form-container">
-    <h2>Update user (userId: <span th:text="${user.userId}"></span>)</h2>
-    <form th:action="@{/users/{userId}(userId=${user.userId})}" th:method="put" th:object="${user}">
+    <h2 th:text="#{update.user}">Update user (userId: <span th:text="${user.userId}"></span>)</h2>
+    <form th:action="@{/users/{userId}/edit(userId=${user.userId})}" th:method="put" th:object="${user}">
+        <!-- CSRF token -->
+        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+
         <div class="form-row">
-            <label for="userName">Username:</label>
+            <label th:text="#{username}" for="userName">Username:</label>
             <input type="text" id="userName" th:field="*{userName}" required/>
         </div>
         <div class="form-row">
-            <label for="userFullName">Full name:</label>
+            <label th:text="#{full.name}" for="userFullName">Full name:</label>
             <input type="text" id="userFullName" th:field="*{userFullName}"/>
         </div>
         <div class="form-row">
-            <label for="userEmail">Email:</label>
+            <label th:text="#{email}" for="userEmail">Email:</label>
             <input type="email" id="userEmail" th:field="*{userEmail}"/>
         </div>
         <div class="form-row">
-            <label for="userLocation">Location:</label>
+            <label th:text="#{location}" for="userLocation">Location:</label>
             <input type="text" id="userLocation" th:field="*{userLocation}"/>
         </div>
         <div class="form-row">
-            <label for="userRole">Subscription:</label>
-            <input type="text" id="userRole" th:field="*{userRole}"/>
+            <label th:text="#{subscription}" for="userRole">Subscription:</label>
+            <select id="userRole" th:field="*{userRole}" required>
+                <option value="" disabled>Select an option</option>
+                <option value="BASIC">BASIC</option>
+                <option value="PREMIUM">PREMIUM</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
         </div>
         <div class="form-row">
-            <label for="userAuthProvider">Social login:</label>
-            <input type="text" id="userAuthProvider" th:field="*{userAuthProvider}"/>
+            <label th:text="#{social.login}" for="userAuthProvider">Social login:</label>
+            <select id="userAuthProvider" th:field="*{userAuthProvider}" required>
+                <option value="google">Google</option>
+            </select>
         </div>
         <div class="form-row button-row">
-            <button type="submit" class="save-button">Save</button>
-            <div id="successMessage" class="success-message" th:if="${update_success}"
-                 th:text="${update_success}"></div>
-            <div class="error-message" th:if="${error}" th:text="${error}"></div>
+            <button th:text="#{save}" type="submit" class="save-button">Save</button>
+        </div>
+        <div id="successMessage">
+            <p class="success-message" th:if="${update_success}"
+               th:text="${update_success}">
+            </p>
+            <p class="error-message" th:if="${error}"
+               th:text="${error}">
+            </p>
         </div>
     </form>
 </div>
 <div>
     <form th:action="@{/users/{userId}(userId=${user.userId})}" th:method="delete">
+        <input type="hidden" name="_method" value="delete" />
         <input type="hidden" name="userId" th:value="${user.userId}"/>
         <div>
-            <button class="delete-button" type="submit"
-                    onclick="return confirm('Are you sure you want to delete this account?');">
+            <button th:text="#{delete.account}" class="delete-button" type="submit"
+                    onclick="return confirm('Are you sure you want to delete this account?');" >
                 Delete Account
             </button>
         </div>
     </form>
 </div>
 <script>
+    // Hide message after 5 seconds
     setTimeout(function () {
-        var successMsg = document.getElementById('successMessage');
-        if (successMsg) {
-            successMsg.style.display = 'none';
+        var successContent = document.querySelector('#successMessage');
+        if (successContent) {
+            successContent.style.opacity = '0';
         }
     }, 5000);
 </script>

@@ -1,14 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" th:lang="en">
 <header th:fragment="header">
     <div class="header-left">
-        <h1><span class="cat-emoji">🐱</span>Catinder</h1>
-        <a class="about-link" th:href="@{/about}">About</a>
+        <h1 class="logo">
+            <a th:href="@{/}" title="Home">
+                <span class="cat-emoji">🐱</span>Catinder
+            </a>
+        </h1>
     </div>
+
+    <nav class="header-nav">
+        <a class="nav-button" aria-label="Cats" th:href="@{/cats}" title="Cats">
+            <img class="header-choice" th:src="@{/images/paw_white.png}" alt="Cats"/>
+            <span>Cats</span>
+        </a>
+        <a class="nav-button" aria-label="Posts" th:href="@{/posts}" title="Posts">
+            <img class="header-choice" th:src="@{/images/post_white.png}" alt="Posts"/>
+            <span>Posts</span>
+        </a>
+        <a class="nav-button" aria-label="Events" th:href="@{/events}" title="Events">
+            <img class="header-choice" th:src="@{/images/event_white.png}" alt="Events"/>
+            <span>Events</span>
+        </a>
+        <a class="nav-button" aria-label="Recommendations" th:href="@{/recommendations}" title="Recommendations">
+            <img class="header-choice" th:src="@{/images/recommendation_white.png}" alt="Recommendations"/>
+            <span>Recommendations</span>
+        </a>
+    </nav>
+
+    <!-- Right: About Dropdown and Language Button -->
     <div class="header-right">
-        <button class="lang-button" aria-label="Change language" title="Change language">
-            &#127760; Language
+        <div class="dropdown about-dropdown">
+            <button class="dropdown-toggle" title="Menu">Menu</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" th:href="@{/about}">About Us</a>
+                <a class="dropdown-item" th:href="@{/contact}">Contact</a>
+                <a class="dropdown-item" th:href="@{/faq}">FAQ</a>
+            </div>
+        </div>
+        <div class="header-nav">
+            <a th:if="user" sec:authorize="isAuthenticated()" class="nav-button settings-button"
+               th:href="@{/users/{userId}/edit(userId=${currentUser.userId})}" th:title="Settings">
+                <img class="header-choice" th:src="@{/images/profilesettings_white.png}" alt="Settings"/>
+                <span>Settings</span>
+            </a>
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+                <a class="header-button login-button" th:href="@{/oauth2/authorization/google}" title="Login">Login</a>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="header-button logout-button" title="Logout">Logout</button>
+            </form>
+        </div>
+        <button class="lang-button" id="langToggle" aria-label="Change language" title="Change language">
+            &#127760; <span th:text="#{language}">Language</span>
         </button>
+        <form id="langForm" th:action="@{/change-language}" method="get" style="display: none;">
+            <select name="lang" onchange="this.form.submit()">
+                <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                <option value="sv" th:selected="${#locale.language == 'sv'}">Svenska</option>
+                <option value="fr" th:selected="${#locale.language == 'fr'}">Français</option>
+            </select>
+        </form>
     </div>
+    <script>
+        const langButton = document.getElementById('langToggle');
+        const langForm = document.getElementById('langForm');
+
+        langButton.addEventListener('click', function() {
+            if (langForm.style.display === 'none' || langForm.style.display === '') {
+                langForm.style.display = 'block';
+            } else {
+                langForm.style.display = 'none';
+            }
+        });
+        document.addEventListener('click', function(event) {
+            if (!langButton.contains(event.target) && !langForm.contains(event.target)) {
+                langForm.style.display = 'none';
+            }
+        });
+    </script>
 </header>
 </html>

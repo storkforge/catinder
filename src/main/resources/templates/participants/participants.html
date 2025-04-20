@@ -10,16 +10,16 @@
 
 <div th:replace="fragments/header"></div>
 
-<h2 style="text-align: center; margin-top: 40px;">Participants Section</h2>
+<h2 th:text="#{participants.section}" style="text-align: center; margin-top: 40px;">Participants Section</h2>
 
 <div class="form-container" style="text-align: center;">
     <ul style="list-style: none; padding: 0;">
-        <li style="margin: 15px;"><a th:href="@{/participants/list}">View All Participants</a></li>
-        <li style="margin: 15px;"><a th:href="@{/participants/by-user}">View by User</a></li>
-        <li style="margin: 15px;"><a th:href="@{/participants/by-event}">View by Event</a></li>
-        <li style="margin: 15px;"><a th:href="@{/participants/add}">Add Participant</a></li>
-        <li style="margin: 15px;"><a th:href="@{/participants/delete}">Delete Participant</a></li>
-        <li style="margin: 15px;"><a th:href="@{/participants/update}">Update Participant</a></li>
+        <li style="margin: 15px;"><a th:text="#{view.all.participants}" th:href="@{/participants/list}">View All Participants</a></li>
+        <li style="margin: 15px;"><a th:text="#{view.by.user}" th:href="@{/participants/by-user}">View by User</a></li>
+        <li style="margin: 15px;"><a th:text="#{view.by.event}" th:href="@{/participants/by-event}">View by Event</a></li>
+        <li style="margin: 15px;"><a th:text="#{add.participant}" th:href="@{/participants/add}">Add Participant</a></li>
+        <li style="margin: 15px;"><a th:text="#{delete.participant}" th:href="@{/participants/delete}">Delete Participant</a></li>
+        <li style="margin: 15px;"><a th:text="#{update.participant}" th:href="@{/participants/update}">Update Participant</a></li>
     </ul>
 </div>
 

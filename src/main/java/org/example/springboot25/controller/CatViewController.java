@@ -6,13 +6,15 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
-
 
 @Controller
 @RequestMapping("/cats")
@@ -49,12 +51,18 @@ public class CatViewController {
         return "cat/creating-a-new-cat-form";
     }
 
-    //Get UserService and add it later. Injected Principal for currently logged in user via security context.
     @PostMapping
     public String processCreateNewCatForm(@ModelAttribute("cat") Cat cat, Principal principal) {
-
-        User user = userService.getUserByUserName(principal.getName());
-        catService.createCat(cat);
+        if (principal instanceof OAuth2AuthenticationToken oauthToken) {
+            OAuth2User oauth2User = oauthToken.getPrincipal();
+            String email = oauth2User.getAttribute("email");
+            User user = userService.findUserByEmail(email);
+            cat.setUserCatOwner(user);
+            catService.createCat(cat);
+        } else {
+            // Handle other types by throwing an exception
+            throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
+        }
         return "redirect:/cats";
     }
 
@@ -78,15 +86,15 @@ public class CatViewController {
         return "redirect:/cats";
     }
 
-    //Uppdatera till viewexception senare
-    @GetMapping("/{catId}/delete")
-    public String deleteCat(@PathVariable Long catId) {
+    //Todo: ????Move delete from cat-list to cat-details
+    @DeleteMapping("/{catId}/delete")
+    public String deleteCat(@PathVariable Long catId, RedirectAttributes redirectAttributes) {
         try {
             catService.deleteCat(catId);
-            return "redirect:/cats";
+            redirectAttributes.addFlashAttribute("delete_success", "Cat deleted successfully!");
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete cat with id " + catId, e);
+            redirectAttributes.addFlashAttribute("error", "Failed to delete cat with id " + catId);
         }
+        return "redirect:/cats";
     }
-
 }

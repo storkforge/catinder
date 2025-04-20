@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Catinder - User</title>
@@ -8,16 +8,23 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
-<h2>User Details:</h2>
+<h2 th:text="#{user.details}">User Details:</h2>
 <div>
-    <p><strong>User ID:</strong> <span th:text="${user.userId}"></span></p>
-    <p><strong>User Name:</strong> <span th:text="${user.userName}"></span></p>
-    <p><strong>Full Name:</strong> <span th:text="${user.userFullName}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${user.userEmail}"></span></p>
-    <p><strong>Location:</strong> <span th:text="${user.userLocation}"></span></p>
+    <p><strong th:text="#{user.id}">User ID:</strong> <span th:text="${user.userId}"></span></p>
+    <p><strong th:text="#{username}">User Name:</strong> <span th:text="${user.userName}"></span></p>
+    <p><strong th:text="#{full.name}">Full Name:</strong> <span th:text="${user.userFullName}"></span></p>
+    <p><strong th:text="#{email}">Email:</strong> <span th:text="${user.userEmail}"></span></p>
+    <p><strong th:text="#{location}">Location:</strong> <span th:text="${user.userLocation}"></span></p>
     <!-- Cats -->
-    <p><strong>Household:</strong> <span th:text="${user.userCats}"></span></p>
-
+    <p><strong th:text="#{household}">Household:</strong>
+        <span th:if="${#lists.isEmpty(cats)}">No cats found.</span>
+        <span th:if="${!#lists.isEmpty(cats)}">
+    <span th:each="cat, iterStat : ${cats}">
+      <span th:text="${cat.catName}">Cat Name</span>
+      <span th:if="${!iterStat.last}">, </span>
+    </span>
+  </span>
+    </p>
 </div>
 </body>
 </html>

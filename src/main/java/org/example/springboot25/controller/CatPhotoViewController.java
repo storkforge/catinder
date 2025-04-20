@@ -22,7 +22,7 @@ public class CatPhotoViewController {
     public String showCatPhotos(Model model) {
         List<CatPhoto> catPhotos = catPhotoService.getAllCatPhotos();
         model.addAttribute("catPhotos", catPhotos);
-        return "catphotos";  // 🔹 Returnerar en HTML-sida som heter "catphotos.html"
+        return "catphoto/catphotos";  // 🔹 Returnerar en HTML-sida som heter "catphotos.html"
     }
 }
 
