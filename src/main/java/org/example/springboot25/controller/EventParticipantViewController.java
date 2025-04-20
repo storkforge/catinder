@@ -4,19 +4,27 @@ import org.example.springboot25.entities.Event;
 import org.example.springboot25.entities.EventParticipant;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.service.EventParticipantService;
+import org.example.springboot25.service.EventService;
+import org.example.springboot25.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/participants")
 public class EventParticipantViewController {
 
-    private final EventParticipantService service;
+    private final EventParticipantService eventParticipantService;
+    private final EventService eventService;
+    private final UserService userService;
 
-    public EventParticipantViewController(EventParticipantService service) {
-        this.service = service;
+    public EventParticipantViewController(EventParticipantService eventParticipantService, EventService eventService, UserService userService) {
+        this.eventParticipantService = eventParticipantService;
+        this.userService = userService;
+        this.eventService = eventService;
     }
 
     @GetMapping
@@ -26,7 +34,7 @@ public class EventParticipantViewController {
 
     @GetMapping("/list")
     public String viewAll(Model model) {
-        model.addAttribute("participants", service.getAllParticipants());
+        model.addAttribute("participants", eventParticipantService.getAllParticipants());
         return "participants/participants-list";
     }
 
@@ -37,7 +45,7 @@ public class EventParticipantViewController {
 
     @GetMapping("/by-event/search")
     public String viewByEventName(@RequestParam String eventName, Model model) {
-        model.addAttribute("participants", service.getParticipantsByEventName(eventName));
+        model.addAttribute("participants", eventParticipantService.getParticipantsByEventName(eventName));
         return "participants/participants-by-event";
     }
 
@@ -48,7 +56,7 @@ public class EventParticipantViewController {
 
     @GetMapping("/by-user/search")
     public String viewByUserName(@RequestParam String userName, Model model) {
-        model.addAttribute("participants", service.getParticipantsByUserName(userName));
+        model.addAttribute("participants", eventParticipantService.getParticipantsByUserName(userName));
         return "participants/participants-by-user";
     }
 
@@ -61,16 +69,19 @@ public class EventParticipantViewController {
     }
 
     @PostMapping("/add")
-    public String addParticipant(@RequestParam String userName,
-                                 @RequestParam String eventName,
+    public String addParticipant(@RequestParam Long eventId,
+                                 Principal principal,
                                  RedirectAttributes redirectAttributes) {
         try {
-            service.addParticipant(userName, eventName);
-            redirectAttributes.addFlashAttribute("success", "Deltagaren har lagts till!");
+            String userName = principal.getName();
+            User user = userService.findUserByUserName(userName);
+            Event event = eventService.getEventById(eventId);
+            eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
+            redirectAttributes.addFlashAttribute("success", "You are now attending the event!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/participants/add";
+        return "redirect:/events";
     }
 
     @GetMapping("/delete")
@@ -83,8 +94,12 @@ public class EventParticipantViewController {
                                     @RequestParam String eventName,
                                     RedirectAttributes redirectAttributes) {
         try {
-            service.deleteParticipant(userName, eventName);
-            redirectAttributes.addFlashAttribute("success", "Deltagaren har tagits bort!");
+            if (userName == null || userName.isEmpty() || eventName == null || eventName.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Username and event name are required");
+                return "redirect:/participants/delete";
+            }
+            eventParticipantService.deleteParticipant(userName, eventName);
+            redirectAttributes.addFlashAttribute("success", "Participant deleted successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
@@ -103,7 +118,7 @@ public class EventParticipantViewController {
                                    @RequestParam String newEventName,
                                    RedirectAttributes redirectAttributes) {
         try {
-            service.patchEventForParticipant(userName, newUserName, eventName, newEventName);
+            eventParticipantService.patchEventForParticipant(userName, newUserName, eventName, newEventName);
             redirectAttributes.addFlashAttribute("success", "The participant has been successfully updated.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());

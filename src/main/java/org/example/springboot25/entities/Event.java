@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class Event {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "event_planner_user_id")
+    @JoinColumn(name = "event_planner_user_id", nullable = false)
     private User userEventPlanner;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

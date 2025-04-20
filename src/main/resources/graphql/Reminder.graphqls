@@ -1,0 +1,24 @@
+type Reminder {
+    id: ID!
+    reminderType: String!
+    reminderInfo: String!
+    reminderDate: DateTime!
+    userId: ID!
+    catId: ID!
+}
+
+input ReminderInput {
+    reminderType: String!
+    reminderInfo: String!
+    reminderDate: DateTime!
+    userId: ID!
+    catId: ID!
+}
+
+input ReminderUpdate {
+    reminderType: String
+    reminderInfo: String
+    reminderDate: DateTime
+    userId: ID
+    catId: ID
+}

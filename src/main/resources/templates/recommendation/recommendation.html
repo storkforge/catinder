@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Recommendations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
-
-<h1>AI-Powered Recommendations</h1>
-
-<div th:if="${recommendations}">
-    <table>
+<h2>AI-Powered Recommendations</h2>
+<div class="table-container" th:if="${recommendations}">
+    <table id="event-table">
         <thead>
-        <tr>
+        <tr class="header-row">
             <th>Category</th>
             <th>Product</th>
             <th>Description</th>
@@ -21,7 +20,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="rec : ${recommendations}">
+        <tr class="header-row" th:each="rec : ${recommendations}">
             <td th:text="${rec.recommendationCategory}">Category</td>
             <td th:text="${rec.recommendationProductName}">Product</td>
             <td th:text="${rec.recommendationProductDescription}">Description</td>
