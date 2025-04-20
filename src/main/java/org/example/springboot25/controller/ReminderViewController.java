@@ -83,7 +83,7 @@ public class ReminderViewController {
 
     @PostMapping("/{reminderId}")
     public String updateReminder(@PathVariable Long reminderId, @Valid @ModelAttribute("reminder") ReminderInputDTO reminderInput,
-                                 BindingResult bindingResult, Principal principal) {
+                                 BindingResult bindingResult, Principal principal,Model model) {
         Reminder persistedReminder = reminderService.getReminderById(reminderId);
 
         User currentUser = getCurrentUser(principal);
@@ -94,6 +94,9 @@ public class ReminderViewController {
         }
 
         if (bindingResult.hasErrors()) {
+            List<Cat> cats = catService.getAllCatsByUser(currentUser);
+            model.addAttribute("cats", cats);
+            model.addAttribute("currentUser", currentUser);
             return "reminder/edit-reminder-details-form";
         }
 
