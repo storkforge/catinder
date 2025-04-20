@@ -1,6 +1,7 @@
 package org.example.springboot25.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +26,7 @@ public class Cat {
     private String catGender;
 
     @Min(0)
+    @Max(25)
     private int catAge;
 
     private String catPersonality;
