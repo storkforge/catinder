@@ -22,28 +22,31 @@
             "Please use a modern browser like Chrome, Firefox, Safari, or Edge.";
         document.querySelector("button").disabled = true;
     }
+
     async function registerPasskey() {
-        const publicKeyOptions = {
-            challenge: Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(32))),
-            rp: { name: "Catinder" },
-            user: {
-                id: Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(16))),
-                name: "demo@catinder.com",
-                displayName: "Demo Cat User"
-            },
-            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-            authenticatorSelection: { userVerification: "preferred" },
-            timeout: 60000,
-            attestation: "direct"
-        };
+        const optionsResponse = await fetch("/passkey/begin-registration", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({username: "demo@catinder.com"})
+        });
+
+        if (!optionsResponse.ok) {
+            throw new Error("Failed to get registration options: " + await optionsResponse.text());
+        }
+
+        const publicKeyOptions = await optionsResponse.json();
+
+        // Convert base64 strings from server to ArrayBuffers
+        publicKeyOptions.challenge = base64ToArrayBuffer(publicKeyOptions.challenge);
+        publicKeyOptions.user.id = base64ToArrayBuffer(publicKeyOptions.user.id);
 
         try {
-            const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
+            const credential = await navigator.credentials.create({publicKey: publicKeyOptions});
             const json = JSON.stringify(credential, replacer);
 
             const res = await fetch("/passkey/register", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 body: json
             });
 
