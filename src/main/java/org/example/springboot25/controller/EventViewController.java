@@ -7,6 +7,8 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.EventParticipantService;
 import org.example.springboot25.service.EventService;
 import org.example.springboot25.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -16,12 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
 @RequestMapping("/events")
 public class EventViewController {
+    private static final Logger log = LoggerFactory.getLogger(EventViewController.class);
     private final EventService eventService;
     private final EventParticipantService eventParticipantService;
     private final UserService userService;
@@ -45,8 +47,8 @@ public class EventViewController {
         Event selectedEvent = eventService.getEventById(eventId);
 
         User currentUser = principal instanceof OAuth2AuthenticationToken
-                ? userService.getUserByEmail(((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email"))
-                : userService.getUserByUserName(principal.getName());
+                ? userService.findUserByEmail(((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email"))
+                : userService.findUserByUserName(principal.getName());
 
         model.addAttribute("events", events);
         model.addAttribute("selectedEvent", selectedEvent);
@@ -61,9 +63,9 @@ public class EventViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            currentUser = userService.getUserByEmail(email);
+            currentUser = userService.findUserByEmail(email);
         } else {
-            currentUser = userService.getUserByUserName(principal.getName());
+            currentUser = userService.findUserByEmail(principal.getName());
         }
         try {
             eventParticipantService.deleteParticipant(currentUser.getUserName(), event.getEventName());
@@ -81,9 +83,9 @@ public class EventViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            currentUser = userService.getUserByEmail(email);
+            currentUser = userService.findUserByEmail(email);
         } else {
-            currentUser = userService.getUserByUserName(principal.getName());
+            currentUser = userService.findUserByEmail(principal.getName());
         }
 
         try {
@@ -96,7 +98,7 @@ public class EventViewController {
     }
 
     @GetMapping("/add")
-    String addEventForm(Model model) {
+    String addEventForm(User user,Model model) {
         if (!model.containsAttribute("event")) {
             model.addAttribute("event", new Event());
         }
@@ -104,21 +106,20 @@ public class EventViewController {
     }
 
     @PostMapping("/add")
-    public String processCreateNewEventForm(@ModelAttribute @Valid Event event,
+    public String processCreateNewEventForm(@ModelAttribute Event event,
                                             Principal principal,
                                             RedirectAttributes redirectAttributes) {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
-            User user = userService.getUserByEmail(email);
+            User user = userService.findUserByEmail(email);
             event.setUserEventPlanner(user);
         } else if (principal != null) {
-            User user = userService.getUserByUserName(principal.getName());
+            User user = userService.findUserByUserName(principal.getName());
             event.setUserEventPlanner(user);
         } else {
             throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
         }
-        event.setEventDateTime(LocalDateTime.now());
         eventService.createEvent(event);
         redirectAttributes.addFlashAttribute("success", "Event created!");
         return "redirect:/events";
@@ -133,7 +134,7 @@ public class EventViewController {
             return "event/event-update";
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "error-page";
+            return "error";
         }
     }
 
@@ -159,7 +160,7 @@ public class EventViewController {
             redirectAttributes.addFlashAttribute("delete_success", "Event deleted!");
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "error-page";
+            return "error";
         }
         return "redirect:/events";
     }

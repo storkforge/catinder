@@ -1,30 +1,18 @@
 package org.example.springboot25.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import org.example.springboot25.entities.UserRole;
 
 public class UserUpdateDTO {
 
-    @NotBlank
     private String userFullName;
-
-    @NotBlank
     private String userName;
-
-    @Email
-    @NotBlank
     private String userEmail;
-
-    @NotBlank
     private String userLocation;
-
-    @NotBlank
     private UserRole userRole;
-
-    @NotBlank
     private String userAuthProvider;
+    private Long userId;
 
+    // Getters and Setters
     public String getUserFullName() {
         return userFullName;
     }
@@ -71,5 +59,14 @@ public class UserUpdateDTO {
 
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
+    }
+
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

@@ -55,7 +55,7 @@ public class PostGraphQLController {
         if (input == null || input.getUserPostAuthorId() == null) {
             throw new IllegalArgumentException("Invalid post input");
         }
-        User user = userService.getUserById(input.getUserPostAuthorId());
+        User user = userService.findUserById(input.getUserPostAuthorId());
         if (user == null) {
             throw new NotFoundException("User with ID: " + input.getUserPostAuthorId() + " not found");
         }

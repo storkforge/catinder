@@ -45,14 +45,14 @@ public class GlobalViewExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ModelAndView handleNotFoundException(NotFoundException ex) {
-        ModelAndView mav = new ModelAndView("error-page");
+        ModelAndView mav = new ModelAndView("error");
         mav.addObject("error", ex.getMessage());
         return mav;
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
     public ModelAndView handleUserAlreadyExistsException(AlreadyExistsException ex) {
-        ModelAndView mav = new ModelAndView("error-page");
+        ModelAndView mav = new ModelAndView("error");
         mav.addObject("error", ex.getMessage());
         return mav;
     }

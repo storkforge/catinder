@@ -64,7 +64,7 @@ public class PostRESTController {
     @ResponseStatus(HttpStatus.CREATED)
     public Post createPost(@RequestBody @Valid Post post, Authentication auth) {
         String username = auth.getName();
-        User currentUser = userService.getUserByUserName(username);
+        User currentUser = userService.findUserByUserName(username);
 
         if (currentUser == null) {
             throw new NotFoundException("Authenticated user not found: " + username);
@@ -81,7 +81,7 @@ public class PostRESTController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePost(@PathVariable Long id, Authentication auth) {
         Post post = postService.getPostById(id);
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(post, currentUser)) {
             throw new AccessDeniedException("You can only delete your own post");
@@ -94,7 +94,7 @@ public class PostRESTController {
     @PutMapping("/{id}")
     public Post updatePost(@PathVariable Long id, @RequestBody @Valid Post updatedPost, Authentication auth) {
         Post existingPost = postService.getPostById(id);
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(existingPost, currentUser)) {
             throw new AccessDeniedException("You can only update your own post");
@@ -110,7 +110,7 @@ public class PostRESTController {
     @PatchMapping("/{id}")
     public Post patchPost(@PathVariable Long id, @RequestBody Map<String, Object> updates, Authentication auth) {
         Post existing = postService.getPostById(id);
-        User currentUser = userService.getUserByUserName(auth.getName());
+        User currentUser = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(existing, currentUser)) {
             throw new AccessDeniedException("You can only update your own post");

@@ -55,7 +55,7 @@ public class EventGraphQLController {
 
     @MutationMapping
     public EventOutputDTO createEvent(@Argument("input") @Valid EventInputDTO input) {
-        User user = userService.getUserById(input.getUserId());
+        User user = userService.findUserById(input.getUserId());
         if (user == null) {
             throw new NotFoundException("User not found with ID: " + input.getUserId());
         }

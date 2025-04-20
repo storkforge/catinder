@@ -1,15 +1,18 @@
 package org.example.springboot25.controller;
 
+import org.example.springboot25.dto.UserOutputDTO;
+import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.mapper.UserMapper;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -21,23 +24,27 @@ public class AdminController {
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
     private final PostService postService;
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public AdminController(PostService postService, UserService userService) {
+    public AdminController(PostService postService, UserService userService, UserMapper userMapper) {
         this.postService = postService;
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
-    // Admin Dashboard)
+    // Admin dashboard
     @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
     public String adminDashboard() {
         return "admin/dashboard";
     }
 
-    // User List
+    // User list
     @GetMapping("/users")
     public String adminUserList(Model model) {
         try {
-            model.addAttribute("users", userService.getAllUsers());
+            List<UserOutputDTO> users = userService.getAllUsers();
+            model.addAttribute("users", users);
             return "admin/users";
         } catch (Exception e) {
             log.warn("Failed to retrieve users: {}", e.getMessage());
@@ -46,32 +53,41 @@ public class AdminController {
         }
     }
 
-    // Edit user form
     @GetMapping("/users/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        return "admin/user-edit";
+        try {
+            User user = userService.findUserById(id);
+            UserUpdateDTO updateDTO = userMapper.toUserUpdateDTO(user);
+            model.addAttribute("user", updateDTO);
+            model.addAttribute("userId", id);
+            return "admin/user-edit";
+        } catch (Exception e) {
+            log.error("Could not load user with ID {}: {}", id, e.getMessage());
+            model.addAttribute("error", "User could not be found");
+            return "admin/error";
+        }
     }
 
     // Update user
     @PostMapping("/users/update")
-    public String updateUser(@ModelAttribute("user") User user, Model model) {
+    public String updateUser(@RequestParam("userId") Long userId,
+                             @ModelAttribute("user") UserUpdateDTO userUpdateDTO,
+                             Model model) {
         try {
-            userService.updateUser(user.getUserId(), user);
+            userService.updateUser(userId, userUpdateDTO);
             return "redirect:/admin/users?success=updated";
         } catch (IllegalArgumentException e) {
-            log.warn("Invalid user ID: {}", user.getUserId(), e);
-            model.addAttribute("error", "Användaren kunde inte uppdateras: ogiltigt ID.");
+            log.warn("Invalid user ID: {}", userId, e);
+            model.addAttribute("error", "User update failed: invalid ID.");
         } catch (Exception e) {
             log.error("Unexpected error during user update", e);
-            model.addAttribute("error", "Ett oväntat fel inträffade vid uppdatering.");
+            model.addAttribute("error", "An unexpected error occurred.");
         }
-        model.addAttribute("user", user);
-        return "admin/user-edit"; // Stay on the same page if update fails
+        model.addAttribute("userId", userId);
+        return "admin/user-edit";
     }
 
-    // View Logs
+    // View system logs
     @GetMapping("/logs")
     public String viewLogs(Model model) {
         model.addAttribute("logs", List.of(
@@ -79,61 +95,64 @@ public class AdminController {
                 "User admin created a post",
                 "User catlover updated profile"
         ));
-        return "admin/logs";
+        return "admin/dashboard";
     }
 
+    // Change user role
     @PostMapping("/users/role")
-    public String changeUserRole(@RequestParam Long userId, @RequestParam String newRole) {
+    public String changeUserRole(@RequestParam Long userId,
+                                 @RequestParam String newRole,
+                                 Authentication auth) {
         try {
-            userService.changeUserRole(userId, newRole);
+            User requestingUser = userService.findUserByUserName(auth.getName());
+            userService.changeUserRole(userId, newRole, requestingUser);
             return "redirect:/admin/settings?success=role-changed";
         } catch (Exception e) {
-            // Log the error
+            log.error("Failed to change role for user {}: {}", userId, e.getMessage());
             return "redirect:/admin/settings?error=role-change-failed";
         }
     }
 
-    // Visa alla inlägg (för moderering)
+    // Show all posts (for moderation)
     @GetMapping("/posts")
     public String showAllPosts(Model model) {
         try {
             model.addAttribute("posts", postService.getAllPosts());
-            return "admin/posts"; // t.ex. templates/admin/posts.html
+            return "admin/posts";
         } catch (Exception e) {
-            // Log the error (optional)
+            log.error("Failed to retrieve posts", e);
             model.addAttribute("error", "Failed to retrieve posts");
-            return "admin/error"; // Create this view if not exists
+            return "admin/error";
         }
     }
 
-    // Ta bort ett inlägg
+    // Delete a post
     @PostMapping("/posts/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
         try {
             postService.deletePost(postId);
             return "redirect:/admin/posts";
         } catch (Exception e) {
-            log.warn("Failed to delete post with id {}: {}", postId, e.getMessage());
+            log.warn("Failed to delete post {}: {}", postId, e.getMessage());
             return "redirect:/admin/posts?error=delete-failed";
         }
     }
 
-    // Ta bort en användare
+    // Delete a user
     @PostMapping("/users/delete/{userId}")
     public String deleteUser(@PathVariable Long userId) {
         try {
             userService.deleteUserById(userId);
             return "redirect:/admin/users";
         } catch (Exception e) {
-            // Log the error (you can also log e.getMessage() for specifics)
-            log.warn("Failed to delete user with id {}: {}", userId, e.getMessage());
+            log.warn("Failed to delete user {}: {}", userId, e.getMessage());
             return "redirect:/admin/users?error=delete-failed";
         }
     }
 
-    // Systeminställningar – placeholder för framtida grejer
+    // Admin settings page
     @GetMapping("/settings")
     public String settingsPage() {
-        return "admin/settings"; // t.ex. templates/admin/settings.html
+        return "admin/settings";
     }
 }

@@ -33,7 +33,7 @@ public class GlobalControllerAdvice {
                 log.debug("OAuth2 email attribute: {}", email);
                 if (email != null) {
                     try {
-                        return userService.getUserByEmail(email);
+                        return userService.findUserByEmail(email);
                     } catch (NotFoundException e) {
                         log.error(e.getMessage());
                         log.warn("User not found for email {} from OAuth2 login", email, e);
@@ -41,13 +41,13 @@ public class GlobalControllerAdvice {
                 }
             } else if (principal instanceof String username) {
                 try {
-                    return userService.getUserByUserName(username);
+                    return userService.findUserByUserName(username);
                 } catch (NotFoundException e) {
                     log.error(e.getMessage());
                 }
             } else if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
                 try {
-                    return userService.getUserByUserName(userDetails.getUsername());
+                    return userService.findUserByUserName(userDetails.getUsername());
                 } catch (NotFoundException e) {
                     log.error(e.getMessage());
                 }

@@ -40,7 +40,7 @@ public class ReminderRESTController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Reminder> getAllReminders(Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
         return reminderService.getRemindersByUser(current);
     }
 
@@ -49,7 +49,7 @@ public class ReminderRESTController {
     @ResponseStatus(HttpStatus.OK)
     public Reminder getReminderById(@PathVariable Long id, Authentication auth) {
         Reminder reminder = reminderService.getReminderById(id);
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(reminder, current)) {
             throw new AccessDeniedException("You can only view your own reminders.");
@@ -62,7 +62,7 @@ public class ReminderRESTController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Reminder createReminder(@RequestBody @Valid Reminder reminder, Authentication auth) {
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
         reminder.setUser(current);
         return reminderService.createReminder(reminder);
     }
@@ -73,7 +73,7 @@ public class ReminderRESTController {
                                    @RequestBody @Valid Reminder updatedReminder,
                                    Authentication auth) {
         Reminder existing = reminderService.getReminderById(id);
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(existing, current)) {
             throw new AccessDeniedException("You can only update your own reminders.");
@@ -89,7 +89,7 @@ public class ReminderRESTController {
                                   @RequestBody Map<String, Object> updates,
                                   Authentication auth) {
         Reminder existing = reminderService.getReminderById(id);
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(existing, current)) {
             throw new AccessDeniedException("You can only update your own reminders.");
@@ -103,7 +103,7 @@ public class ReminderRESTController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteReminder(@PathVariable Long id, Authentication auth) {
         Reminder reminder = reminderService.getReminderById(id);
-        User current = userService.getUserByUserName(auth.getName());
+        User current = userService.findUserByUserName(auth.getName());
 
         if (isNotOwnerOrAdmin(reminder, current)) {
             throw new AccessDeniedException("You can only delete your own reminders.");
