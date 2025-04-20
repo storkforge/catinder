@@ -6,8 +6,6 @@ import org.example.springboot25.repository.EventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +22,11 @@ public class EventService {
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
+
+    public List<Event> searchEvents(String query) {
+        return eventRepository.findByEventNameContainingIgnoreCase(query);
+    }
+
 
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
