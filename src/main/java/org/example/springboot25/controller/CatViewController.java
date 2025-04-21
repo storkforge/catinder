@@ -26,6 +26,10 @@ public class CatViewController {
 
     private final CatService catService;
     private final UserService userService;
+    private static final List<String> CAT_BREEDS = Arrays.asList(
+            "Siamese", "Persian", "Maine Coon", "Ragdoll", "Bengal",
+            "British Shorthair", "Scottish Fold", "Sphynx", "Abyssinian", "Birman"
+    );
 
     @Autowired
     public CatViewController(CatService catService, UserService userService) {
@@ -62,9 +66,7 @@ public class CatViewController {
         Cat cat = new Cat();
         cat.getCatPhotos().add(new CatPhoto());
         model.addAttribute("cat", cat);
-        List<String> breeds = Arrays.asList("Siamese", "Persian", "Maine Coon", "Ragdoll", "Bengal",
-                "British Shorthair", "Scottish Fold", "Sphynx", "Abyssinian", "Birman");
-        model.addAttribute("breeds", breeds);
+        model.addAttribute("breeds", CAT_BREEDS);
         return "cat/creating-a-new-cat-form";
     }
 
@@ -89,9 +91,7 @@ public class CatViewController {
     public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
         Cat cat = catService.getCatById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
-        List<String> breeds = Arrays.asList("Siamese", "Persian", "Maine Coon", "Ragdoll", "Bengal",
-                "British Shorthair", "Scottish Fold", "Sphynx", "Abyssinian", "Birman");
-        model.addAttribute("breeds", breeds);
+        model.addAttribute("breeds", CAT_BREEDS);
         model.addAttribute("cat", cat);
         return "cat/existing-edit-cat-form";
     }

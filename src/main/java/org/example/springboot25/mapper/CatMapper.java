@@ -19,7 +19,7 @@ public class CatMapper {
         this.userRepository = userRepository;
     }
 
-    public Cat toCat (CatInputDTO catInputDTO) {
+    public Cat toCat(CatInputDTO catInputDTO) {
         Cat cat = new Cat();
         cat.setCatName(catInputDTO.getCatName().trim());
         cat.setCatProfilePicture(catInputDTO.getCatProfilePicture() != null ?
@@ -42,22 +42,26 @@ public class CatMapper {
     }
 
     public void updateCatFromDTO(CatUpdateDTO catUpdateDTO, Cat cat) {
-        if(catUpdateDTO.getCatName() != null) {
+        if (catUpdateDTO.getCatName() != null) {
             cat.setCatName(catUpdateDTO.getCatName().trim());
         }
-        if(catUpdateDTO.getCatProfilePicture() != null) {
+        if (catUpdateDTO.getCatProfilePicture() != null) {
             cat.setCatProfilePicture(catUpdateDTO.getCatProfilePicture().trim());
         }
-        if(catUpdateDTO.getCatBreed() != null) {
+        if (catUpdateDTO.getCatBreed() != null) {
             cat.setCatBreed(catUpdateDTO.getCatBreed().trim());
         }
         if (catUpdateDTO.getCatGender() != null) {
-            cat.setCatGender(CatGender.valueOf(catUpdateDTO.getCatGender().trim().toUpperCase()));
+            try {
+                cat.setCatGender(CatGender.valueOf(catUpdateDTO.getCatGender().trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
+            }
         }
-        if(catUpdateDTO.getCatAge() != null) {
+        if (catUpdateDTO.getCatAge() != null) {
             cat.setCatAge(catUpdateDTO.getCatAge());
         }
-        if(catUpdateDTO.getCatPersonality() != null) {
+        if (catUpdateDTO.getCatPersonality() != null) {
             cat.setCatPersonality(catUpdateDTO.getCatPersonality().trim());
         }
     }

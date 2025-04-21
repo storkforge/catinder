@@ -2,6 +2,7 @@ package org.example.springboot25.service;
 
 import org.example.springboot25.entities.CatGender;
 import org.example.springboot25.entities.User;
+import org.example.springboot25.exceptions.BadRequestException;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.CatRepository;
 import org.example.springboot25.entities.Cat;
@@ -55,6 +56,7 @@ public class CatService {
         return catRepository.findById(catId);
     }
 
+
     public Cat createCat(Cat cat) {
         return catRepository.save(cat);
     }
@@ -65,6 +67,9 @@ public class CatService {
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
                 try {
+                    if (text == null) {
+                        throw new IllegalArgumentException("CatGender cannot be null");
+                    }
                     setValue(CatGender.valueOf(text.trim().toUpperCase()));
                 } catch (IllegalArgumentException e) {
                     throw new IllegalArgumentException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
@@ -83,8 +88,9 @@ public class CatService {
             cat.setCatAge(catDetails.getCatAge());
             cat.setCatPersonality(catDetails.getCatPersonality());
             return catRepository.save(cat);
-        }).orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
+        }).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
     }
+
     public Cat partialUpdateCat(Long catId, Map<String, Object> updates) throws NotFoundException {
         Cat cat = catRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
@@ -97,6 +103,7 @@ public class CatService {
         if (updates.containsKey("catBreed")) {
             cat.setCatBreed((String) updates.get("catBreed"));
         }
+
         if (updates.containsKey("catGender")) {
             Object genderObj = updates.get("catGender");
             if (genderObj instanceof String) {
@@ -104,10 +111,10 @@ public class CatService {
                 try {
                     cat.setCatGender(CatGender.valueOf(genderStr));
                 } catch (IllegalArgumentException e) {
-                    throw new NotFoundException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
+                    throw new BadRequestException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
                 }
             } else {
-                throw new NotFoundException("Invalid type for catGender. Must be a string.");
+                throw new BadRequestException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
             }
         }
 
@@ -115,15 +122,15 @@ public class CatService {
             Object catAgeObj = updates.get("catAge");
             if (catAgeObj instanceof Number) {
                 cat.setCatAge(((Number) catAgeObj).intValue());
-            }else if (catAgeObj instanceof String) {
+            } else if (catAgeObj instanceof String) {
 
-                try{
-                    int age =Integer.parseInt((String) catAgeObj);
+                try {
+                    int age = Integer.parseInt((String) catAgeObj);
                     cat.setCatAge(age);
-                    } catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throw new NotFoundException("Invalid catAge value. Must be an integer.");
                 }
-            }else {
+            } else {
                 throw new NotFoundException("Invalid type for catAge. Must be a number or numeric string.");
             }
             cat.setCatAge((int) updates.get("catAge"));
@@ -135,7 +142,7 @@ public class CatService {
     }
 
     public void deleteCat(Long catId) throws NotFoundException {
-        if(!catRepository.existsById(catId)) {
+        if (!catRepository.existsById(catId)) {
             throw new NotFoundException("Cat not found with id " + catId);
         }
         catRepository.deleteById(catId);
