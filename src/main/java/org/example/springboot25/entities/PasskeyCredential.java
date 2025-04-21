@@ -23,6 +23,21 @@ public class PasskeyCredential implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * A stable, opaque identifier for the user, used by the authenticator.
+     */
+    @Lob
+    @Column(name = "user_handle")
+    private byte[] userHandle;
+
+    public byte[] getUserHandle() {
+        return userHandle;
+    }
+
+    public void setUserHandle(byte[] userHandle) {
+        this.userHandle = userHandle;
+    }
+
+    /**
      * The username associated with this credential.
      */
     @NotNull

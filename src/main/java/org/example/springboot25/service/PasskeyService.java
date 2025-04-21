@@ -1,64 +1,97 @@
 package org.example.springboot25.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import org.example.springboot25.entities.PasskeyCredential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.example.springboot25.entities.User;
+import org.example.springboot25.repository.PasskeyCredentialRepository;
+import org.example.springboot25.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PasskeyService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PasskeyService.class);
+    private final PasskeyCredentialRepository credentialRepo;
+    private final UserRepository userRepo;
+    private final HttpSession session;
 
-    // Enkel in-memory storage – byt till databas om ni vill
-    private final ConcurrentHashMap<String, PasskeyCredential> credentialStore = new ConcurrentHashMap<>();
+    @Autowired
+    public PasskeyService(PasskeyCredentialRepository credentialRepo,
+                          UserRepository userRepo,
+                          HttpSession session) {
+        this.credentialRepo = credentialRepo;
+        this.userRepo = userRepo;
+        this.session = session;
+    }
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    public void saveCredential(String rawCredentialJson, String userName) {
-        try {
-            JsonNode json = objectMapper.readTree(rawCredentialJson);
-
-            if (!json.has("id") || !json.has("rawId") || !json.has("response")) {
-                logger.error("Missing required fields in credential JSON");
-                throw new IllegalArgumentException("Credential JSON missing required fields");
-            }
-
-            String id = json.get("id").asText();
-            String rawId = json.get("rawId").asText();
-            String publicKey = json.get("response").toString();
-
-            if (id.isEmpty() || publicKey.isEmpty()) {
-                logger.error("Empty values for required fields: id={}, publicKey={}", id, publicKey);
-                throw new IllegalArgumentException("Credential contains empty required values");
-            }
-
-            PasskeyCredential credential = new PasskeyCredential();
-            credential.setUserName(userName);
-            credential.setCredentialId(id);
-            credential.setPublicKey(publicKey);
-            credential.setSignatureCount(0);
-
-            credentialStore.put(id, credential);
-
-            logger.info("Passkey credential saved: ID={}, PublicKey={}", id, publicKey);
-
-        } catch (Exception e) {
-            logger.error("Failed to parse and save passkey credential: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to process credential", e);
+    public String startRegistration(String userEmail) {
+        Optional<User> optionalUser = userRepo.findByUserEmail(userEmail);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("User not found");
         }
+
+        User user = optionalUser.get();
+        byte[] challenge = new byte[32];
+        new SecureRandom().nextBytes(challenge);
+        session.setAttribute("register_challenge", challenge);
+
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(challenge);
     }
 
-    public PasskeyCredential getCredentialById(String id) {
-        return credentialStore.get(id);
+    public void finishRegistration(String credentialId, String publicKey, byte[] userHandle, String userEmail) {
+        Optional<User> optionalUser = userRepo.findByUserEmail(userEmail);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = optionalUser.get();
+
+        PasskeyCredential credential = new PasskeyCredential();
+        credential.setCredentialId(credentialId);
+        credential.setPublicKey(publicKey);
+        credential.setUserHandle(userHandle);
+        credential.setUser(user);
+        credential.setSignatureCount(0);
+        credentialRepo.save(credential);
     }
 
-    public boolean credentialExists(String id) {
-        return credentialStore.containsKey(id);
+    public String startLogin(String userEmail) {
+        Optional<User> optionalUser = userRepo.findByUserEmail(userEmail);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        User user = optionalUser.get();
+        List<PasskeyCredential> credentials = credentialRepo.findAllByUser(user.getUserName());
+        if (credentials.isEmpty()) {
+            throw new RuntimeException("No credentials found");
+        }
+
+        byte[] challenge = new byte[32];
+        new SecureRandom().nextBytes(challenge);
+        session.setAttribute("login_challenge", challenge);
+
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(challenge);
+    }
+
+    public void finishLogin(String credentialId, byte[] clientDataHash, byte[] authenticatorData, byte[] signature) {
+        Optional<PasskeyCredential> optionalCredential = credentialRepo.findByCredentialId(credentialId);
+        if (optionalCredential.isEmpty()) {
+            throw new RuntimeException("Credential not found");
+        }
+        PasskeyCredential credential = optionalCredential.get();
+        User user = credential.getUser();
+
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                user, null, user.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
