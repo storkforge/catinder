@@ -2,10 +2,11 @@ package org.example.springboot25.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
-import org.example.springboot25.dto.CatOutputDTO;
+import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
@@ -13,12 +14,12 @@ import org.example.springboot25.security.CustomUserDetails;
 import org.example.springboot25.security.CustomUserDetailsService;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
-import org.example.springboot25.mapper.UserMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.example.springboot25.mapper.UserMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -46,9 +47,9 @@ public class UserViewController {
                               CustomUserDetailsService uds,
                               UserMapper userMapper) {
         this.userService = userService;
-        this.userMapper = userMapper;
         this.catService = catService;
         this.uds = uds;
+        this.userMapper = userMapper;
     }
 
     @GetMapping
@@ -62,13 +63,14 @@ public class UserViewController {
     }
 
     @GetMapping("/profile/id/{userId}")
-    public String getUserById(@PathVariable Long userId, Model model) {
+    public String getUserById(@PathVariable() Long userId, Model model) {
         try {
-            User userEntity = userService.findUserById(userId);
-            UserOutputDTO user = userMapper.toDto(userEntity);
+            UserOutputDTO user = userService.getUserDtoById(userId);
+            User userEntity = userMapper.toUser(user);
             List<CatOutputDTO> cats = catService.getAllCatsByUser(userEntity);
             model.addAttribute("user", user);
             model.addAttribute("cats", cats);
+
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
@@ -77,11 +79,10 @@ public class UserViewController {
     }
 
     @GetMapping("/profile/{userName}")
-    public String getUserByUserName(@PathVariable String userName, Model model) {
+    String getUserByUserName(@PathVariable String userName, Model model) {
         try {
             User user = userService.findUserByUserName(userName);
-            UserOutputDTO dto = userMapper.toDto(user);
-            model.addAttribute("user", dto);
+            model.addAttribute("user", user);
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
@@ -90,11 +91,10 @@ public class UserViewController {
     }
 
     @GetMapping("/by-email/{userEmail}")
-    public String getUserByUserEmail(@PathVariable String userEmail, Model model) {
+    String getUserByUserEmail(@PathVariable String userEmail, Model model) {
         try {
             User user = userService.findUserByEmail(userEmail);
-            UserOutputDTO dto = userMapper.toDto(user);
-            model.addAttribute("user", dto);
+            model.addAttribute("user", user);
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
@@ -172,16 +172,13 @@ public class UserViewController {
     }
 
     @PostMapping("/add")
-    public String addUser(@ModelAttribute("user") @Valid UserInputDTO inputDTO,
-                          Model model,
-                          RedirectAttributes redirectAttributes) {
+    public String addUser(@ModelAttribute("user") @Valid UserInputDTO inputDTO, Model model) {
         try {
             userService.addUser(inputDTO);
-            redirectAttributes.addFlashAttribute("success", "User added successfully!");
-            return "redirect:/users";
+            return "redirect:/users/list?success=added";
         } catch (Exception e) {
             log.error("Failed to add user", e);
-            model.addAttribute("error", "Failed to add user: " + e.getMessage());
+            model.addAttribute("error", "Failed to add user");
             return "user/user-add";
         }
     }
@@ -215,6 +212,8 @@ public class UserViewController {
             userService.updateUser(userId, updateDTO);
             redirectAttributes.addFlashAttribute("update_success", "Saved!");
 
+            // Refresh Authentication so new role is live
+            // Refresh SecurityContext with updated role
             Authentication oldAuth = SecurityContextHolder.getContext().getAuthentication();
             UserDetails freshDetails = new CustomUserDetails(userMapper.toUser(updateDTO));
 
@@ -243,12 +242,9 @@ public class UserViewController {
     }
 
     @PatchMapping("/{userId}/edit")
-    public String updateUserPartial(@PathVariable Long userId,
-                                    @RequestParam Map<String, Object> updates,
-                                    RedirectAttributes redirectAttributes,
-                                    Model model) {
+    public String updateUser(@PathVariable Long userId, @RequestParam Map<String, Object> updates, RedirectAttributes redirectAttributes, Model model) {
         try {
-            userService.updateUser(userId, updates);
+            User updatedUser = userService.updateUser(userId, updates);
             redirectAttributes.addFlashAttribute("update_success", "Details saved!");
         } catch (AlreadyExistsException | NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
@@ -257,24 +253,33 @@ public class UserViewController {
         return "redirect:/users/" + userId + "/edit";
     }
 
-    @PostMapping("/delete/{id}")
-    public String deleteUserFromList(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    @GetMapping("/{userId}/delete")
+    String showDeleteForm(@PathVariable Long userId, Model model) {
         try {
-            userService.deleteUserById(id);
-            redirectAttributes.addFlashAttribute("delete_success", "User deleted successfully!");
-            return "redirect:/users";
-        } catch (Exception e) {
-            log.warn("Failed to delete user {}", id, e);
-            redirectAttributes.addFlashAttribute("error", "Delete failed.");
-            return "redirect:/users";
+            User user = userService.findUserById(userId);
+            model.addAttribute("user", user);
+            return "user/user-update";
+        } catch (NotFoundException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "error";
         }
     }
 
+    /**
+     * Deletes the currently authenticated user's own account.
+     * <p>
+     * This method handles a DELETE request to allow a user to delete their own account.
+     * It invalidates the session and clears the security context upon success.
+     * If the user is not found, an error message is shown on a dedicated error page.
+     *
+     * @param userId             the ID of the user to delete
+     * @param request            the HTTP request used to invalidate the session
+     * @param redirectAttributes used to pass a success message to the redirect target
+     * @param model              the model for passing error information to the view
+     * @return a redirect to the home page or an error page if deletion fails
+     */
     @DeleteMapping("/{userId}/delete")
-    public String deleteOwnAccount(@PathVariable Long userId,
-                                   HttpServletRequest request,
-                                   RedirectAttributes redirectAttributes,
-                                   Model model) {
+    String deleteOwnAccount(@PathVariable Long userId, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
         try {
             userService.deleteUserById(userId);
             redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
