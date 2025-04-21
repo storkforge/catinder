@@ -66,6 +66,18 @@ public class PasskeyCredential implements Serializable {
      */
     private long signatureCount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @CreatedDate
     @Column(updatable = false)
     private Instant createdAt;
