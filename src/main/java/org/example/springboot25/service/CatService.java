@@ -51,13 +51,10 @@ public class CatService {
         return catRepository.findById(catId);
     }
 
-    //TODO: ADD BACK NOT NULL FOR USER IN SCHEMA, USER, CAT, CHECK CATRESTCONTROLLER AND CATVIEWCONTROLLER
-
     public Cat createCat(Cat cat) {
         return catRepository.save(cat);
     }
 
-    //Fixa throws
     public Cat updateCat(Long catId, Cat catDetails) throws NotFoundException {
         return catRepository.findById(catId).map(cat -> {
             cat.setCatName(catDetails.getCatName());
@@ -69,7 +66,6 @@ public class CatService {
             return catRepository.save(cat);
         }).orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
     }
-//TODO KOLLA IGENOM PARTIAL UPDATE
     public Cat partialUpdateCat(Long catId, Map<String, Object> updates) throws NotFoundException {
         Cat cat = catRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));

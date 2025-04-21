@@ -19,7 +19,6 @@
         <thead>
         <!-- Add a specific class (header-row) for styling the header row -->
         <tr class="header-row">
-            <th>ID</th>
             <th th:text="#{cat.name}">Name</th>
             <th th:text="#{cat.breed}">Breed</th>
             <th th:text="#{cat.age}">Age</th>
@@ -28,7 +27,6 @@
         </thead>
         <tbody>
         <tr class="data-row" th:each="cat : ${cats}">
-            <td th:text="${cat.catId}">1</td>
             <td th:text="${cat.catName}">Cat Name</td>
             <td th:text="${cat.catBreed}">Breed</td>
             <td th:text="${cat.catAge}">Age</td>
@@ -37,9 +35,8 @@
                 <a th:text="#{view}" th:href="@{'/cats/' + ${cat.catId}}">View</a> |
                 <a th:text="#{edit}" th:href="@{'/cats/' + ${cat.catId} + '/edit'}">Edit</a> |
                 <!-- Use a form for deletion -->
-                <form th:action="@{/cats/{catId}/delete(catId=${cat.catId})}" th:method="delete"
-                      style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this cat?');">
-                    <button type="submit" th:text="#{delete}">Delete</button>
+                <form th:action="@{/cats/{catId}/delete(catId=${cat.catId})}" th:method="delete" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this cat?');">
+                    <button type="submit" class="delete-button" th:text="#{delete}">Delete</button>
                 </form>
             </td>
 

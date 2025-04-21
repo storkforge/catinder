@@ -660,6 +660,78 @@ a:hover {
     background-color: rgba(255, 0, 0, 0.3);
     color: #fff;
 }
+#cats-table .delete-button {
+    background: none;
+    border: none;
+    color: #505050;
+    text-decoration: none;
+    cursor: pointer;
+    font: inherit;            /* Inherit font styles from parent */
+    padding: 0;               /* Remove extra spacing */
+    font-weight: bold;
+}
+
+.delete-button:hover {
+    color: #003d82;
+}
+
+/*___ REMINDER TABLE ___*/
+#reminders-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Reminder header row styling */
+#reminders-table thead tr {
+    background-color: #f08080;
+    color: white;
+    font-weight: bold;
+}
+
+/* Table header and cell styling for reminders */
+#reminders-table th,
+#reminders-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Optional zebra-striping on the data rows */
+#reminders-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+#reminders-table tbody tr:nth-child(odd) {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
+/* Rounded corners for first and last columns, if desired */
+#reminders-table tr.data-row td:first-child,
+#reminders-table tr.header-row th:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#reminders-table tr.data-row td:last-child,
+#reminders-table tr.header-row th:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+#reminders-table .delete-button {
+    background: none;
+    border: none;
+    color: #505050;
+    text-decoration: none;
+    cursor: pointer;
+    font: inherit;            /* Inherit font styles from parent */
+    padding: 0;               /* Remove extra spacing */
+    font-weight: bold;
+}
+
+.delete-button:hover {
+    color: #003d82;
+}
 
 .stylized-button {
     border-radius: 22px;
