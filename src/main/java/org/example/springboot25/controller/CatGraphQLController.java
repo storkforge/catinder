@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
-import org.example.springboot25.entities.Cat;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.CatMapper;
 import org.example.springboot25.service.CatService;
@@ -30,39 +29,29 @@ public class CatGraphQLController {
 
     @QueryMapping
     public List<CatOutputDTO> getAllCats() {
-        return catService.getAllCats().stream().map(catMapper::toDTO).toList();
+        return catService.getAllCats();
     }
 
-    // ToDo: CatService should return a Cat directly instead of Optional<Cat> to simplify controller logic
     @QueryMapping
     public CatOutputDTO getCatById(@Argument Long catId) {
-        Cat cat = catService.getCatById(catId)
+        return catService.getCatById(catId)
+                .map(catMapper::toDTO)
                 .orElseThrow(() -> new NotFoundException("Cat with ID " + catId + " not found"));
-        return catMapper.toDTO(cat);
     }
-
-      // ToDo: CatService needs an getCatByName-method for this to work:
-//    @QueryMapping
-//    public CatOutputDTO getCatByName(@Argument String catName) {
-//        return catMapper.toDTO(catService.getCatByName(catName));
-//    }
-
 
     @MutationMapping
     public CatOutputDTO createCat(@Argument("input") @Valid CatInputDTO input) {
-        Cat cat = catMapper.toCat(input);
-        Cat savedCat = catService.createCat(cat);
-        return catMapper.toDTO(savedCat);
+        return catService.createCat(input);
     }
 
     @MutationMapping
-    public CatOutputDTO updateCat(@Argument Long catId, @Argument("input") @Valid CatUpdateDTO input) {
-        Cat catToUpdate = catService.getCatById(catId)
-                .orElseThrow(() -> new NotFoundException("Cat with ID " + catId + " not found"));
+    public CatOutputDTO updateCat(@Argument Long catId, @Argument("input") @Valid CatInputDTO input) {
+        return catService.updateCat(catId, input);
+    }
 
-        catMapper.updateCatFromDTO(input, catToUpdate);
-        Cat updatedCat = catService.updateCat(catId, catToUpdate);
-        return catMapper.toDTO(updatedCat);
+    @MutationMapping
+    public CatOutputDTO partialUpdateCat(@Argument Long catId, @Argument("input") @Valid CatUpdateDTO input) {
+        return catService.partialUpdateCat(catId, input);
     }
 
     @MutationMapping

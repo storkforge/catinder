@@ -1,5 +1,6 @@
 package org.example.springboot25.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,11 +11,14 @@ public class CatInputDTO {
 
     private String catProfilePicture;
 
+    @NotBlank
     private String catBreed;
 
+    @NotBlank
     private String catGender;
 
-
+    @NotNull
+    @Min(0)
     private Integer catAge;
 
     private String catPersonality;

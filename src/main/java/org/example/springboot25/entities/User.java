@@ -6,18 +6,22 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.annotation.Id; // Redis ID
+import org.springframework.data.redis.core.RedisHash;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "app_user")
-public class User {
+@RedisHash("User")
+public class User implements Serializable {
 
     private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
-    @Id
+    @jakarta.persistence.Id
+    @Id // Redis ID
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
@@ -33,7 +37,6 @@ public class User {
     @Column(unique = true)
     private String userEmail;
 
-    //@NotBlank
     private String userLocation;
 
     @NotNull
@@ -62,11 +65,19 @@ public class User {
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
+    // ======================
+    // Getters and Setters
+    // ======================
+
     public Long getUserId() {
         return userId;
     }
 
-    public @NotBlank String getUserFullName() {
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUserFullName() {
         return userFullName;
     }
 
@@ -121,7 +132,7 @@ public class User {
     }
 
     public String getUserPassword() {
-        return null; // To not expose even the hashed password
+        return null; // never expose it directly
     }
 
     public void setUserPassword(String userPassword) {
@@ -132,12 +143,6 @@ public class User {
         }
     }
 
-    /**
-     * Verifies if the provided raw password matches the stored hashed password
-     *
-     * @param rawPassword the password to check
-     * @return true if the password matches, false otherwise
-     */
     public boolean checkPassword(String rawPassword) {
         return ENCODER.matches(rawPassword, this.userPassword);
     }
@@ -173,6 +178,4 @@ public class User {
     public void setUserPost(List<Post> userPost) {
         this.userPost = userPost;
     }
-
-    public void setUserId(Long userId) { this.userId = userId; }
 }

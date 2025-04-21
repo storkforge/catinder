@@ -4,14 +4,18 @@ import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
+
+    @CachePut(value = "userDtoCache", key = "#dto.userId")
     public User toUser(UserUpdateDTO dto) {
-        if (dto == null) throw new IllegalArgumentException("UserInputDTO cannot be null");
+        if (dto == null) throw new IllegalArgumentException("UserUpdateDTO cannot be null");
 
         User user = new User();
+        user.setUserId(dto.getUserId());
         user.setUserFullName(dto.getUserFullName());
         user.setUserName(dto.getUserName());
         user.setUserEmail(dto.getUserEmail());
@@ -66,6 +70,7 @@ public class UserMapper {
         if (user == null) throw new IllegalArgumentException("User cannot be null");
 
         UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setUserId(user.getUserId());
         dto.setUserFullName(user.getUserFullName());
         dto.setUserName(user.getUserName());
         dto.setUserEmail(user.getUserEmail());
