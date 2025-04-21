@@ -89,6 +89,7 @@ public class CatViewController {
         return "cat/existing-edit-cat-form";
     }
 
+    //TODO: Add redirect to id?
     @PostMapping("/{catId}")
     public String updateCat(@PathVariable Long catId, @ModelAttribute("cat") Cat cat) {
         try {
