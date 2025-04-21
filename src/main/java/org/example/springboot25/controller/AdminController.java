@@ -34,6 +34,7 @@ public class AdminController {
 
     // Admin dashboard
     @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
     public String adminDashboard() {
         return "admin/dashboard";
     }

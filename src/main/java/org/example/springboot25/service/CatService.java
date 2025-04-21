@@ -5,6 +5,8 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.CatRepository;
 import org.example.springboot25.entities.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.ApplicationScope;
@@ -31,20 +33,28 @@ public class CatService {
     public List<Cat> getAllCats() {
         return catRepository.findAll();
     }
+
     public List<Cat> getAllCatsByUser(User user) {
         return catRepository.findAllByUserCatOwner(user);
     }
+
+    public List<Cat> getCatsVisibleTo(Authentication auth, User currentUser) {
+
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")); // :contentReference[oaicite:2]{index=2}
+
+        return isAdmin ? catRepository.findAll()
+                : catRepository.findAllByUserCatOwner(currentUser);
+    }
+
     public Optional<Cat> getCatById(Long catId) {
         return catRepository.findById(catId);
     }
-
-    //TODO: ADD BACK NOT NULL FOR USER IN SCHEMA, USER, CAT, CHECK CATRESTCONTROLLER AND CATVIEWCONTROLLER
 
     public Cat createCat(Cat cat) {
         return catRepository.save(cat);
     }
 
-    //Fixa throws
     public Cat updateCat(Long catId, Cat catDetails) throws NotFoundException {
         return catRepository.findById(catId).map(cat -> {
             cat.setCatName(catDetails.getCatName());
@@ -56,7 +66,6 @@ public class CatService {
             return catRepository.save(cat);
         }).orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
     }
-//TODO KOLLA IGENOM PARTIAL UPDATE
     public Cat partialUpdateCat(Long catId, Map<String, Object> updates) throws NotFoundException {
         Cat cat = catRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));

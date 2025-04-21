@@ -1,21 +1,23 @@
 package org.example.springboot25.controller;
 
-import jakarta.validation.Valid;
 import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.service.CommentService;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.example.springboot25.dto.CommentInputDTO;
+import org.example.springboot25.dto.CommentOutputDTO;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/posts")
@@ -23,10 +25,12 @@ public class PostViewController {
 
     private final PostService postService;
     private final UserService userService;
+    private final CommentService commentService;
 
-    public PostViewController(PostService postService, UserService userService) {
+    public PostViewController(PostService postService, UserService userService, CommentService commentService) {
         this.postService = postService;
         this.userService = userService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -39,7 +43,6 @@ public class PostViewController {
         } else if (principal != null) {
             currentUser = userService.findUserByUserName(principal.getName());
         }
-
         model.addAttribute("posts", postService.getAllPostsOrderByDate());
         model.addAttribute("currentUser", currentUser);
         return "post/post-list";
@@ -54,7 +57,7 @@ public class PostViewController {
     }
 
     @PostMapping("/add")
-    public String processCreateNewPostForm(@ModelAttribute("post") Post post, Principal principal) {
+    public String processCreateNewPostForm(@ModelAttribute Post post, Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) principal;
             OAuth2User oauth2User = oauthToken.getPrincipal();
@@ -77,12 +80,12 @@ public class PostViewController {
             return "post/post-update";
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "error-page";
+            return "error";
         }
     }
 
     @PutMapping("/{postId}")
-    public String updatePost(@PathVariable Long postId, @Valid @ModelAttribute Post post, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String updatePost(@PathVariable Long postId, @ModelAttribute Post post, RedirectAttributes redirectAttributes) {
         try {
             postService.updatePost(postId, post);
             redirectAttributes.addFlashAttribute("update_success", "Post Updated!");
@@ -93,15 +96,38 @@ public class PostViewController {
         return "redirect:/posts/" + postId + "/edit";
     }
 
-    @DeleteMapping("/{postId}")
+    @GetMapping("/{postId}/delete")
+    public String getDeleteForm(@PathVariable Long postId, Model model) {
+        try {
+            Post post = postService.getPostById(postId);
+            model.addAttribute("post", post);
+            return "post/post-update";
+        } catch (NotFoundException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "error";
+        }
+    }
+
+    @DeleteMapping("/{postId}/delete")
     String deletePost(@PathVariable Long postId, RedirectAttributes redirectAttributes, Model model) {
         try {
             postService.deletePost(postId);
             redirectAttributes.addFlashAttribute("delete_success", "Post deleted!");
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "error-page";
+            return "error";
         }
         return "redirect:/posts";
+    }
+
+    @GetMapping("/posts/{postId}")
+    public String showPostDetails(@PathVariable Long postId, Model model) {
+        Post post = postService.getPostById(postId); // eller liknande
+        List<CommentOutputDTO> comments = commentService.getAllCommentsForPost(postId);
+
+        model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
+        model.addAttribute("newComment", new CommentInputDTO()); // för kommentarsformulär
+        return "post/post-details"; // HTML-sidan
     }
 }

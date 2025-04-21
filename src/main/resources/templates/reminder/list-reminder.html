@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Reminders</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Include the header fragment -->
+<div th:replace="fragments/header"></div>
+
+<!-- Page title for Reminders -->
+<h2 th:text="#{Reminders}">Reminders</h2>
+
+<!-- Navigation for creating a new reminder -->
+<div class="header-nav">
+    <a class="submit create-button" th:href="@{/reminders/new}">
+        <span th:text="#{add.new.reminder}">Add New Reminder</span>
+    </a>
+</div>
+
+<!-- Table container for reminders -->
+<div class="table-container">
+    <table id="reminders-table" th:if="${reminders}">
+        <thead>
+        <!-- Header row for the table -->
+        <tr class="header-row">
+            <th th:text="#{reminder.type}">Type</th>
+            <th th:text="#{reminder.info}">Info</th>
+            <th th:text="#{reminder.dateTime}">Date &amp; Time</th>
+            <th th:text="#{reminder.actions}">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterate over reminders -->
+        <tr class="data-row" th:each="reminder : ${reminders}">
+            <td th:text="${reminder.reminderType}">Reminder Type</td>
+            <td th:text="${reminder.reminderInfo}">Info</td>
+            <td th:text="${#temporals.format(reminder.reminderDate, 'yyyy-MM-dd HH:mm')}">Date &amp; Time</td>
+            <td>
+                <a th:text="#{view}" th:href="@{'/reminders/' + ${reminder.reminderId}}">View</a> |
+                <a th:text="#{edit}" th:href="@{'/reminders/' + ${reminder.reminderId} + '/edit'}">Edit</a> |
+                <form th:action="@{/reminders/{reminderId}/delete(reminderId=${reminder.reminderId})}"
+                      th:method="delete"
+                      style="display:inline;"
+                      onsubmit="return confirm('Are you sure you want to delete this reminder?');">
+                    <button type="submit" class="delete-button" th:text="#{delete}">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

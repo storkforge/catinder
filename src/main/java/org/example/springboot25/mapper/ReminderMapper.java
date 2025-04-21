@@ -5,6 +5,7 @@ import org.example.springboot25.dto.ReminderOutputDTO;
 import org.example.springboot25.dto.ReminderUpdateDTO;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.Reminder;
+import org.example.springboot25.entities.ReminderType;
 import org.example.springboot25.entities.User;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,7 @@ public class ReminderMapper {
 
     public Reminder toEntityInput(ReminderInputDTO input, User user, Cat cat) {
         Reminder reminder = new Reminder();
-        reminder.setReminderType(input.getReminderType());
-        reminder.setReminderInfo(input.getReminderInfo());
+        reminder.setReminderType(ReminderType.valueOf(input.getReminderType()));
         reminder.setReminderDate(input.getReminderDate());
         reminder.setUser(user);
         reminder.setCatReminderCat(cat);
@@ -29,7 +29,7 @@ public class ReminderMapper {
         }
         ReminderOutputDTO dto = new ReminderOutputDTO();
         dto.setId(reminder.getReminderId());
-        dto.setReminderType(reminder.getReminderType());
+        dto.setReminderType(reminder.getReminderType().name());
         dto.setReminderInfo(reminder.getReminderInfo());
         if (reminder.getReminderDate() != null) {
             dto.setReminderDate(reminder.getReminderDate().atOffset(ZoneOffset.UTC));
@@ -44,8 +44,9 @@ public class ReminderMapper {
     }
 
     public Reminder toEntityUpdate(ReminderUpdateDTO input, Reminder existingReminder, User user, Cat cat) {
-        if (input.getReminderType() != null) existingReminder.setReminderType(input.getReminderType());
-        if (input.getReminderInfo() != null) existingReminder.setReminderInfo(input.getReminderInfo());
+        if (input.getReminderType() != null) {
+            existingReminder.setReminderType(ReminderType.valueOf(input.getReminderType()));
+        }
         if (input.getReminderDate() != null) existingReminder.setReminderDate(input.getReminderDate());
         if (user != null) existingReminder.setUser(user);
         if (cat != null) existingReminder.setCatReminderCat(cat);

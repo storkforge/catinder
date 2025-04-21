@@ -27,9 +27,37 @@ header {
 
 .header-right {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-end; /* Right-align the two rows */
+    gap: 0.5rem;
+    margin-right: 35px;
+}
+
+/* Top row: Settings and Login/Logout */
+.header-top {
+    display: flex;
+    align-items: baseline;
     gap: 1rem;
-    margin-right: 20px;
+}
+
+/* Bottom row: Menu and Language */
+.header-bottom {
+    display: flex;
+    align-items: baseline;
+    gap: 3rem; /* Adjust spacing between Menu and Language as needed */
+}
+
+/* Give lower order values to Settings and Logout/Login */
+.settings-button,
+.login-button,
+.logout-button {
+    order: 1;
+}
+
+/* Give higher order values to Menu and Language */
+.about-dropdown,
+.lang-button {
+    order: 2;
 }
 
 h1 {
@@ -78,22 +106,6 @@ h1 a:active {
     color: rgba(255, 255, 255, 0.3);
 }
 
-.lang-button {
-    background-color: transparent;
-    border: none;
-    outline: none;
-    border-radius: 20px;
-    padding: 5px 15px;
-    font-size: 16px;
-    color: #fffaef;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.lang-button:hover {
-    background-color: rgba(148, 148, 148, 0.3);
-    color: #fff;
-}
 
 p {
     cursor: default;
@@ -207,7 +219,7 @@ a:hover {
 
 /* Header row styling */
 #event-table thead tr {
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
 }
 
@@ -228,14 +240,14 @@ a:hover {
 }
 
 #event-table tr.data-row td:first-child,
-#event-table tr.header-row th:first-child{
+#event-table tr.header-row th:first-child {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
 
 }
 
 #event-table tr.data-row td:last-child,
-#event-table tr.header-row th:last-child{
+#event-table tr.header-row th:last-child {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
@@ -304,7 +316,7 @@ a:hover {
     justify-content: space-evenly;
     align-items: center;
     margin: 0 1rem;
-    color: rgb(100,100,100);
+    color: rgb(100, 100, 100);
 }
 
 .nav-button {
@@ -318,8 +330,20 @@ a:hover {
     max-width: 100px;
 }
 
+.nav-button.settings-button {
+    margin-top: 0;
+    padding: 0;
+}
+
 .settings-button {
-    scale: 60%;
+    font-size: 14px; /* or another smaller size */
+    padding: 0.5rem;
+    transform: scale(0.6);
+}
+
+.settings-button img {
+    width: 32px; /* adjust as needed */
+    height: auto;
 }
 
 .nav-button img.header-choice {
@@ -335,6 +359,12 @@ a:hover {
 .nav-button span {
     font-size: 0.9rem;
     text-align: center;
+}
+
+.admin-button {
+    display: flex;
+    margin: 1em auto auto;
+
 }
 
 /*___ /NAVIGATION ___*/
@@ -416,10 +446,10 @@ a:hover {
 /*___ CREATE-BUTTON ___*/
 
 .create-button {
-    background-color: rgba(255,255,255,0.8);
+    background-color: rgba(255, 255, 255, 0.8);
     border-radius: 8px;
-    outline: rgba(0,0,0,0.3);
-    margin: 20px    ;
+    outline: rgba(0, 0, 0, 0.3);
+    margin: 20px;
     padding: 8px 16px;
     cursor: pointer;
     font-size: 12px;
@@ -471,6 +501,7 @@ a:hover {
     padding-left: 0;
     margin: 0;
 }
+
 /*___ /Remove list-bullets ___*/
 
 
@@ -522,22 +553,19 @@ a:hover {
 }
 
 #user-table tr.data-row td:first-child,
-#user-table tr.header-row th:first-child{
+#user-table tr.header-row th:first-child {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
 
 }
 
 #user-table tr.data-row td:last-child,
-#user-table tr.header-row th:last-child{
+#user-table tr.header-row th:last-child {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
 
 /*___ /USER-TABLE ___*/
-
-
-
 
 
 /*___ TABLE ___*/
@@ -581,24 +609,27 @@ a:hover {
 #cats-table tbody tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.5);
 }
+
 #cats-table tbody tr:nth-child(odd) {
     background-color: rgba(200, 200, 200, 0.5);
 }
 
 #cats-table tr.data-row td:first-child,
-#cats-table tr.header-row th:first-child{
+#cats-table tr.header-row th:first-child {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
 
 }
 
 #cats-table tr.data-row td:last-child,
-#cats-table tr.header-row th:last-child{
+#cats-table tr.header-row th:last-child {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
 
 /*___ /CAT-LIST ___*/
+
+/*___ HEADER RIGHT ___*/
 
 .header-button {
     background-color: transparent;
@@ -629,3 +660,240 @@ a:hover {
     background-color: rgba(255, 0, 0, 0.3);
     color: #fff;
 }
+#cats-table .delete-button {
+    background: none;
+    border: none;
+    color: #505050;
+    text-decoration: none;
+    cursor: pointer;
+    font: inherit;            /* Inherit font styles from parent */
+    padding: 0;               /* Remove extra spacing */
+    font-weight: bold;
+}
+
+.delete-button:hover {
+    color: #003d82;
+}
+
+/*___ REMINDER TABLE ___*/
+#reminders-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Reminder header row styling */
+#reminders-table thead tr {
+    background-color: #f08080;
+    color: white;
+    font-weight: bold;
+}
+
+/* Table header and cell styling for reminders */
+#reminders-table th,
+#reminders-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Optional zebra-striping on the data rows */
+#reminders-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+#reminders-table tbody tr:nth-child(odd) {
+    background-color: rgba(200, 200, 200, 0.5);
+}
+
+/* Rounded corners for first and last columns, if desired */
+#reminders-table tr.data-row td:first-child,
+#reminders-table tr.header-row th:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#reminders-table tr.data-row td:last-child,
+#reminders-table tr.header-row th:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+#reminders-table .delete-button {
+    background: none;
+    border: none;
+    color: #505050;
+    text-decoration: none;
+    cursor: pointer;
+    font: inherit;            /* Inherit font styles from parent */
+    padding: 0;               /* Remove extra spacing */
+    font-weight: bold;
+}
+
+.delete-button:hover {
+    color: #003d82;
+}
+
+.stylized-button {
+    border-radius: 22px;
+    padding: 5px 8px;
+    font-size: 16px;
+    color: #fffaef;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.stylized-button:hover {
+    background-color: rgba(148, 148, 148, 0.3);
+    color: #fff;
+}
+
+.custom-dropdown {
+    width: 120px;
+    position: relative;
+    display: inline-block;
+}
+
+.custom-dropdown-toggle {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    color: #fffaef;
+    cursor: pointer;
+}
+
+.custom-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(10, 10, 10, 0.9);
+    min-width: 160px;
+    padding: 0.5rem 0;
+    border-radius: 4px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    margin: 0;
+}
+
+.custom-dropdown:hover .custom-dropdown-menu {
+    display: block;
+}
+
+.custom-dropdown-item a {
+    color: #fffaef;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: block;
+}
+
+.custom-dropdown-item a:hover {
+    color: #de7a3b;
+}
+
+/*___ /HEADER RIGHT ___*/
+/* ___ SLIDESHOW ___ */
+
+.image‐wrapper {
+    width: 512px;
+    height: 512px;
+    overflow: hidden;
+    background-color: black;
+}
+
+.image‐wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+}
+
+.catPhotos-container {
+    max-width: 50%;
+    padding: 30px 30px 40px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.5rem;
+}
+
+.slideshow-container{
+    position: relative;
+    margin: auto auto 100px;
+    padding-left: 72px;
+    padding-right: 72px;
+    width: 512px;
+}
+
+.mySlides{
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-wrapper{
+    width: 512px;
+    height: 512px;
+    overflow: hidden;
+    background:#000;
+}
+
+.image-wrapper img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+/* ___ /SLIDESHOW ___ */
+/*___ CAT PHOTO ___*/
+
+.cat-details{
+    padding: 8px 16px;
+    text-align:left;
+    background:transparent;
+}
+
+.cat-details p {
+    display: block;
+    margin: 1rem 0;
+}
+
+.cat-details span {
+    display: block;
+    margin-bottom: 4px;
+}
+
+/*____ /CAT PHOTO ___*/
+/*___ SLIDESHOW ARROWS ___*/
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 12px;
+    font-size: 56px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s ease;
+    user-select: none;
+    z-index: 2;
+}
+
+.prev {
+    left: 10px;
+    border-radius: 8px;
+}
+
+.next {
+    right: 10px;
+    border-radius: 8px;
+}
+
+.prev:hover, .next:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+/*___ /SLIDESHOW ARROWS ___*/

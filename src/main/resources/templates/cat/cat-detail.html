@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Cat Detail - Catinder</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+
     <style>
         /* Reuse the same styles as above */
         html, body {
@@ -25,10 +27,6 @@
             padding: 1.5em 1em;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
         h1 {
             text-align: left;
             font-size: 45px;
@@ -38,40 +36,6 @@
             0 3px 6px rgba(255, 104, 15, 0.5),
             0 10px 20px rgba(255, 255, 255, 0.1);
             cursor: default;
-        }
-        .cat-emoji {
-            font-size: 1em;
-            text-shadow: none;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-        .about-link {
-            font-size: 18px;
-            text-decoration: none;
-            color: #e79a6f;
-            margin-left: 20px;
-            font-weight: bold;
-        }
-        .about-link:hover {
-            color: rgba(255, 255, 255, 0.3);
-        }
-        .header-right {
-            margin-right: 20px;
-        }
-        .lang-button {
-            background-color: transparent;
-            border: none;
-            outline: none;
-            border-radius: 20px;
-            padding: 5px 15px;
-            font-size: 16px;
-            color: #fffaef;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .lang-button:hover {
-            background-color: rgba(148, 148, 148, 0.3);
-            color: #fff;
         }
         .main-content {
             display: flex;
@@ -95,25 +59,19 @@
     </style>
 </head>
 <body>
-<header>
-    <div class="header-left">
-        <h1><span class="cat-emoji">🐱</span>Catinder</h1>
-        <a class="about-link" th:href="@{/about}">About</a>
-    </div>
-    <div class="header-right">
-        <button class="lang-button" aria-label="Change language" title="Change language">&#127760; Language</button>
-    </div>
-</header>
+<div th:replace="fragments/header"></div>
 
 <div class="main-content">
     <h2 th:text="#{cat.detail}">Cat Detail</h2>
     <div>
-        <p><strong th:text="#{cat.id}">ID:</strong> <span th:text="${cat.catId}"></span></p>
         <p><strong th:text="#{cat.name}">Name:</strong> <span th:text="${cat.catName}"></span></p>
         <p><strong th:text="#{cat.breed}">Breed:</strong> <span th:text="${cat.catBreed}"></span></p>
         <p><strong th:text="#{cat.gender}">Gender:</strong> <span th:text="${cat.catGender}"></span></p>
         <p><strong th:text="#{cat.age}">Age:</strong> <span th:text="${cat.catAge}"></span></p>
         <p><strong th:text="#{cat.personality}">Personality:</strong> <span th:text="${cat.catPersonality}"></span></p>
+        <p><strong th:text="#{cat.photo}">Photo:</strong> <span th:each="catPhoto, iterStat : ${cat.catPhotos}"></span>
+        </p>
+        <p ></p>
     </div>
     <a th:text="#{back.to.cats.list}" th:href="@{/cats}">Back to Cats List</a>
 </div>

@@ -2,8 +2,10 @@ package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
 import org.example.springboot25.entities.Reminder;
+import org.example.springboot25.entities.ReminderType;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
+import org.example.springboot25.repository.ReminderRepository;
 import org.example.springboot25.service.ReminderService;
 import org.example.springboot25.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -11,10 +13,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reminders")
@@ -22,20 +27,22 @@ public class ReminderRESTController {
 
     private final ReminderService reminderService;
     private final UserService userService;
+    private final ReminderRepository reminderRepository;
 
-    public ReminderRESTController(ReminderService reminderService, UserService userService) {
+    public ReminderRESTController(ReminderService reminderService, UserService userService, ReminderRepository reminderRepository) {
         this.reminderService = reminderService;
         this.userService = userService;
+        this.reminderRepository = reminderRepository;
     }
 
-    // Helper: check if current user owns the reminder or is admin
+    // kolla vem som äger the reminder
     private boolean isNotOwnerOrAdmin(Reminder reminder, User currentUser) {
         boolean isOwner = reminder.getUser().getUserId().equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         return !(isOwner || isAdmin);
     }
 
-    // Only authenticated users can view their own reminders
+    // bara auth can se egna reminders
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -111,4 +118,27 @@ public class ReminderRESTController {
 
         reminderService.deleteReminder(id);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/type/{type}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Reminder> getRemindersByType(@PathVariable ReminderType type, Authentication auth) {
+        User current = userService.findUserByUserName(auth.getName());
+        return reminderService.getRemindersByUserAndType(current, type);
+    }
+
+@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public Map<String, String> handleInvalidReminderType(MethodArgumentTypeMismatchException ex) {
+            Map<String, String> error = new HashMap<>();
+            if (ex.getParameter().getParameterType().equals(ReminderType.class)) {
+                    error.put("error", "Invalid reminder type. Valid values are: " +
+                                      Arrays.stream(ReminderType.values())
+                                            .map(Enum::name)
+                                            .collect(Collectors.joining(", ")));
+                } else {
+                    error.put("error", ex.getMessage());
+                }
+            return error;
+        }
 }

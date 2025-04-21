@@ -7,6 +7,8 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.EventParticipantService;
 import org.example.springboot25.service.EventService;
 import org.example.springboot25.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -16,12 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
 @RequestMapping("/events")
 public class EventViewController {
+    private static final Logger log = LoggerFactory.getLogger(EventViewController.class);
     private final EventService eventService;
     private final EventParticipantService eventParticipantService;
     private final UserService userService;
@@ -33,14 +35,20 @@ public class EventViewController {
     }
 
     @GetMapping
-    public String showAllEvents(Model model) {
-        model.addAttribute("events", eventService.getAllEvents());
+    public String showAllEvents(@RequestParam(value = "q", required = false) String query,Model model) {
+        List<Event> events;
+        if (query != null && !query.trim().isEmpty()) {
+            events = eventService.searchEvents(query);
+            model.addAttribute("searchQuery", query);
+        } else {
+            events = eventService.getAllEvents();
+        }
+        model.addAttribute("events", events);
         return "event/event-list";
     }
 
     @GetMapping("/event-details/{eventId}")
     public String showEventDetails(@PathVariable Long eventId, Principal principal, Model model) {
-        // Retrieve all events if needed for navigation or sidebar
         List<Event> events = eventService.getAllEvents();
         Event selectedEvent = eventService.getEventById(eventId);
 
@@ -96,7 +104,7 @@ public class EventViewController {
     }
 
     @GetMapping("/add")
-    String addEventForm(Model model) {
+    String addEventForm(User user,Model model) {
         if (!model.containsAttribute("event")) {
             model.addAttribute("event", new Event());
         }
@@ -104,7 +112,7 @@ public class EventViewController {
     }
 
     @PostMapping("/add")
-    public String processCreateNewEventForm(@ModelAttribute @Valid Event event,
+    public String processCreateNewEventForm(@ModelAttribute Event event,
                                             Principal principal,
                                             RedirectAttributes redirectAttributes) {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
@@ -118,7 +126,6 @@ public class EventViewController {
         } else {
             throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
         }
-        event.setEventDateTime(LocalDateTime.now());
         eventService.createEvent(event);
         redirectAttributes.addFlashAttribute("success", "Event created!");
         return "redirect:/events";
@@ -133,7 +140,7 @@ public class EventViewController {
             return "event/event-update";
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "error-page";
+            return "error";
         }
     }
 
@@ -159,7 +166,7 @@ public class EventViewController {
             redirectAttributes.addFlashAttribute("delete_success", "Event deleted!");
         } catch (NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
-            return "error-page";
+            return "error";
         }
         return "redirect:/events";
     }
