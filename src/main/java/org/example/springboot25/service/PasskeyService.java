@@ -7,6 +7,8 @@ import org.example.springboot25.repository.PasskeyCredentialRepository;
 import org.example.springboot25.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class PasskeyService {
@@ -88,10 +91,12 @@ public class PasskeyService {
         }
         PasskeyCredential credential = optionalCredential.get();
         User user = credential.getUser();
-
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user, null, user.getAuthorities()
-        );
+        // Build authorities manually (assumes a roles collection on User)
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(user.getUserName(), null, authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }
