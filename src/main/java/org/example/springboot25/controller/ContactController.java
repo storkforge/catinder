@@ -16,7 +16,7 @@ public class ContactController {
     }
 
     @GetMapping
-    public String contact(Model model) {
+    public String contact() {
         return "contact";
     }
 

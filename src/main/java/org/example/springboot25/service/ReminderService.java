@@ -18,11 +18,9 @@ import java.util.Map;
 public class ReminderService {
 
     private final ReminderRepository reminderRepository;
-    private final UserRepository userRepository;
 
-    public ReminderService(ReminderRepository reminderRepository, UserRepository userRepository) {
+    public ReminderService(ReminderRepository reminderRepository) {
         this.reminderRepository = reminderRepository;
-        this.userRepository = userRepository;
     }
 
     public List<Reminder> getAllReminders() {
