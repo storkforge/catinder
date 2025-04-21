@@ -11,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-
 @Controller
 @RequestMapping("/participants")
 public class EventParticipantViewController {
@@ -68,27 +66,16 @@ public class EventParticipantViewController {
         return "participants/participants-add";
     }
 
-//    @PostMapping("/add")
-//    public String addParticipant(@RequestParam Long eventId,
-//                                 Principal principal,
-//                                 RedirectAttributes redirectAttributes) {
-//        try {
-//            String userName = principal.getName();
-//            User user = userService.findUserByUserName(userName);
-//            Event event = eventService.getEventById(eventId);
-//            eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
-//            redirectAttributes.addFlashAttribute("success", "You are now attending the event!");
-//        } catch (Exception e) {
-//            redirectAttributes.addFlashAttribute("error", e.getMessage());
-//        }
-//        return "redirect:/events";
-//    }
-
     @PostMapping("/add")
     public String addParticipant(@RequestParam String userName,
                                  @RequestParam String eventName,
                                  RedirectAttributes redirectAttributes) {
         try {
+            if (userName == null || userName.isEmpty() || eventName == null || eventName.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Username and event name are required");
+                return "redirect:/participants/add";
+            }
+
             eventParticipantService.addParticipant(userName, eventName);
             redirectAttributes.addFlashAttribute("success", "You are now attending the event!");
         } catch (Exception e) {
