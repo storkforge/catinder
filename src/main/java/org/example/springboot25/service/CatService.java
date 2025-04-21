@@ -7,7 +7,6 @@ import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.CatRepository;
 import org.example.springboot25.entities.Cat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
