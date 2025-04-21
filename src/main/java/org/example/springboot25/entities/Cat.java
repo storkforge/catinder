@@ -1,16 +1,16 @@
 package org.example.springboot25.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Cat implements Serializable {
+public class Cat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,21 +21,25 @@ public class Cat implements Serializable {
 
     private String catProfilePicture;
 
-    @NotBlank
     private String catBreed;
 
-    @NotBlank
-    private String catGender;
+//   private String catGender;
+
+    @Enumerated(EnumType.STRING)
+    private CatGender catGender;
 
     @Min(0)
+    @Max(25)
     private int catAge;
 
     private String catPersonality;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cat_owner_user_id")
     private User userCatOwner;
+
+
 
     @OneToMany(mappedBy = "catPhotoCat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CatPhoto> catPhotos = new ArrayList<>();
@@ -48,10 +52,6 @@ public class Cat implements Serializable {
 
     public Long getCatId() {
         return catId;
-    }
-
-    public void setCatId(Long catId) {
-        this.catId = catId;
     }
 
     public String getCatName() {
@@ -78,11 +78,11 @@ public class Cat implements Serializable {
         this.catBreed = catBreed;
     }
 
-    public String getCatGender() {
+    public CatGender getCatGender() {
         return catGender;
     }
 
-    public void setCatGender(String catGender) {
+    public void setCatGender(CatGender catGender) {
         this.catGender = catGender;
     }
 
@@ -141,4 +141,5 @@ public class Cat implements Serializable {
     public void setCatRecommendations(List<Recommendation> catRecommendations) {
         this.catRecommendations = catRecommendations;
     }
+
 }

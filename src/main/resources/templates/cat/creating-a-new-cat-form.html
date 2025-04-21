@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Catinder - Cat Form</title>
@@ -96,14 +96,24 @@
         <label th:text="#{cat.name}" for="catName">Name:</label>
         <input type="text" id="catName" th:field="*{catName}" required />
 
-        <label th:text="#{cat.breed}" for="catBreed">Breed:</label>
-        <input type="text" id="catBreed" th:field="*{catBreed}" />
+      <label th:text="#{cat.breed}" for="catBreed">Breed:</label>
+      <select id="catBreed" th:field="*{catBreed}">
+          <option value="">-- Select Breed --</option>
+          <option th:each="breed : ${breeds}"
+                  th:value="${breed}"
+                  th:text="${breed}"
+                  th:selected="${breed == cat.catBreed}">
+          </option>
+      </select>
+    <label th:text="#{cat.gender}" for="catGender">Gender:</label>
+    <select id="catGender" th:field="*{catGender}">
+      <option value="">-- Select Gender --</option>
+      <option value="MALE" th:selected="${cat.catGender == 'MALE'}">Male</option>
+      <option value="FEMALE" th:selected="${cat.catGender == 'FEMALE'}">Female</option>
+    </select>
 
-        <label th:text="#{cat.gender}" for="catGender">Gender:</label>
-        <input type="text" id="catGender" th:field="*{catGender}" />
-
-        <label th:text="#{cat.age}" for="catAge">Age:</label>
-        <input type="number" id="catAge" th:field="*{catAge}" min="0" />
+    <label th:text="#{cat.age}" for="catAge">Age:</label>
+      <input type="number" id="catAge" th:field="*{catAge}" min="0" max="25" />
 
         <label th:text="#{cat.personality}" for="catPersonality">Personality:</label>
         <input type="text" id="catPersonality" th:field="*{catPersonality}" />
