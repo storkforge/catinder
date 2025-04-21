@@ -27,6 +27,7 @@ public class CatGraphQLController {
         this.catMapper = catMapper;
     }
 
+
     @QueryMapping
     public List<CatOutputDTO> getAllCats() {
         return catService.getAllCats();
