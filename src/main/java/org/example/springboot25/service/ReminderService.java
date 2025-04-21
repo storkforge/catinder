@@ -5,6 +5,7 @@ import org.example.springboot25.entities.ReminderType;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.ReminderRepository;
+import org.example.springboot25.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +18,11 @@ import java.util.Map;
 public class ReminderService {
 
     private final ReminderRepository reminderRepository;
+    private final UserRepository userRepository;
 
-    public ReminderService(ReminderRepository reminderRepository) {
+    public ReminderService(ReminderRepository reminderRepository, UserRepository userRepository) {
         this.reminderRepository = reminderRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Reminder> getAllReminders() {

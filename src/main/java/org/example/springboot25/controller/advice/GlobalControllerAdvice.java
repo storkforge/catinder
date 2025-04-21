@@ -1,7 +1,9 @@
 package org.example.springboot25.controller.advice;
 
+import org.example.springboot25.entities.Reminder;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.service.ReminderService;
 import org.example.springboot25.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +13,18 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.List;
+
 @ControllerAdvice
 public class GlobalControllerAdvice {
     private static final Logger log = LoggerFactory.getLogger(GlobalControllerAdvice.class);
     private final UserService userService;
+    private final ReminderService reminderService;
 
     @Autowired
-    public GlobalControllerAdvice(UserService userService) {
+    public GlobalControllerAdvice(UserService userService, ReminderService reminderService) {
         this.userService = userService;
+        this.reminderService = reminderService;
     }
 
     @ModelAttribute("currentUser")
@@ -55,5 +61,10 @@ public class GlobalControllerAdvice {
         }
         log.trace("No currentUser resolved");
         return null;
+    }
+
+    @ModelAttribute("getReminders")
+    public List<Reminder> getReminders(@ModelAttribute("currentUser") User currentUser) {
+        return reminderService.getRemindersByUser(currentUser);
     }
 }
