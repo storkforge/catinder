@@ -74,7 +74,7 @@ public class ReminderViewController {
             throw new AccessDeniedException("You can only edit your own reminder");
         }
         model.addAttribute("reminder", reminder);
-        List<Cat> cats = catService.getAllCatsByUser(current);
+        List<Cat> cats = catService.getAllCatsByUserAsEntity(current);
         model.addAttribute("cats", cats);
         model.addAttribute("currentUser", current);
         return "reminder/edit-reminder-details-form";
@@ -94,7 +94,7 @@ public class ReminderViewController {
         }
 
         if (bindingResult.hasErrors()) {
-            List<Cat> cats = catService.getAllCatsByUser(currentUser);
+            List<Cat> cats = catService.getAllCatsByUserAsEntity(currentUser);
             model.addAttribute("cats", cats);
             model.addAttribute("currentUser", currentUser);
             return "reminder/edit-reminder-details-form";
@@ -112,7 +112,7 @@ public class ReminderViewController {
     public String showCreateNewReminderForm(Model model, Principal principal) {
         model.addAttribute("reminder", new Reminder());
         User current = getCurrentUser(principal);
-        List<Cat> cats = catService.getAllCatsByUser(current);
+        List<Cat> cats = catService.getAllCatsByUserAsEntity(current);
         model.addAttribute("cats", cats);
         model.addAttribute("currentUser", current);
         return "reminder/creating-a-new-reminder-form";
@@ -125,7 +125,7 @@ public class ReminderViewController {
         User user = getCurrentUser(principal);
         if (bindingResult.hasErrors()) {
             User current = getCurrentUser(principal);
-            List<Cat> cats = catService.getAllCatsByUser(current);
+            List<Cat> cats = catService.getAllCatsByUserAsEntity(current);
             model.addAttribute("cats", cats);
             return "reminder/creating-a-new-reminder-form";
         }

@@ -1,30 +1,31 @@
 package org.example.springboot25.dto;
 
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
 import org.example.springboot25.entities.UserRole;
 
+/**
+ * DTO for capturing user input when creating a new user.
+ */
 public class UserInputDTO {
 
-    @NotBlank
+    @NotBlank(message = "Full name is required.")
     private String userFullName;
 
-    @NotBlank
+    @NotBlank(message = "Username is required.")
     private String userName;
 
-    @Email
-    @NotBlank
+    @Email(message = "Email must be valid.")
+    @NotBlank(message = "Email is required.")
     private String userEmail;
 
-    @NotBlank
+    @NotBlank(message = "Location is required.")
     private String userLocation;
 
-    @NotBlank
+    @NotBlank(message = "User role is required.")
     private UserRole userRole;
 
-    @NotBlank
+    @NotBlank(message = "Auth provider is required.")
     private String userAuthProvider;
 
     // Getters and Setters
@@ -75,5 +76,4 @@ public class UserInputDTO {
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
     }
-
 }

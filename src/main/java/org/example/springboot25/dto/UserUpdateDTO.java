@@ -2,17 +2,29 @@ package org.example.springboot25.dto;
 
 import org.example.springboot25.entities.UserRole;
 
+/**
+ * DTO used for updating existing user information.
+ */
 public class UserUpdateDTO {
 
+    private Long userId;
     private String userFullName;
     private String userName;
     private String userEmail;
     private String userLocation;
     private UserRole userRole;
     private String userAuthProvider;
-    private Long userId;
 
     // Getters and Setters
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public String getUserFullName() {
         return userFullName;
     }
@@ -59,14 +71,5 @@ public class UserUpdateDTO {
 
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
-    }
-
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 }

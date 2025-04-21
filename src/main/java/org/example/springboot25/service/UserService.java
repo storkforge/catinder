@@ -13,6 +13,9 @@ import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,16 +44,19 @@ public class UserService {
     // INTERNAL METHODS (Entity)
     // ==========================
 
+    @Cacheable(value = "users", key = "#userId")
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
     }
 
+    @Cacheable(value = "usersByUsername", key = "#userName")
     public User findUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
                 .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
     }
 
+    @Cacheable(value = "usersByEmail", key = "#email")
     public User findUserByEmail(String email) {
         return userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
@@ -109,9 +115,11 @@ public class UserService {
         } else {
             user.setUserPassword(null);
         }
+
         return userRepository.save(user);
     }
 
+    @CachePut(value = "users", key = "#userId")
     public UserOutputDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
         User user = findUserById(userId);
 
@@ -127,6 +135,7 @@ public class UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
+    @CachePut(value = "users", key = "#userId")
     public User updateUser(Long userId, Map<String, Object> updates) {
         User existingUser = findUserById(userId);
 
@@ -174,6 +183,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    @CacheEvict(value = { "users", "usersByUsername", "usersByEmail" }, key = "#userId")
     public void deleteUserById(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id " + userId + " not found");
@@ -191,6 +201,8 @@ public class UserService {
         user.setUserRole(UserRole.valueOf(newRole.toUpperCase()));
         userRepository.save(user);
     }
+
+    // ========== Filtered List Methods (not cached for now) ==========
 
     public List<UserOutputDTO> getAllUsersByUserName(String userName) {
         return userRepository.findAllByUserNameContainingIgnoreCase(userName).stream()

@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Cat {
+@RedisHash("Cat")
+public class Cat implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +23,10 @@ public class Cat {
 
     private String catProfilePicture;
 
+    @NotBlank
     private String catBreed;
 
+    @NotBlank
     private String catGender;
 
     @Min(0)
@@ -30,7 +35,7 @@ public class Cat {
     private String catPersonality;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat_owner_user_id")
     private User userCatOwner;
 
@@ -45,6 +50,10 @@ public class Cat {
 
     public Long getCatId() {
         return catId;
+    }
+
+    public void setCatId(Long catId) {
+        this.catId = catId;
     }
 
     public String getCatName() {
@@ -134,5 +143,4 @@ public class Cat {
     public void setCatRecommendations(List<Recommendation> catRecommendations) {
         this.catRecommendations = catRecommendations;
     }
-
 }

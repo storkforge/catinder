@@ -18,57 +18,64 @@ public class CatMapper {
         this.userRepository = userRepository;
     }
 
-    public Cat toCat (CatInputDTO catInputDTO) {
+    public Cat toCat(CatInputDTO dto) {
         Cat cat = new Cat();
-        cat.setCatName(catInputDTO.getCatName().trim());
-        cat.setCatProfilePicture(catInputDTO.getCatProfilePicture() != null ?
-                catInputDTO.getCatProfilePicture().trim() : null);
-        cat.setCatBreed(catInputDTO.getCatBreed().trim());
-        cat.setCatGender(catInputDTO.getCatGender().trim());
-        cat.setCatAge(catInputDTO.getCatAge());
-        cat.setCatPersonality(catInputDTO.getCatPersonality() != null ?
-                catInputDTO.getCatPersonality().trim() : null);
+        cat.setCatName(dto.getCatName().trim());
+        cat.setCatProfilePicture(dto.getCatProfilePicture() != null ? dto.getCatProfilePicture().trim() : null);
+        cat.setCatBreed(dto.getCatBreed().trim());
+        cat.setCatGender(dto.getCatGender().trim());
+        cat.setCatAge(dto.getCatAge());
+        cat.setCatPersonality(dto.getCatPersonality() != null ? dto.getCatPersonality().trim() : null);
 
-        User user = userRepository.findById(catInputDTO.getUserId())
-                .orElseThrow(() -> new NotFoundException("User with ID " + catInputDTO.getUserId() + " not found"));
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new NotFoundException("User with ID " + dto.getUserId() + " not found"));
 
         cat.setUserCatOwner(user);
         return cat;
     }
 
-    public void updateCatFromDTO(CatUpdateDTO catUpdateDTO, Cat cat) {
-        if(catUpdateDTO.getCatName() != null) {
-            cat.setCatName(catUpdateDTO.getCatName().trim());
+    public void updateCatFromDTO(CatUpdateDTO dto, Cat cat) {
+        if (dto.getCatName() != null) {
+            cat.setCatName(dto.getCatName().trim());
         }
-        if(catUpdateDTO.getCatProfilePicture() != null) {
-            cat.setCatProfilePicture(catUpdateDTO.getCatProfilePicture().trim());
+        if (dto.getCatProfilePicture() != null) {
+            cat.setCatProfilePicture(dto.getCatProfilePicture().trim());
         }
-        if(catUpdateDTO.getCatBreed() != null) {
-            cat.setCatBreed(catUpdateDTO.getCatBreed().trim());
+        if (dto.getCatBreed() != null) {
+            cat.setCatBreed(dto.getCatBreed().trim());
         }
-        if(catUpdateDTO.getCatGender() != null) {
-            cat.setCatGender(catUpdateDTO.getCatGender().trim());
+        if (dto.getCatGender() != null) {
+            cat.setCatGender(dto.getCatGender().trim());
         }
-        if(catUpdateDTO.getCatAge() != null) {
-            cat.setCatAge(catUpdateDTO.getCatAge());
+        if (dto.getCatAge() != null) {
+            cat.setCatAge(dto.getCatAge());
         }
-        if(catUpdateDTO.getCatPersonality() != null) {
-            cat.setCatPersonality(catUpdateDTO.getCatPersonality().trim());
+        if (dto.getCatPersonality() != null) {
+            cat.setCatPersonality(dto.getCatPersonality().trim());
         }
     }
 
     public CatOutputDTO toDTO(Cat cat) {
-        CatOutputDTO catOutputDTO = new CatOutputDTO();
-        catOutputDTO.setCatId(cat.getCatId());
-        catOutputDTO.setCatName(cat.getCatName());
-        catOutputDTO.setCatProfilePicture(cat.getCatProfilePicture());
-        catOutputDTO.setCatBreed(cat.getCatBreed());
-        catOutputDTO.setCatGender(cat.getCatGender());
-        catOutputDTO.setCatAge(cat.getCatAge());
-        catOutputDTO.setCatPersonality(cat.getCatPersonality());
+        CatOutputDTO dto = new CatOutputDTO();
+        dto.setCatId(cat.getCatId());
+        dto.setCatName(cat.getCatName());
+        dto.setCatProfilePicture(cat.getCatProfilePicture());
+        dto.setCatBreed(cat.getCatBreed());
+        dto.setCatGender(cat.getCatGender());
+        dto.setCatAge(cat.getCatAge());
+        dto.setCatPersonality(cat.getCatPersonality());
         if (cat.getUserCatOwner() != null) {
-            catOutputDTO.setUserId(cat.getUserCatOwner().getUserId());
+            dto.setUserId(cat.getUserCatOwner().getUserId());
         }
-        return catOutputDTO;
+        return dto;
+    }
+
+    public void updateCatFromInputDTO(CatInputDTO dto, Cat cat) {
+        cat.setCatName(dto.getCatName().trim());
+        cat.setCatProfilePicture(dto.getCatProfilePicture() != null ? dto.getCatProfilePicture().trim() : null);
+        cat.setCatBreed(dto.getCatBreed().trim());
+        cat.setCatGender(dto.getCatGender().trim());
+        cat.setCatAge(dto.getCatAge());
+        cat.setCatPersonality(dto.getCatPersonality() != null ? dto.getCatPersonality().trim() : null);
     }
 }
