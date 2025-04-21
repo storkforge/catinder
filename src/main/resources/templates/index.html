@@ -53,12 +53,9 @@
     <p>Please click the login-button to sign in/create an account!</p>
 </div>
 
-<!-- Eva testar en grej -->
-<div class="login-test-buttons"
-     style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-
-    <button class="login-button google-login"
-            onclick="location.href='/oauth2/authorization/google'">
+<!-- Eva testar passkey grej -->
+<div class="login-test-buttons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+    <button class="login-button google-login" onclick="location.href='/oauth2/authorization/google'">
         Login with Google
     </button>
 
@@ -69,35 +66,76 @@
 
 <script>
     document.getElementById("passkey-login-btn").addEventListener("click", async () => {
+        const email = prompt("What's your email?");
+        if (!email) return;
+
         try {
-            const startResp = await fetch("/webauthn/login/start", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" }
-            });
-
+            const startResp = await fetch(`/passkey/webauthn/login/start?userEmail=${encodeURIComponent(email)}`);
             const options = await startResp.json();
+
+            // Konvertera Base64 → ArrayBuffer
+            options.publicKey.challenge = base64urlToBuffer(options.publicKey.challenge);
+            options.publicKey.allowCredentials = options.publicKey.allowCredentials.map(cred => ({
+                ...cred,
+                id: base64urlToBuffer(cred.id)
+            }));
+
             const credential = await navigator.credentials.get({
-                publicKey: options.publicKeyCredentialRequestOptions
+                publicKey: options.publicKey
             });
 
-            const finishResp = await fetch("/webauthn/login/finish", {
+            const authData = {
+                id: credential.id,
+                rawId: bufferToBase64url(credential.rawId),
+                type: credential.type,
+                response: {
+                    authenticatorData: bufferToBase64url(credential.response.authenticatorData),
+                    clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
+                    signature: bufferToBase64url(credential.response.signature),
+                    userHandle: credential.response.userHandle
+                        ? bufferToBase64url(credential.response.userHandle)
+                        : null
+                }
+            };
+
+            const finishResp = await fetch("/passkey/webauthn/login/finish", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(credential)
+                body: JSON.stringify(authData)
             });
 
             if (finishResp.ok) {
                 window.location.href = "/dashboard";
             } else {
-                alert("Passkey authentication failed.");
+                alert("Login failed");
             }
         } catch (err) {
             console.error("Passkey login error:", err);
-            alert("An error occurred during Passkey login.");
+            alert("An error occurred during login.");
         }
     });
+
+    function base64urlToBuffer(base64url) {
+        const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+        const pad = "=".repeat((4 - base64url.length % 4) % 4);
+        const binary = atob(base64 + pad);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+
+    function bufferToBase64url(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
 </script>
-<!-- Slut på Eva testar en grej -->
+<!-- Slut på Eva testar passkey grej -->
 
 <script>
     setTimeout(function () {
