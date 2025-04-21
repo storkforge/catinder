@@ -1,6 +1,7 @@
 package org.example.springboot25.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,9 +23,13 @@ public class Cat {
 
     private String catBreed;
 
-    private String catGender;
+//   private String catGender;
+
+    @Enumerated(EnumType.STRING)
+    private CatGender catGender;
 
     @Min(0)
+    @Max(25)
     private int catAge;
 
     private String catPersonality;
@@ -33,6 +38,8 @@ public class Cat {
     @ManyToOne
     @JoinColumn(name = "cat_owner_user_id")
     private User userCatOwner;
+
+
 
     @OneToMany(mappedBy = "catPhotoCat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CatPhoto> catPhotos = new ArrayList<>();
@@ -71,11 +78,11 @@ public class Cat {
         this.catBreed = catBreed;
     }
 
-    public String getCatGender() {
+    public CatGender getCatGender() {
         return catGender;
     }
 
-    public void setCatGender(String catGender) {
+    public void setCatGender(CatGender catGender) {
         this.catGender = catGender;
     }
 
