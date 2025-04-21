@@ -14,7 +14,7 @@ public class UserUpdateDTO {
     private String userLocation;
     private UserRole userRole;
     private String userAuthProvider;
-    private Long userId;
+
 
     public UserUpdateDTO() {}
 
@@ -29,8 +29,6 @@ public class UserUpdateDTO {
     }
 
     // Getters and Setters
-    public Long getUserId() {return userId;}
-
     public String getUserFullName() {
         return userFullName;
     }
