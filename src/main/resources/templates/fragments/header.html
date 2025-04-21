@@ -43,11 +43,9 @@
                     <span th:text="#{settings}">Settings</span>
                 </a>
             </div>
-            <!-- Show login button only if the user is not authenticated -->
             <div sec:authorize="!isAuthenticated()">
                 <a class="header-button login-button" th:href="@{/oauth2/authorization/google}" title="Login" th:text="#{login}">Login</a>
             </div>
-            <!-- Show logout button only if the user is authenticated -->
             <div sec:authorize="isAuthenticated()">
                 <form th:action="@{/logout}" method="post" style="display: inline;">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
