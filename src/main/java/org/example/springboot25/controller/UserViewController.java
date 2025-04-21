@@ -102,6 +102,69 @@ public class UserViewController {
         }
     }
 
+    @GetMapping("/by-username/{userName}")
+    String getUsersByUserName(@PathVariable String userName, Model model) {
+        List<UserOutputDTO> users = userService.getAllUsersByUserName("%" + userName + "%");
+        if (users.isEmpty())
+            model.addAttribute("message", "No users found with username '" + userName + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-name/{userFullName}")
+    String getUsersByFullName(@PathVariable String userFullName, Model model) {
+        List<UserOutputDTO> users = userService.getAllUsersByFullName("%" + userFullName + "%");
+        if (users.isEmpty())
+            model.addAttribute("message", "No users found for name '" + userFullName + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-location/{userLocation}")
+    String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
+        List<UserOutputDTO> users = userService.getAllUsersByLocation(userLocation);
+        if (users.isEmpty())
+            model.addAttribute("message", "No users found for location '" + userLocation + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-role/{userRole}")
+    public String getUsersByUserRole(@PathVariable String userRole, Model model) {
+        List<UserOutputDTO> users = userService.getAllUsersByRole(userRole);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for role '" + userRole + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-role-location")
+    String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
+        List<UserOutputDTO> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for role '" + userRole + "' and location '" + userLocation + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-cat")
+    String getUsersByCatName(@RequestParam String catName, Model model) {
+        List<UserOutputDTO> users = userService.getAllUsersByCatName(catName);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for cat '" + catName + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
+    @GetMapping("/by-search-term/{searchTerm}")
+    String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
+        List<UserOutputDTO> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
+        if (users.isEmpty())
+            model.addAttribute("message", "No results found for search term '" + searchTerm + "'.");
+        model.addAttribute("users", users);
+        return "user/user-list";
+    }
+
     @GetMapping("/add")
     public String addUserForm(Model model) {
         model.addAttribute("user", new UserInputDTO());
@@ -222,5 +285,26 @@ public class UserViewController {
             return "error";
         }
         return "redirect:/";
+    }
+
+    /**
+     * Deletes a user from the user list (typically by an admin or moderator).
+     * <p>
+     * This method handles a DELETE request to delete a specific user by ID. If the deletion is successful,
+     * the user is redirected to the user list view with a success message. If any error occurs,
+     * the user is redirected back with an error flag.
+     *
+     * @param id the ID of the user to delete
+     * @return a redirect string to the user list page with query parameters indicating result
+     */
+    @DeleteMapping("/delete/{id}")
+    public String deleteUserFromList(@PathVariable Long id) {
+        try {
+            userService.deleteUserById(id);
+            return "redirect:/users/list?success=deleted";
+        } catch (Exception e) {
+            log.warn("Failed to delete user {}", id, e);
+            return "redirect:/users/list?error=delete-failed";
+        }
     }
 }
