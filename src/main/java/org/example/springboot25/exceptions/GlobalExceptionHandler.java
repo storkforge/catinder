@@ -3,6 +3,7 @@ package org.example.springboot25.exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(NotFoundException ex) {
         return Map.of("error", ex.getMessage());
+    }
+    @ExceptionHandler(org.springframework.dao.InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidDataAccessApiUsageException(
+            org.springframework.dao.InvalidDataAccessApiUsageException ex) {
+        Throwable cause = ex.getCause();
+        if (cause instanceof IllegalArgumentException && cause.getMessage().contains("No enum constant")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid catGender value. Must be 'MALE' or 'FEMALE'."));
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "An unexpected error occurred."));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

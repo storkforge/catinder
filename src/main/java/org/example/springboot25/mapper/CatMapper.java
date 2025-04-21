@@ -4,6 +4,7 @@ import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
 import org.example.springboot25.entities.Cat;
+import org.example.springboot25.entities.CatGender;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.UserRepository;
@@ -18,13 +19,17 @@ public class CatMapper {
         this.userRepository = userRepository;
     }
 
-    public Cat toCat (CatInputDTO catInputDTO) {
+    public Cat toCat(CatInputDTO catInputDTO) {
         Cat cat = new Cat();
         cat.setCatName(catInputDTO.getCatName().trim());
         cat.setCatProfilePicture(catInputDTO.getCatProfilePicture() != null ?
                 catInputDTO.getCatProfilePicture().trim() : null);
         cat.setCatBreed(catInputDTO.getCatBreed().trim());
-        cat.setCatGender(catInputDTO.getCatGender().trim());
+        if (catInputDTO.getCatGender() != null) {
+            cat.setCatGender(CatGender.valueOf(catInputDTO.getCatGender().trim().toUpperCase()));
+        } else {
+            cat.setCatGender(null);  // or handle as needed
+        }
         cat.setCatAge(catInputDTO.getCatAge());
         cat.setCatPersonality(catInputDTO.getCatPersonality() != null ?
                 catInputDTO.getCatPersonality().trim() : null);
@@ -37,22 +42,26 @@ public class CatMapper {
     }
 
     public void updateCatFromDTO(CatUpdateDTO catUpdateDTO, Cat cat) {
-        if(catUpdateDTO.getCatName() != null) {
+        if (catUpdateDTO.getCatName() != null) {
             cat.setCatName(catUpdateDTO.getCatName().trim());
         }
-        if(catUpdateDTO.getCatProfilePicture() != null) {
+        if (catUpdateDTO.getCatProfilePicture() != null) {
             cat.setCatProfilePicture(catUpdateDTO.getCatProfilePicture().trim());
         }
-        if(catUpdateDTO.getCatBreed() != null) {
+        if (catUpdateDTO.getCatBreed() != null) {
             cat.setCatBreed(catUpdateDTO.getCatBreed().trim());
         }
-        if(catUpdateDTO.getCatGender() != null) {
-            cat.setCatGender(catUpdateDTO.getCatGender().trim());
+        if (catUpdateDTO.getCatGender() != null) {
+            try {
+                cat.setCatGender(CatGender.valueOf(catUpdateDTO.getCatGender().trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
+            }
         }
-        if(catUpdateDTO.getCatAge() != null) {
+        if (catUpdateDTO.getCatAge() != null) {
             cat.setCatAge(catUpdateDTO.getCatAge());
         }
-        if(catUpdateDTO.getCatPersonality() != null) {
+        if (catUpdateDTO.getCatPersonality() != null) {
             cat.setCatPersonality(catUpdateDTO.getCatPersonality().trim());
         }
     }
@@ -63,7 +72,7 @@ public class CatMapper {
         catOutputDTO.setCatName(cat.getCatName());
         catOutputDTO.setCatProfilePicture(cat.getCatProfilePicture());
         catOutputDTO.setCatBreed(cat.getCatBreed());
-        catOutputDTO.setCatGender(cat.getCatGender());
+        catOutputDTO.setCatGender(cat.getCatGender() != null ? cat.getCatGender().name() : null);
         catOutputDTO.setCatAge(cat.getCatAge());
         catOutputDTO.setCatPersonality(cat.getCatPersonality());
         if (cat.getUserCatOwner() != null) {

@@ -14,6 +14,7 @@ public class CatInputDTO {
 
     private String catGender;
 
+
     private Integer catAge;
 
     private String catPersonality;
