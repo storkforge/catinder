@@ -16,8 +16,6 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class PasskeyService {
@@ -35,13 +33,21 @@ public class PasskeyService {
         this.session = session;
     }
 
+    public boolean credentialExists(String credentialId) {
+        return credentialRepo.existsByCredentialId(credentialId);
+    }
+
+    public void saveCredential(String credentialJson, String userName) {
+        // Placeholder – implement parsing and saving later
+        System.out.println("Credential JSON received: " + credentialJson);
+    }
+
     public String startRegistration(String userEmail) {
         Optional<User> optionalUser = userRepo.findByUserEmail(userEmail);
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("User not found");
         }
 
-        User user = optionalUser.get();
         byte[] challenge = new byte[32];
         new SecureRandom().nextBytes(challenge);
         session.setAttribute("register_challenge", challenge);
@@ -72,9 +78,9 @@ public class PasskeyService {
         }
 
         User user = optionalUser.get();
-        List<PasskeyCredential> credentials = credentialRepo.findAllByUser(user.getUserName());
+        List<PasskeyCredential> credentials = credentialRepo.findAllByUser(user);
         if (credentials.isEmpty()) {
-            throw new RuntimeException("No credentials found");
+            throw new RuntimeException("No credentials found for user");
         }
 
         byte[] challenge = new byte[32];
@@ -89,12 +95,15 @@ public class PasskeyService {
         if (optionalCredential.isEmpty()) {
             throw new RuntimeException("Credential not found");
         }
+
         PasskeyCredential credential = optionalCredential.get();
         User user = credential.getUser();
-        // Build authorities manually (assumes a roles collection on User)
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+
+        // Bygg authorities från användarrollen
+        List<GrantedAuthority> authorities = List.of(
+                new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name())
+        );
+
         UsernamePasswordAuthenticationToken auth =
                 new UsernamePasswordAuthenticationToken(user.getUserName(), null, authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);

@@ -74,7 +74,7 @@ public class User {
         this.userFullName = userFullName;
     }
 
-    public String getUserName() {
+    public @NotBlank String getUserName() {
         return userName;
     }
 

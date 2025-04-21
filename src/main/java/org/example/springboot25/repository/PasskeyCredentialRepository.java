@@ -2,6 +2,7 @@ package org.example.springboot25.repository;
 
 import org.example.springboot25.entities.PasskeyCredential;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.example.springboot25.entities.User;
 
 import java.util.List;
 import java.util.Optional;
