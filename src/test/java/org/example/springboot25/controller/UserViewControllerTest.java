@@ -1,6 +1,7 @@
 package org.example.springboot25.controller;
 
 
+import org.example.springboot25.config.UserTestMockConfig;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
@@ -8,12 +9,14 @@ import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.GlobalViewExceptionHandler;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.UserMapper;
+import org.example.springboot25.security.CustomUserDetailsService;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -26,27 +29,31 @@ import org.springframework.validation.BindingResult;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserViewController.class)
+@WebMvcTest(controllers = UserViewController.class)
 @WithMockUser
-@Import(GlobalViewExceptionHandler.class)
+@Import({GlobalViewExceptionHandler.class, UserTestMockConfig.class})
 class UserViewControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Autowired
     private UserService userService;
 
-    @MockitoBean
+    @Autowired
     private CatService catService;
 
-    @MockitoBean
+    @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     private User mockCurrentUser() {
         User user = new User();
@@ -114,24 +121,27 @@ class UserViewControllerTest {
                 .andExpect(model().attributeExists("user"));
     }
 
-    @Test
-    @DisplayName("Should load edit user form")
-    void shouldLoadEditUserForm() throws Exception {
-        UserOutputDTO dto = new UserOutputDTO();
-        when(userService.getUserDtoById(1L)).thenReturn(dto);
-        when(userMapper.outputToUpdateDTO(dto)).thenReturn(new UserUpdateDTO());
+@Test
+@DisplayName("Should load edit user form")
+void shouldLoadEditUserForm() throws Exception {
+    UserOutputDTO mockOutputDto = new UserOutputDTO();
+    UserUpdateDTO mockUpdateDto = new UserUpdateDTO();
 
-        mockMvc.perform(get("/users/edit/1").flashAttr("currentUser", mockCurrentUser()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("user/user-update"))
-                .andExpect(model().attributeExists("user"))
-                .andExpect(model().attributeExists("userId"));
-    }
+    when(userService.getUserDtoById(1L)).thenReturn(mockOutputDto);
+    when(userMapper.outputToUpdateDTO(any(UserOutputDTO.class))).thenReturn(mockUpdateDto);
+
+    mockMvc.perform(get("/users/1/edit")
+                    .flashAttr("currentUser", mockCurrentUser()))
+            .andExpect(status().isOk())
+            .andExpect(view().name("user/user-update"))
+            .andExpect(model().attributeExists("user"))
+            .andExpect(model().attributeExists("userId"));
+}
 
     @Test
     @DisplayName("Should delete user from list")
     void shouldDeleteUserFromList() throws Exception {
-        mockMvc.perform(post("/users/delete/1")
+        mockMvc.perform(delete("/users/delete/1")
                         .with(csrf())
                         .flashAttr("currentUser", mockCurrentUser()))
                 .andExpect(status().is3xxRedirection())
@@ -148,7 +158,7 @@ class UserViewControllerTest {
                         .accept(MediaType.TEXT_HTML)
                         .header("Content-Type", "text/html"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("error-page"))
+                .andExpect(view().name("error"))
                 .andExpect(model().attributeExists("error"));
     }
 
@@ -159,7 +169,7 @@ class UserViewControllerTest {
 
         mockMvc.perform(get("/users/profile/nonexistent").flashAttr("currentUser", mockCurrentUser()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("error-page"))
+                .andExpect(view().name("error"))
                 .andExpect(model().attributeExists("error"));
     }
 
@@ -186,7 +196,7 @@ class UserViewControllerTest {
     @Test
     @DisplayName("Should delete own account")
     void shouldDeleteOwnAccount() throws Exception {
-        mockMvc.perform(delete("/users/1")
+        mockMvc.perform(delete("/users/1/delete")
                         .with(csrf())
                         .flashAttr("currentUser", mockCurrentUser()))
                 .andExpect(status().is3xxRedirection())

@@ -1,10 +1,12 @@
 package org.example.springboot25;
 
-import org.example.springboot25.config.UserServiceTestConfig;
+import org.example.springboot25.config.SecurityConfig;
+import org.example.springboot25.config.UserTestMockConfig;
 import org.example.springboot25.controller.UserRestController;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
+import org.example.springboot25.security.CustomOAuth2UserService;
 import org.example.springboot25.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.containsString;
 
 @WebMvcTest(UserRestController.class)
-@Import(UserServiceTestConfig.class)
+@Import({UserTestMockConfig.class, SecurityConfig.class})
 public class UserSecurityTest {
 
     @Autowired
@@ -32,6 +34,9 @@ public class UserSecurityTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Test
     @DisplayName("Should redirect unauthenticated user to login OAuth")

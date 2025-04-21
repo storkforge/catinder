@@ -1,6 +1,6 @@
 package org.example.springboot25.controller;
 
-import org.example.springboot25.config.UserServiceTestConfig;
+import org.example.springboot25.config.UserTestMockConfig;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import java.util.List;
 
-@Import(UserServiceTestConfig.class)
+@Import(UserTestMockConfig.class)
 @WebMvcTest(controllers = UserRestController.class)
 class UserRestControllerTest {
 
