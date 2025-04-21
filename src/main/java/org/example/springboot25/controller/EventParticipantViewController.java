@@ -68,20 +68,33 @@ public class EventParticipantViewController {
         return "participants/participants-add";
     }
 
+//    @PostMapping("/add")
+//    public String addParticipant(@RequestParam Long eventId,
+//                                 Principal principal,
+//                                 RedirectAttributes redirectAttributes) {
+//        try {
+//            String userName = principal.getName();
+//            User user = userService.findUserByUserName(userName);
+//            Event event = eventService.getEventById(eventId);
+//            eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
+//            redirectAttributes.addFlashAttribute("success", "You are now attending the event!");
+//        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("error", e.getMessage());
+//        }
+//        return "redirect:/events";
+//    }
+
     @PostMapping("/add")
-    public String addParticipant(@RequestParam Long eventId,
-                                 Principal principal,
+    public String addParticipant(@RequestParam String userName,
+                                 @RequestParam String eventName,
                                  RedirectAttributes redirectAttributes) {
         try {
-            String userName = principal.getName();
-            User user = userService.findUserByUserName(userName);
-            Event event = eventService.getEventById(eventId);
-            eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
+            eventParticipantService.addParticipant(userName, eventName);
             redirectAttributes.addFlashAttribute("success", "You are now attending the event!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/events";
+        return "redirect:/participants/add";
     }
 
     @GetMapping("/delete")
@@ -104,26 +117,6 @@ public class EventParticipantViewController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/participants/delete";
-    }
-
-    @GetMapping("/update")
-    public String showPatchForm() {
-        return "participants/participants-update";
-    }
-
-    @PostMapping("/update")
-    public String patchParticipant(@RequestParam String userName,
-                                   @RequestParam String newUserName,
-                                   @RequestParam String eventName,
-                                   @RequestParam String newEventName,
-                                   RedirectAttributes redirectAttributes) {
-        try {
-            eventParticipantService.patchEventForParticipant(userName, newUserName, eventName, newEventName);
-            redirectAttributes.addFlashAttribute("success", "The participant has been successfully updated.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
-        }
-        return "redirect:/participants/update";
     }
 
 }
