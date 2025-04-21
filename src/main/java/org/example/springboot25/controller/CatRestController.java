@@ -1,5 +1,6 @@
 package org.example.springboot25.controller;
 
+import org.example.springboot25.entities.CatGender;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
@@ -12,8 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.PropertyEditorSupport;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +63,30 @@ public class CatRestController {
         }
 
         return ResponseEntity.ok(cat);
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(CatGender.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                if(text == null || text.trim().isEmpty()) {
+                    setValue(null);
+                } else {
+                    try {
+                        setValue(CatGender.valueOf(text.trim().toUpperCase()));
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalArgumentException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
+                    }
+                }
+            }
+
+            @Override
+            public String getAsText() {
+                CatGender value = (CatGender) getValue();
+                return (value != null ? value.name() : "");
+            }
+        });
     }
 
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM')")

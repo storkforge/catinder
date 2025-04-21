@@ -1,5 +1,6 @@
 package org.example.springboot25.service;
 
+import org.example.springboot25.entities.CatGender;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.CatRepository;
@@ -9,8 +10,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.context.annotation.ApplicationScope;
 
+import java.beans.PropertyEditorSupport;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +59,21 @@ public class CatService {
         return catRepository.save(cat);
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(CatGender.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                try {
+                    setValue(CatGender.valueOf(text.trim().toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
+                }
+            }
+        });
+    }
+
+    //Fixa throws
     public Cat updateCat(Long catId, Cat catDetails) throws NotFoundException {
         return catRepository.findById(catId).map(cat -> {
             cat.setCatName(catDetails.getCatName());
@@ -79,8 +98,19 @@ public class CatService {
             cat.setCatBreed((String) updates.get("catBreed"));
         }
         if (updates.containsKey("catGender")) {
-            cat.setCatGender((String) updates.get("catGender"));
+            Object genderObj = updates.get("catGender");
+            if (genderObj instanceof String) {
+                String genderStr = ((String) genderObj).trim().toUpperCase();
+                try {
+                    cat.setCatGender(CatGender.valueOf(genderStr));
+                } catch (IllegalArgumentException e) {
+                    throw new NotFoundException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
+                }
+            } else {
+                throw new NotFoundException("Invalid type for catGender. Must be a string.");
+            }
         }
+
         if (updates.containsKey("catAge")) {
             Object catAgeObj = updates.get("catAge");
             if (catAgeObj instanceof Number) {

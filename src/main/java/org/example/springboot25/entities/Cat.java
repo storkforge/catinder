@@ -23,7 +23,10 @@ public class Cat {
 
     private String catBreed;
 
-    private String catGender;
+//   private String catGender;
+
+    @Enumerated(EnumType.STRING)
+    private CatGender catGender;
 
     @Min(0)
     @Max(25)
@@ -35,6 +38,8 @@ public class Cat {
     @ManyToOne
     @JoinColumn(name = "cat_owner_user_id")
     private User userCatOwner;
+
+
 
     @OneToMany(mappedBy = "catPhotoCat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CatPhoto> catPhotos = new ArrayList<>();
@@ -73,11 +78,11 @@ public class Cat {
         this.catBreed = catBreed;
     }
 
-    public String getCatGender() {
+    public CatGender getCatGender() {
         return catGender;
     }
 
-    public void setCatGender(String catGender) {
+    public void setCatGender(CatGender catGender) {
         this.catGender = catGender;
     }
 

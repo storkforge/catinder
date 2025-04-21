@@ -77,7 +77,11 @@
     </select>
 
     <label th:text="#{cat.gender}" for="catGender">Gender:</label>
-    <input type="text" id="catGender" th:field="*{catGender}" />
+    <select id="catGender" th:field="*{catGender}">
+      <option value="">-- Select Gender --</option>
+      <option value="MALE" th:selected="${cat.catGender == 'MALE'}">Male</option>
+      <option value="FEMALE" th:selected="${cat.catGender == 'FEMALE'}">Female</option>
+    </select>
 
     <label th:text="#{cat.age}" for="catAge">Age:</label>
     <input type="number" id="catAge" th:field="*{catAge}" min="0" max="25" />
