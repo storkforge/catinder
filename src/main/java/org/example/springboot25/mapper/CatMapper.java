@@ -4,6 +4,7 @@ import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
 import org.example.springboot25.entities.Cat;
+import org.example.springboot25.entities.CatGender;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.UserRepository;
@@ -18,16 +19,20 @@ public class CatMapper {
         this.userRepository = userRepository;
     }
 
-    public Cat toCat(CatInputDTO dto) {
-        if (dto == null) throw new IllegalArgumentException("CatInputDTO cannot be null");
-
+    public Cat toCat(CatInputDTO catInputDTO) {
         Cat cat = new Cat();
-        cat.setCatName(dto.getCatName());
-        cat.setCatProfilePicture(dto.getCatProfilePicture());
-        cat.setCatBreed(dto.getCatBreed());
-        cat.setCatGender(dto.getCatGender());
-        cat.setCatAge(dto.getCatAge());
-        cat.setCatPersonality(dto.getCatPersonality());
+        cat.setCatName(catInputDTO.getCatName().trim());
+        cat.setCatProfilePicture(catInputDTO.getCatProfilePicture() != null ?
+                catInputDTO.getCatProfilePicture().trim() : null);
+        cat.setCatBreed(catInputDTO.getCatBreed().trim());
+        if (catInputDTO.getCatGender() != null) {
+            cat.setCatGender(CatGender.valueOf(catInputDTO.getCatGender().trim().toUpperCase()));
+        } else {
+            cat.setCatGender(null);  // or handle as needed
+        }
+        cat.setCatAge(catInputDTO.getCatAge());
+        cat.setCatPersonality(catInputDTO.getCatPersonality() != null ?
+                catInputDTO.getCatPersonality().trim() : null);
 
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new NotFoundException("User with ID " + dto.getUserId() + " not found"));
@@ -36,29 +41,40 @@ public class CatMapper {
         return cat;
     }
 
-    public void updateCatFromDto(CatUpdateDTO dto, Cat cat) {
-        if (dto == null || cat == null) throw new IllegalArgumentException("DTO or Cat cannot be null");
-
-        if (dto.getCatName() != null) cat.setCatName(dto.getCatName());
-        if (dto.getCatProfilePicture() != null) cat.setCatProfilePicture(dto.getCatProfilePicture());
-        if (dto.getCatBreed() != null) cat.setCatBreed(dto.getCatBreed());
-        if (dto.getCatGender() != null) cat.setCatGender(dto.getCatGender());
-        if (dto.getCatAge() != null) cat.setCatAge(dto.getCatAge());
-        if (dto.getCatPersonality() != null) cat.setCatPersonality(dto.getCatPersonality());
+    public void updateCatFromDTO(CatUpdateDTO catUpdateDTO, Cat cat) {
+        if (catUpdateDTO.getCatName() != null) {
+            cat.setCatName(catUpdateDTO.getCatName().trim());
+        }
+        if (catUpdateDTO.getCatProfilePicture() != null) {
+            cat.setCatProfilePicture(catUpdateDTO.getCatProfilePicture().trim());
+        }
+        if (catUpdateDTO.getCatBreed() != null) {
+            cat.setCatBreed(catUpdateDTO.getCatBreed().trim());
+        }
+        if (catUpdateDTO.getCatGender() != null) {
+            try {
+                cat.setCatGender(CatGender.valueOf(catUpdateDTO.getCatGender().trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid catGender value. Must be 'MALE' or 'FEMALE'.");
+            }
+        }
+        if (catUpdateDTO.getCatAge() != null) {
+            cat.setCatAge(catUpdateDTO.getCatAge());
+        }
+        if (catUpdateDTO.getCatPersonality() != null) {
+            cat.setCatPersonality(catUpdateDTO.getCatPersonality().trim());
+        }
     }
 
-    public CatOutputDTO toDto(Cat cat) {
-        if (cat == null) throw new IllegalArgumentException("Cat cannot be null");
-
-        CatOutputDTO dto = new CatOutputDTO();
-        dto.setCatId(cat.getCatId());
-        dto.setCatName(cat.getCatName());
-        dto.setCatProfilePicture(cat.getCatProfilePicture());
-        dto.setCatBreed(cat.getCatBreed());
-        dto.setCatGender(cat.getCatGender());
-        dto.setCatAge(cat.getCatAge());
-        dto.setCatPersonality(cat.getCatPersonality());
-
+    public CatOutputDTO toDTO(Cat cat) {
+        CatOutputDTO catOutputDTO = new CatOutputDTO();
+        catOutputDTO.setCatId(cat.getCatId());
+        catOutputDTO.setCatName(cat.getCatName());
+        catOutputDTO.setCatProfilePicture(cat.getCatProfilePicture());
+        catOutputDTO.setCatBreed(cat.getCatBreed());
+        catOutputDTO.setCatGender(cat.getCatGender() != null ? cat.getCatGender().name() : null);
+        catOutputDTO.setCatAge(cat.getCatAge());
+        catOutputDTO.setCatPersonality(cat.getCatPersonality());
         if (cat.getUserCatOwner() != null) {
             dto.setUserId(cat.getUserCatOwner().getUserId());
         }

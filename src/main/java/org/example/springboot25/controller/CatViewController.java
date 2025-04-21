@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -28,6 +29,10 @@ public class CatViewController {
 
     private final CatService catService;
     private final UserService userService;
+    private static final List<String> CAT_BREEDS = Arrays.asList(
+            "Siamese", "Persian", "Maine Coon", "Ragdoll", "Bengal",
+            "British Shorthair", "Scottish Fold", "Sphynx", "Abyssinian", "Birman"
+    );
 
     public CatViewController(CatService catService, UserService userService) {
         this.catService = catService;
@@ -50,6 +55,10 @@ public class CatViewController {
 
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
+        Cat cat = new Cat();
+        cat.getCatPhotos().add(new CatPhoto());
+        model.addAttribute("cat", cat);
+        model.addAttribute("breeds", CAT_BREEDS);
         model.addAttribute("cat", new CatInputDTO());
         return "cat/creating-a-new-cat-form";
     }
@@ -73,8 +82,12 @@ public class CatViewController {
         return "redirect:/cats";
     }
 
-
     @GetMapping("/{catId}/edit")
+    public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
+        Cat cat = catService.getCatById(catId)
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+        model.addAttribute("breeds", CAT_BREEDS);
+        model.addAttribute("cat", cat);
     public String showEditCatForm(@PathVariable Long catId, Model model) {
         CatOutputDTO existingCat = catService.getCatDtoById(catId);
         CatUpdateDTO updateDTO = new CatUpdateDTO();

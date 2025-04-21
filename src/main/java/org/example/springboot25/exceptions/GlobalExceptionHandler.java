@@ -52,6 +52,17 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleNotFoundException(NotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
+    @ExceptionHandler(org.springframework.dao.InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidDataAccessApiUsageException(
+            org.springframework.dao.InvalidDataAccessApiUsageException ex) {
+        Throwable cause = ex.getCause();
+        if (cause instanceof IllegalArgumentException && cause.getMessage().contains("No enum constant")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid catGender value. Must be 'MALE' or 'FEMALE'."));
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "An unexpected error occurred."));
+    }
+
 
     @ExceptionHandler(InvalidInputException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
