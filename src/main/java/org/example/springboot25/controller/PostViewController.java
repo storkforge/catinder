@@ -3,6 +3,7 @@ package org.example.springboot25.controller;
 import org.example.springboot25.entities.Post;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
+import org.example.springboot25.service.CommentService;
 import org.example.springboot25.service.PostService;
 import org.example.springboot25.service.UserService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -11,9 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.example.springboot25.dto.CommentInputDTO;
+import org.example.springboot25.dto.CommentOutputDTO;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/posts")
@@ -21,10 +25,12 @@ public class PostViewController {
 
     private final PostService postService;
     private final UserService userService;
+    private final CommentService commentService;
 
-    public PostViewController(PostService postService, UserService userService) {
+    public PostViewController(PostService postService, UserService userService, CommentService commentService) {
         this.postService = postService;
         this.userService = userService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -112,5 +118,16 @@ public class PostViewController {
             return "error";
         }
         return "redirect:/posts";
+    }
+
+    @GetMapping("/posts/{postId}")
+    public String showPostDetails(@PathVariable Long postId, Model model) {
+        Post post = postService.getPostById(postId); // eller liknande
+        List<CommentOutputDTO> comments = commentService.getAllCommentsForPost(postId);
+
+        model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
+        model.addAttribute("newComment", new CommentInputDTO()); // för kommentarsformulär
+        return "post/post-details"; // HTML-sidan
     }
 }
