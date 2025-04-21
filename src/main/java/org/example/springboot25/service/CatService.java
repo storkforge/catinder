@@ -13,12 +13,15 @@ import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -43,6 +46,34 @@ public class CatService {
 
     public Cat findCatById(Long catId) {
         return catRepository.findById(catId)
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")); // :contentReference[oaicite:2]{index=2}
+
+        return isAdmin ? catRepository.findAll()
+                : catRepository.findAllByUserCatOwner(currentUser);
+    }
+
+    public Optional<Cat> getCatById(Long catId) {
+        return catRepository.findById(catId);
+    }
+
+    public Cat createCat(Cat cat) {
+        return catRepository.save(cat);
+    }
+
+    public Cat updateCat(Long catId, Cat catDetails) throws NotFoundException {
+        return catRepository.findById(catId).map(cat -> {
+            cat.setCatName(catDetails.getCatName());
+            cat.setCatProfilePicture(catDetails.getCatProfilePicture());
+            cat.setCatBreed(catDetails.getCatBreed());
+            cat.setCatGender(catDetails.getCatGender());
+            cat.setCatAge(catDetails.getCatAge());
+            cat.setCatPersonality(catDetails.getCatPersonality());
+            return catRepository.save(cat);
+        }).orElseThrow(()-> new NotFoundException("Cat not found with id " + catId));
+    }
+    public Cat partialUpdateCat(Long catId, Map<String, Object> updates) throws NotFoundException {
+        Cat cat = catRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
     }
 
