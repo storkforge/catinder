@@ -102,7 +102,7 @@
         </thead>
         <tbody>
         <tr class="data-row" th:each="reminder : ${reminders}">
-            <td th:text="${reminder.reminderType}">Reminder Type</td>
+            <td th:text="${#messages.msg('reminder.type.' + reminder.reminderType.name())}">Reminder Type</td>
             <td th:text="${reminder.reminderInfo}">Info</td>
             <td th:text="${#temporals.format(reminder.reminderDate, 'yyyy-MM-dd HH:mm')}">Date &amp; Time</td>
             <td>

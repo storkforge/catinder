@@ -13,7 +13,7 @@
 <!-- Main content container mimicking your event-meta container style -->
 <main class="form-container reminder-meta-container">
     <!-- Reminder Header -->
-    <h2 th:text="#{'reminder.type.' + ${reminder.reminderType.name()}}">Reminder Type</h2>
+    <h2 th:text="${#messages.msg('reminder.type.' + reminder.reminderType.name())}">Reminder Type</h2>
 
     <div class="reminder-meta">
         <strong><label th:text="#{info}" >Info:</label></strong>
