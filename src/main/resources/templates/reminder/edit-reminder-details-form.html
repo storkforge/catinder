@@ -8,24 +8,22 @@
 <body>
 <header th:replace="fragments/header :: header"></header>
 
-<h2>Edit Reminder</h2>
+<h2 th:text="#{edit.reminder}" >Edit Reminder</h2>
 
 <div class="form-container">
     <form th:action="@{'/reminders/' + ${reminder.reminderId}}" method="post">
         <input type="hidden" name="userId" th:value="${currentUser.userId}" />
-        <!-- If needed for HTTP method override, uncomment the hidden field below -->
-        <!-- <input type="hidden" name="_method" value="put" /> -->
 
         <!-- Reminder Type -->
         <div class="form-row">
-            <label for="reminderType">Reminder Type:</label>
+            <label th:text="#{reminder.type.with.colon}"  for="reminderType">Reminder Type:</label>
             <select id="reminderType" name="reminderType" required>
-                <option value="">-- Select Type --</option>
-                <option value="VET_APPOINTMENT"
+                <option th:text="#{select.type}"  value="">-- Select Type --</option>
+                <option th:text="#{vet_apt}"  value="VET_APPOINTMENT"
                         th:selected="${reminder.reminderType.name() == 'VET_APPOINTMENT'}">
                     Veterinary Appointment
                 </option>
-                <option value="EVENT"
+                <option th:text="#{event.reminder}"  value="EVENT"
                         th:selected="${reminder.reminderType.name() == 'Event'}">
                     Event
                 </option>
@@ -34,23 +32,23 @@
 
         <!-- Reminder Info -->
         <div class="form-row">
-            <label for="reminderInfo">Reminder Info:</label>
+            <label th:text="#{reminder.info.with.colon}"  for="reminderInfo">Reminder Info:</label>
             <input type="text" id="reminderInfo" name="reminderInfo"
                    th:value="${reminder.reminderInfo}" required/>
         </div>
 
         <!-- Reminder Date & Time -->
         <div class="form-row">
-            <label for="reminderDate">Reminder Date &amp; Time:</label>
+            <label th:text="#{reminder.dateTime}"  for="reminderDate">Reminder Date &amp; Time:</label>
             <input type="datetime-local" id="reminderDate" name="reminderDate"
                    th:value="${reminder.reminderDate != null ? #temporals.format(reminder.reminderDate, 'yyyy-MM-dd''T''HH:mm') : ''}" required/>
         </div>
 
         <!-- Cat Selection -->
         <div class="form-row">
-            <label for="catId">Select Your Cat:</label>
+            <label th:text="#{select.your.cat}"  for="catId">Select Your Cat:</label>
             <select id="catId" name="catId" required>
-                <option value="">-- Select Your Cat --</option>
+                <option th:text="#{select.your.cat.reminder}" value="">-- Select Your Cat --</option>
                 <option th:each="cat : ${cats}"
                         th:value="${cat.catId}"
                         th:text="${cat.catName}"
@@ -61,8 +59,8 @@
 
         <!-- Submit / Cancel Buttons -->
         <div class="form-row">
-            <button type="submit">Update Reminder</button>
-            <a class="create-button" th:href="@{'/reminders/' + ${reminder.reminderId}}">Cancel</a>
+            <button th:text="#{update.reminder}"  type="submit">Update Reminder</button>
+            <a  th:text="#{cancel}" class="create-button" th:href="@{'/reminders/' + ${reminder.reminderId}}">Cancel</a>
         </div>
     </form>
 </div>

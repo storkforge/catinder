@@ -9,19 +9,19 @@
 <body>
 <div th:replace="fragments/header"></div>
 <div class="form-container">
-    <h2>Create post</h2>
+    <h2 th:text="#{create.post}" >Create post</h2>
     <form th:action="@{/posts/add}" th:object="${post}" th:method="post">
         <div class="form-row">
-            <label for="postText">Post Text:</label>
-            <textarea id="postText" name="postText" rows="5" cols="40" placeholder="Write your post here..."
+            <label th:text="#{post.text.with.colon}" for="postText">Post Text:</label>
+            <textarea id="postText" name="postText" rows="5" cols="40" th:placeholder="#{write.your.post.here}"
                       required></textarea>
         </div>
         <div class="form-row">
-            <label for="postImageUrl">Image URL (optional):</label>
+            <label th:text="#{image.url.optional}" for="postImageUrl">Image URL (optional):</label>
             <input type="text" id="postImageUrl" name="postImageUrl" placeholder="http://example.com/image.jpg"/>
         </div>
         <div class="form-row">
-            <button type="submit">Create Post</button>
+            <button th:text="#{create.post}" type="submit">Create Post</button>
         </div>
 
     </form>

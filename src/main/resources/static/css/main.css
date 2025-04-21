@@ -605,6 +605,7 @@ a:hover {
 }
 
 
+
 /* Optional zebra-striping on data rows */
 #cats-table tbody tr:nth-child(even) {
     background-color: rgba(255, 255, 255, 0.5);
@@ -626,6 +627,29 @@ a:hover {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 }
+
+.action-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;  /* Adjust spacing as needed */
+}
+
+.action-item {
+    display: inline-flex;
+    align-items: center;
+}
+
+.separator {
+    margin: 0 4px; /* Fine-tune as needed */
+}
+
+/* Ensure consistent styling for links/buttons */
+.lang-button {
+    text-decoration: none;
+    color: black;
+    font-weight: 600;
+}
+
 
 /*___ /CAT-LIST ___*/
 
@@ -660,20 +684,43 @@ a:hover {
     background-color: rgba(255, 0, 0, 0.3);
     color: #fff;
 }
+
 #cats-table .delete-button {
     background: none;
     border: none;
     color: #505050;
     text-decoration: none;
     cursor: pointer;
-    font: inherit;            /* Inherit font styles from parent */
-    padding: 0;               /* Remove extra spacing */
+    font: inherit;
+    padding: 0;
+    margin: 0;
     font-weight: bold;
+    vertical-align: middle;
+    line-height: 1;
 }
+.action-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
 
 .delete-button:hover {
     color: #003d82;
 }
+
+.lang-button {
+    text-decoration: none;
+    color: #505050;
+    font-weight: 600;
+}
+
+.lang-button:hover {
+    color: #003d82;
+    cursor: pointer;
+}
+
 
 /*___ REMINDER TABLE ___*/
 #reminders-table {
@@ -897,3 +944,124 @@ a:hover {
     background: rgba(0, 0, 0, 0.8);
 }
 /*___ /SLIDESHOW ARROWS ___*/
+/* Overlay covering the entire screen */
+#modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+    z-index: 998; /* Just below the modal */
+}
+
+/* Modal container styles */
+#custom-confirmation {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    z-index: 999; /* On top of the overlay */
+    max-width: 90%;
+    text-align: center;
+}
+
+/* Optional: style the buttons */
+#custom-confirmation button {
+    margin: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#confirm-ok {
+    background-color: #28a745;
+    color: #fff;
+}
+
+#confirm-cancel {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+#event-table .delete-button {
+    background: none;
+    border: none;
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+    font-weight: bold;
+    vertical-align: middle;
+    margin: 0;
+}
+
+#event-table .delete-button:hover {
+    color: #003d82;
+}
+.action-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+
+.separator {
+    margin: 0 4px;
+}
+
+
+/* Overlay covering the entire screen */
+#modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+    z-index: 998;
+}
+
+/* Modal container styles */
+#custom-confirmation {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    max-width: 90%;
+    text-align: center;
+}
+
+/* Style the modal buttons */
+#custom-confirmation button {
+    margin: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#confirm-ok {
+    background-color: #28a745;
+    color: #fff;
+}
+
+#confirm-cancel {
+    background-color: #dc3545;
+    color: #fff;
+}
