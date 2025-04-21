@@ -65,6 +65,10 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute("getReminders")
     public List<Reminder> getReminders(@ModelAttribute("currentUser") User currentUser) {
+        if (currentUser == null) {
+            log.trace("No current user, returning empty reminder list");
+            return List.of();
+        }
         return reminderService.getRemindersByUser(currentUser);
     }
 }
