@@ -8,6 +8,7 @@ import org.example.springboot25.service.UserService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -54,7 +55,11 @@ public class UserGraphQLController {
     }
 
     @MutationMapping
-    @CacheEvict(value = {"users", "usersByUsername", "usersByEmail"}, key = "#userId")
+    @Caching(evict = {
+            @CacheEvict(value = "users", key = "#userId"),
+            @CacheEvict(value = "usersByUsername", allEntries = true),
+            @CacheEvict(value = "usersByEmail", allEntries = true)
+    })
     public boolean deleteUser(@Argument Long userId) {
         try {
             userService.deleteUserById(userId);

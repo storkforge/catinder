@@ -8,17 +8,18 @@ import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.CatMapper;
 import org.example.springboot25.repository.CatRepository;
+import org.example.springboot25.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,15 +29,17 @@ import java.util.stream.Collectors;
 public class CatService {
 
     private final CatRepository catRepository;
+    private final UserRepository userRepository;
     private final CatMapper catMapper;
 
     @Autowired
-    public CatService(CatRepository catRepository, CatMapper catMapper) {
+    public CatService(CatRepository catRepository, UserRepository userRepository, CatMapper catMapper) {
         this.catRepository = catRepository;
+        this.userRepository = userRepository;
         this.catMapper = catMapper;
     }
 
-    @Cacheable("cats")
+    @Cacheable(value = "cats", key = "'allCats'")
     public List<CatOutputDTO> getAllCats() {
         return catRepository.findAll()
                 .stream()
@@ -44,12 +47,19 @@ public class CatService {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable("cats")
-    public List<CatOutputDTO> getAllCatsByUser(User user) {
+    @Cacheable(value = "cats", key = "#userId")
+    public List<CatOutputDTO> getAllCatsByUserId(Long userId) {
+        User user = new User();
+        user.setUserId(userId);
         return catRepository.findAllByUserCatOwner(user)
                 .stream()
                 .map(catMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Deprecated // Prefer getAllCatsByUserId for better cache key safety
+    public List<CatOutputDTO> getAllCatsByUser(User user) {
+        return getAllCatsByUserId(user.getUserId());
     }
 
     public List<Cat> getAllCatsByUserAsEntity(User user) {
@@ -67,8 +77,15 @@ public class CatService {
         return catRepository.findById(catId);
     }
 
-    @CacheEvict(value = {"cats", "cat"}, allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "cats", allEntries = true),
+            @CacheEvict(value = "cat", allEntries = true)
+    })
     public CatOutputDTO createCat(CatInputDTO dto) {
+        if (!userRepository.existsById(dto.getUserId())) {
+            throw new NotFoundException("User not found with id " + dto.getUserId());
+        }
+
         Cat cat = catMapper.toCat(dto);
         return catMapper.toDTO(catRepository.save(cat));
     }
@@ -91,7 +108,10 @@ public class CatService {
         return catMapper.toDTO(catRepository.save(cat));
     }
 
-    @CacheEvict(value = {"cats", "cat"}, allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "cat", key = "#catId"),
+            @CacheEvict(value = "cats", allEntries = true)
+    })
     public void deleteCat(Long catId) throws NotFoundException {
         if (!catRepository.existsById(catId)) {
             throw new NotFoundException("Cat not found with id " + catId);

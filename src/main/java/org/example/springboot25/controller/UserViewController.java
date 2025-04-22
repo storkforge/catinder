@@ -6,34 +6,21 @@ import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
-import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
-import org.example.springboot25.security.CustomUserDetails;
 import org.example.springboot25.security.CustomUserDetailsService;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.example.springboot25.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -66,14 +53,12 @@ public class UserViewController {
     }
 
     @GetMapping("/profile/id/{userId}")
-    public String getUserById(@PathVariable() Long userId, Model model) {
+    public String getUserById(@PathVariable Long userId, Model model) {
         try {
             UserOutputDTO user = userService.getUserDtoById(userId);
-            User userEntity = userMapper.toUser(user);
-            List<CatOutputDTO> cats = catService.getAllCatsByUser(userEntity);
+            List<CatOutputDTO> cats = catService.getAllCatsByUserId(userId);
             model.addAttribute("user", user);
             model.addAttribute("cats", cats);
-
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
@@ -82,7 +67,7 @@ public class UserViewController {
     }
 
     @GetMapping("/profile/{userName}")
-    String getUserByUserName(@PathVariable String userName, Model model) {
+    public String getUserByUserName(@PathVariable String userName, Model model) {
         try {
             User user = userService.findUserByUserName(userName);
             model.addAttribute("user", user);
@@ -94,7 +79,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-email/{userEmail}")
-    String getUserByUserEmail(@PathVariable String userEmail, Model model) {
+    public String getUserByUserEmail(@PathVariable String userEmail, Model model) {
         try {
             User user = userService.findUserByEmail(userEmail);
             model.addAttribute("user", user);
@@ -106,7 +91,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-username/{userName}")
-    String getUsersByUserName(@PathVariable String userName, Model model) {
+    public String getUsersByUserName(@PathVariable String userName, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByUserName("%" + userName + "%");
         if (users.isEmpty())
             model.addAttribute("message", "No users found with username '" + userName + "'.");
@@ -115,7 +100,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-name/{userFullName}")
-    String getUsersByFullName(@PathVariable String userFullName, Model model) {
+    public String getUsersByFullName(@PathVariable String userFullName, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByFullName("%" + userFullName + "%");
         if (users.isEmpty())
             model.addAttribute("message", "No users found for name '" + userFullName + "'.");
@@ -124,7 +109,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-location/{userLocation}")
-    String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
+    public String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByLocation(userLocation);
         if (users.isEmpty())
             model.addAttribute("message", "No users found for location '" + userLocation + "'.");
@@ -142,7 +127,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-role-location")
-    String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
+    public String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for role '" + userRole + "' and location '" + userLocation + "'.");
@@ -151,7 +136,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-cat")
-    String getUsersByCatName(@RequestParam String catName, Model model) {
+    public String getUsersByCatName(@RequestParam String catName, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByCatName(catName);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for cat '" + catName + "'.");
@@ -160,13 +145,11 @@ public class UserViewController {
     }
 
     @GetMapping("/by-search-term/{searchTerm}")
-    String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
+    public String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for search term '" + searchTerm + "'.");
         model.addAttribute("users", users);
         return "user/user-list";
     }
-
-    // Remaining logic remains unchanged as caching is handled at the service layer
 }

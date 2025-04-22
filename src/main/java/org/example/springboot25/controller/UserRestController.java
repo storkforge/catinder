@@ -53,7 +53,7 @@ public class UserRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/id/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(value = "user", key = "#userId")
+    @Cacheable(value = "users", key = "#userId")
     public UserOutputDTO getById(@PathVariable Long userId, Authentication auth) {
         User current = getCurrentUser(auth);
         UserOutputDTO target = userService.getUserDtoById(userId);
@@ -67,7 +67,7 @@ public class UserRestController {
 
     @GetMapping("/username/{userName}")
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable(value = "userByUsername", key = "#userName")
+    @Cacheable(value = "usersByUsername", key = "#userName")
     public UserOutputDTO getByUserName(@PathVariable String userName) {
         return userService.getUserDtoByUserName(userName);
     }
@@ -111,7 +111,7 @@ public class UserRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PutMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value = "user", key = "#userId")
+    @CachePut(value = "users", key = "#userId")
     public UserOutputDTO updateUser(@PathVariable Long userId,
                                     @RequestBody @Valid UserUpdateDTO userUpdateDTO,
                                     Authentication auth) {
@@ -128,7 +128,7 @@ public class UserRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    @CacheEvict(value = "user", key = "#userId")
+    @CacheEvict(value = "users", key = "#userId")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId, Authentication auth) {
         User current = getCurrentUser(auth);
         UserOutputDTO target = userService.getUserDtoById(userId);

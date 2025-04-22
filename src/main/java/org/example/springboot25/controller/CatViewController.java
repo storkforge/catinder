@@ -1,5 +1,6 @@
 package org.example.springboot25.controller;
 
+import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
@@ -38,8 +39,12 @@ public class CatViewController {
     public String listCats(Model model,
                            @AuthenticationPrincipal OAuth2User principal,
                            Authentication authentication) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
         User me = userService.findUserByEmail(principal.getAttribute("email"));
-        List<CatOutputDTO> cats = catService.getAllCatsByUser(me);
+        List<CatOutputDTO> cats = catService.getAllCatsByUserId(me.getUserId());
         model.addAttribute("cats", cats);
         return "cat/cats-list";
     }
@@ -64,8 +69,9 @@ public class CatViewController {
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
+
             User user = userService.findUserByEmail(email);
-            var inputDto = new org.example.springboot25.dto.CatInputDTO();
+            CatInputDTO inputDto = new CatInputDTO();
             inputDto.setUserId(user.getUserId());
             inputDto.setCatName(catDTO.getCatName());
             inputDto.setCatProfilePicture(catDTO.getCatProfilePicture());
@@ -73,9 +79,10 @@ public class CatViewController {
             inputDto.setCatGender(catDTO.getCatGender());
             inputDto.setCatAge(catDTO.getCatAge());
             inputDto.setCatPersonality(catDTO.getCatPersonality());
+
             catService.createCat(inputDto);
         } else {
-            throw new IllegalStateException("Unexpected authentication type: " + principal.getClass().getName());
+            return "redirect:/login";
         }
         return "redirect:/cats";
     }
@@ -92,17 +99,20 @@ public class CatViewController {
     @PostMapping("/{catId}")
     public String updateCat(@PathVariable Long catId, @ModelAttribute("cat") CatOutputDTO catDTO) {
         try {
-            var inputDto = new org.example.springboot25.dto.CatInputDTO();
+            Long currentOwnerId = catService.getCatById(catId)
+                    .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId))
+                    .getUser().getUserId();
+
+            CatInputDTO inputDto = new CatInputDTO();
             inputDto.setCatName(catDTO.getCatName());
             inputDto.setCatProfilePicture(catDTO.getCatProfilePicture());
             inputDto.setCatBreed(catDTO.getCatBreed());
             inputDto.setCatGender(catDTO.getCatGender());
             inputDto.setCatAge(catDTO.getCatAge());
             inputDto.setCatPersonality(catDTO.getCatPersonality());
-            inputDto.setUserId(catDTO.getUserId());
+            inputDto.setUserId(currentOwnerId); // protect ownership
+
             catService.updateCat(catId, inputDto);
-        } catch (NotFoundException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Update failed for cat with id " + catId, e);
         }
