@@ -25,11 +25,13 @@ public class CatMapper {
         cat.setCatProfilePicture(catInputDTO.getCatProfilePicture() != null ?
                 catInputDTO.getCatProfilePicture().trim() : null);
         cat.setCatBreed(catInputDTO.getCatBreed().trim());
+
         if (catInputDTO.getCatGender() != null) {
             cat.setCatGender(CatGender.valueOf(catInputDTO.getCatGender().trim().toUpperCase()));
         } else {
-            cat.setCatGender(null);  // or handle as needed
+            cat.setCatGender(null);
         }
+
         cat.setCatAge(catInputDTO.getCatAge());
         cat.setCatPersonality(catInputDTO.getCatPersonality() != null ?
                 catInputDTO.getCatPersonality().trim() : null);
@@ -41,7 +43,7 @@ public class CatMapper {
         return cat;
     }
 
-    public void updateCatFromDTO(CatUpdateDTO catUpdateDTO, Cat cat) {
+    public void updateCatFromDto(CatUpdateDTO catUpdateDTO, Cat cat) {
         if (catUpdateDTO.getCatName() != null) {
             cat.setCatName(catUpdateDTO.getCatName().trim());
         }
@@ -66,7 +68,7 @@ public class CatMapper {
         }
     }
 
-    public CatOutputDTO toDTO(Cat cat) {
+    public CatOutputDTO toDto(Cat cat) {
         CatOutputDTO catOutputDTO = new CatOutputDTO();
         catOutputDTO.setCatId(cat.getCatId());
         catOutputDTO.setCatName(cat.getCatName());
@@ -75,9 +77,11 @@ public class CatMapper {
         catOutputDTO.setCatGender(cat.getCatGender() != null ? cat.getCatGender().name() : null);
         catOutputDTO.setCatAge(cat.getCatAge());
         catOutputDTO.setCatPersonality(cat.getCatPersonality());
+
         if (cat.getUserCatOwner() != null) {
             catOutputDTO.setUserId(cat.getUserCatOwner().getUserId());
         }
+
         return catOutputDTO;
     }
 }

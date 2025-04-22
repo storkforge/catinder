@@ -53,6 +53,7 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleNotFoundException(NotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
+
     @ExceptionHandler(org.springframework.dao.InvalidDataAccessApiUsageException.class)
     public ResponseEntity<Map<String, String>> handleInvalidDataAccessApiUsageException(
             org.springframework.dao.InvalidDataAccessApiUsageException ex) {
@@ -72,5 +73,10 @@ public class GlobalExceptionHandler {
         return error;
     }
 
-
+    @ExceptionHandler(InvalidInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInvalidInputException(InvalidInputException ex) {
+        logger.warn("InvalidInputException: {}", ex.getMessage());
+        return Map.of("error", "Invalid input: " + ex.getMessage());
+    }
 }
