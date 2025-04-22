@@ -198,16 +198,6 @@
                 <!--                    </excludes>-->
                 <!--                </configuration>-->
             </plugin>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>10.20.1</version>
-                <configuration>
-                    <url>jdbc:postgresql://localhost:5432/mydatabase</url>
-                    <user>myuser</user>
-                    <password>secret</password>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
