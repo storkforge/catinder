@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.CatUpdateDTO;
+import org.example.springboot25.entities.Cat;
+import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.service.CatService;
@@ -26,9 +28,9 @@ import java.util.List;
 public class CatViewController {
 
     private static final Logger log = LoggerFactory.getLogger(CatViewController.class);
-
     private final CatService catService;
     private final UserService userService;
+
     private static final List<String> CAT_BREEDS = Arrays.asList(
             "Siamese", "Persian", "Maine Coon", "Ragdoll", "Bengal",
             "British Shorthair", "Scottish Fold", "Sphynx", "Abyssinian", "Birman"
@@ -55,11 +57,9 @@ public class CatViewController {
 
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
-        Cat cat = new Cat();
-        cat.getCatPhotos().add(new CatPhoto());
-        model.addAttribute("cat", cat);
+        CatInputDTO catInput = new CatInputDTO();
+        model.addAttribute("cat", catInput);
         model.addAttribute("breeds", CAT_BREEDS);
-        model.addAttribute("cat", new CatInputDTO());
         return "cat/creating-a-new-cat-form";
     }
 
@@ -83,14 +83,10 @@ public class CatViewController {
     }
 
     @GetMapping("/{catId}/edit")
-    public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
-        Cat cat = catService.getCatById(catId)
-                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
-        model.addAttribute("breeds", CAT_BREEDS);
-        model.addAttribute("cat", cat);
     public String showEditCatForm(@PathVariable Long catId, Model model) {
         CatOutputDTO existingCat = catService.getCatDtoById(catId);
         CatUpdateDTO updateDTO = new CatUpdateDTO();
+
         updateDTO.setCatName(existingCat.getCatName());
         updateDTO.setCatProfilePicture(existingCat.getCatProfilePicture());
         updateDTO.setCatBreed(existingCat.getCatBreed());
@@ -99,11 +95,11 @@ public class CatViewController {
         updateDTO.setCatPersonality(existingCat.getCatPersonality());
 
         model.addAttribute("cat", updateDTO);
+        model.addAttribute("breeds", CAT_BREEDS);
         model.addAttribute("catId", catId);
         return "cat/existing-edit-cat-form";
     }
 
-    //TODO: Add redirect to id?
     @PostMapping("/{catId}")
     public String updateCat(@PathVariable Long catId,
                             @ModelAttribute("cat") @Valid CatUpdateDTO updateDTO,
