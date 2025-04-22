@@ -1,9 +1,11 @@
 package org.example.springboot25.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.springboot25.mapper.UserMapper;
 import org.example.springboot25.security.CustomOAuth2UserService;
 import org.example.springboot25.security.CustomUserDetailsService;
 import org.example.springboot25.service.CatService;
+import org.example.springboot25.service.ReminderService;
 import org.example.springboot25.service.UserService;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -36,4 +38,8 @@ public class UserTestMockConfig {
     public CustomOAuth2UserService customOAuth2UserService() {
         return Mockito.mock(CustomOAuth2UserService.class);
     }
+
+    @Bean
+    public ReminderService reminderService() {return Mockito.mock(ReminderService.class);}
+
 }
