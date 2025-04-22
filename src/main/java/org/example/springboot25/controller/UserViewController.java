@@ -2,6 +2,7 @@ package org.example.springboot25.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
@@ -66,7 +67,7 @@ public class UserViewController {
         try {
             UserOutputDTO user = userService.getUserDtoById(userId);
             User userEntity = userMapper.toUser(user);
-            List<Cat> cats = catService.getAllCatsByUser(userEntity);
+            List<CatOutputDTO> cats = catService.getAllCatsByUser(userEntity);
             model.addAttribute("user", user);
             model.addAttribute("cats", cats);
 

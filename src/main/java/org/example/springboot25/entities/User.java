@@ -62,6 +62,19 @@ public class User {
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
+    public User () {}
+
+    public User(Long userId, String fullName, String userName, String email, String location, UserRole role, String authProvider) {
+        this.userId = userId;
+        this.userFullName = fullName;
+        this.userName = userName;
+        this.userEmail = email;
+        this.userLocation = location;
+        this.userRole = role;
+        this.userAuthProvider = authProvider;
+    }
+
+
     public Long getUserId() {
         return userId;
     }

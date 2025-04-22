@@ -11,8 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-
 @Controller
 @RequestMapping("/participants")
 public class EventParticipantViewController {
@@ -69,19 +67,21 @@ public class EventParticipantViewController {
     }
 
     @PostMapping("/add")
-    public String addParticipant(@RequestParam Long eventId,
-                                 Principal principal,
+    public String addParticipant(@RequestParam String userName,
+                                 @RequestParam String eventName,
                                  RedirectAttributes redirectAttributes) {
         try {
-            String userName = principal.getName();
-            User user = userService.findUserByUserName(userName);
-            Event event = eventService.getEventById(eventId);
-            eventParticipantService.addParticipant(user.getUserName(), event.getEventName());
+            if (userName == null || userName.isEmpty() || eventName == null || eventName.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Username and event name are required");
+                return "redirect:/participants/add";
+            }
+
+            eventParticipantService.addParticipant(userName, eventName);
             redirectAttributes.addFlashAttribute("success", "You are now attending the event!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/events";
+        return "redirect:/participants/add";
     }
 
     @GetMapping("/delete")
@@ -104,26 +104,6 @@ public class EventParticipantViewController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/participants/delete";
-    }
-
-    @GetMapping("/update")
-    public String showPatchForm() {
-        return "participants/participants-update";
-    }
-
-    @PostMapping("/update")
-    public String patchParticipant(@RequestParam String userName,
-                                   @RequestParam String newUserName,
-                                   @RequestParam String eventName,
-                                   @RequestParam String newEventName,
-                                   RedirectAttributes redirectAttributes) {
-        try {
-            eventParticipantService.patchEventForParticipant(userName, newUserName, eventName, newEventName);
-            redirectAttributes.addFlashAttribute("success", "The participant has been successfully updated.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
-        }
-        return "redirect:/participants/update";
     }
 
 }

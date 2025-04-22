@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,8 +13,9 @@ public class Reminder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reminderId;
 
-    @NotBlank
-    private String reminderType;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ReminderType reminderType;
 
     @NotBlank
     private String reminderInfo;
@@ -34,15 +34,20 @@ public class Reminder {
     @JoinColumn(name = "reminder_cat_id")
     private Cat catReminderCat;
 
+
     public Long getReminderId() {
         return reminderId;
     }
 
-    public String getReminderType() {
+    public void setReminderId(Long reminderId) {
+        this.reminderId = reminderId;
+    }
+
+    public ReminderType getReminderType() {
         return reminderType;
     }
 
-    public void setReminderType(String reminderType) {
+    public void setReminderType(ReminderType reminderType) {
         this.reminderType = reminderType;
     }
 
@@ -77,9 +82,4 @@ public class Reminder {
     public void setCatReminderCat(Cat catReminderCat) {
         this.catReminderCat = catReminderCat;
     }
-
-    public void setReminderId(Long reminderId) {
-        this.reminderId = reminderId;
-    }
-
 }

@@ -12,10 +12,10 @@
 
 <div class="main-content">
 
-    <h2>Random Cat from API</h2>
+    <h2 th:text="#{random.cat.from.api}">Random Cat from API</h2>
 
     <form th:action="@{/catimage}" method="get">
-        <button type="submit" class="create-button">Give me a new cat image</button>
+        <button th:text="#{give.me.a.new.cat.image}" type="submit" class="create-button">Give me a new cat image</button>
     </form>
 
     <div class="form-container" style="margin-top: 30px; text-align: center;">

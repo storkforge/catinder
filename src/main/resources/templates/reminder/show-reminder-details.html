@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catinder - Reminder Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Include the header fragment -->
+<header th:replace="fragments/header :: header"></header>
+
+<!-- Main content container mimicking your event-meta container style -->
+<main class="form-container reminder-meta-container">
+    <!-- Reminder Header -->
+    <h2 th:text="${#messages.msg('reminder.type.' + reminder.reminderType.name())}">Reminder Type</h2>
+
+    <div class="reminder-meta">
+        <strong><label th:text="#{info}" >Info:</label></strong>
+        <p th:text="${reminder.reminderInfo}">Reminder info goes here</p>
+    </div>
+    <div class="reminder-meta">
+        <strong><label  th:text="#{date.and.time.with.colon}" >Date &amp; Time:</label></strong>
+        <p th:text="${#temporals.format(reminder.reminderDate, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</p>
+    </div>
+
+    <!-- Action Buttons Section -->
+    <div class="reminder-meta">
+        <a  th:text="#{back.to.list}" class="create-button" th:href="@{/reminders}">Back to List</a>
+        <a  th:text="#{edit.reminder}" class="create-button" th:href="@{'/reminders/' + ${reminder.reminderId} + '/edit'}">Edit Reminder</a>
+    </div>
+
+    <!-- Feedback Messages Section -->
+    <div class="reminder-meta" id="successMessage">
+        <div class="success-content">
+            <p class="success-message" th:if="${attendSuccess}" th:text="${attendSuccess}"></p>
+            <p class="success-message" th:if="${cancelSuccess}" th:text="${cancelSuccess}"></p>
+            <p class="error-message" th:if="${error}" th:text="${error}"></p>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // Hide the success message after 5 seconds
+    setTimeout(function () {
+        var successContent = document.querySelector('#successMessage .success-content');
+        if (successContent) {
+            successContent.style.opacity = '0';
+        }
+    }, 5000);
+</script>
+</body>
+</html>

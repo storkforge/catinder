@@ -1,16 +1,32 @@
 package org.example.springboot25.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import org.example.springboot25.entities.UserRole;
 
 public class UserUpdateDTO {
 
+    private Long userId;
     private String userFullName;
+
+    @NotBlank
     private String userName;
     private String userEmail;
     private String userLocation;
     private UserRole userRole;
     private String userAuthProvider;
-    private Long userId;
+
+
+    public UserUpdateDTO() {}
+
+    public UserUpdateDTO(String userFullName, String userName, String userEmail,
+                         String userLocation, UserRole userRole, String userAuthProvider) {
+        this.userFullName = userFullName;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userLocation = userLocation;
+        this.userRole = userRole;
+        this.userAuthProvider = userAuthProvider;
+    }
 
     // Getters and Setters
     public String getUserFullName() {

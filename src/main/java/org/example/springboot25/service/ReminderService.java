@@ -1,6 +1,7 @@
 package org.example.springboot25.service;
 
 import org.example.springboot25.entities.Reminder;
+import org.example.springboot25.entities.ReminderType;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.ReminderRepository;
@@ -68,8 +69,13 @@ public class ReminderService {
         Reminder existing = reminderRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Reminder with id " + id + " not found"));
 
-        if (updates.get("reminderType") instanceof String type) {
-            existing.setReminderType(type);
+        if (updates.get("reminderType") instanceof String typeStr) {
+            try {
+                ReminderType reminderType = ReminderType.valueOf(typeStr);
+                existing.setReminderType(reminderType);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Reminder type " + typeStr + " not found");
+            }
         }
         if (updates.get("reminderInfo") instanceof String info) {
             existing.setReminderInfo(info);
@@ -83,5 +89,10 @@ public class ReminderService {
                 updates.containsKey("reminderDate");
 
         return changesMade ? reminderRepository.save(existing) : existing;
+    }
+
+
+    public List<Reminder> getRemindersByUserAndType(User user, ReminderType type) {
+        return reminderRepository.findAllByUserAndReminderType(user, type);
     }
 }

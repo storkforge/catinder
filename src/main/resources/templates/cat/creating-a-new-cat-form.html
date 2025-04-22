@@ -26,10 +26,6 @@
       padding: 1.5em 1em;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    .header-left {
-      display: flex;
-      align-items: center;
-    }
     h1 {
       text-align: left;
       font-size: 45px;
@@ -39,40 +35,6 @@
       0 3px 6px rgba(255, 104, 15, 0.5),
       0 10px 20px rgba(255, 255, 255, 0.1);
       cursor: default;
-    }
-    .cat-emoji {
-      font-size: 1em;
-      text-shadow: none;
-      vertical-align: middle;
-      margin-right: 10px;
-    }
-    .about-link {
-      font-size: 18px;
-      text-decoration: none;
-      color: #e79a6f;
-      margin-left: 20px;
-      font-weight: bold;
-    }
-    .about-link:hover {
-      color: rgba(255, 255, 255, 0.3);
-    }
-    .header-right {
-      margin-right: 20px;
-    }
-    .lang-button {
-      background-color: transparent;
-      border: none;
-      outline: none;
-      border-radius: 20px;
-      padding: 5px 15px;
-      font-size: 16px;
-      color: #fffaef;
-      cursor: pointer;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .lang-button:hover {
-      background-color: rgba(148, 148, 148, 0.3);
-      color: #fff;
     }
     /* Styles for form view */
     .content {
@@ -125,26 +87,36 @@
 <div th:replace="fragments/header"></div>
 
 <div class="content">
-  <h2 th:text="#{new.cat}" >New Cat</h2>
+    <h2 th:text="#{new.cat}">New Cat</h2>
 
   <form th:if="${cat.catId == null}"
         th:action="@{/cats}"
         th:object="${cat}" method="post">
 
-    <label th:text="#{cat.name}" for="catName">Name:</label>
-    <input type="text" id="catName" th:field="*{catName}" required />
+        <label th:text="#{cat.name}" for="catName">Name:</label>
+        <input type="text" id="catName" th:field="*{catName}" required />
 
-    <label th:text="#{cat.breed}" for="catBreed">Breed:</label>
-    <input type="text" id="catBreed" th:field="*{catBreed}" />
-
+      <label th:text="#{cat.breed}" for="catBreed">Breed:</label>
+      <select id="catBreed" th:field="*{catBreed}">
+          <option value="">-- Select Breed --</option>
+          <option th:each="breed : ${breeds}"
+                  th:value="${breed}"
+                  th:text="${breed}"
+                  th:selected="${breed == cat.catBreed}">
+          </option>
+      </select>
     <label th:text="#{cat.gender}" for="catGender">Gender:</label>
-    <input type="text" id="catGender" th:field="*{catGender}" />
+    <select id="catGender" th:field="*{catGender}">
+      <option value="">-- Select Gender --</option>
+      <option value="MALE" th:selected="${cat.catGender == 'MALE'}">Male</option>
+      <option value="FEMALE" th:selected="${cat.catGender == 'FEMALE'}">Female</option>
+    </select>
 
     <label th:text="#{cat.age}" for="catAge">Age:</label>
-    <input type="number" id="catAge" th:field="*{catAge}" min="0" />
+      <input type="number" id="catAge" th:field="*{catAge}" min="0" max="25" />
 
-    <label th:text="#{cat.personality}" for="catPersonality">Personality:</label>
-    <input type="text" id="catPersonality" th:field="*{catPersonality}" />
+        <label th:text="#{cat.personality}" for="catPersonality">Personality:</label>
+        <input type="text" id="catPersonality" th:field="*{catPersonality}" />
 
     <label for="photoUrl">Photo URL:</label>
     <input
@@ -158,7 +130,7 @@
     <button th:text="#{submit}" type="submit">Submit</button>
   </form>
 
-  <a th:text="#{back.to.cats.list}" th:href="@{/cats}">Back to Cats List</a>
+    <a th:text="#{back.to.cats.list}" th:href="@{/cats}">Back to Cats List</a>
 </div>
 </body>
 </html>
