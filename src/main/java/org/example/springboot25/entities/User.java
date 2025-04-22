@@ -65,6 +65,10 @@ public class User implements Serializable {
     public User(long l, String adminUser, String username, String mail, String testCity, UserRole userRole, String google) {
     }
 
+    public User() {
+
+    }
+
     // Getters and Setters
 
     public Long getUserId() {
