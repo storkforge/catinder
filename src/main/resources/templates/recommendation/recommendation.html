@@ -8,15 +8,15 @@
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
-<h2>AI-Powered Recommendations</h2>
+<h2 th:text="#{ai.powered.recommendations}" >AI-Powered Recommendations</h2>
 <div class="table-container" th:if="${recommendations}">
     <table id="event-table">
         <thead>
         <tr class="header-row">
-            <th>Category</th>
-            <th>Product</th>
-            <th>Description</th>
-            <th>Link</th>
+            <th th:text="#{category}" >Category</th>
+            <th th:text="#{product}" >Product</th>
+            <th th:text="#{description}" >Description</th>
+            <th th:text="#{link}" >Link</th>
         </tr>
         </thead>
         <tbody>
@@ -31,7 +31,7 @@
 </div>
 
 <div th:if="${#lists.isEmpty(recommendations)}">
-    <p>No recommendations available at the moment.</p>
+    <p th:text="#{no.rec.available}" >No recommendations available at the moment.</p>
 </div>
 </body>
 </html>

@@ -145,10 +145,15 @@ public class EventViewController {
     }
 
     @PutMapping("/{eventId}")
-    public String updateEvent(@PathVariable Long eventId, @Valid @ModelAttribute Event event, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String updateEvent(@PathVariable Long eventId,
+                              @Valid @ModelAttribute Event event,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "event/event-update";
         }
+        Event existingEvent = eventService.getEventById(eventId);
+        event.setEventDateTime(existingEvent.getEventDateTime());
         try {
             eventService.updateEvent(eventId, event);
             redirectAttributes.addFlashAttribute("update_success", "Event Updated!");
@@ -158,7 +163,6 @@ public class EventViewController {
         }
         return "redirect:/events/" + eventId + "/edit";
     }
-
     @DeleteMapping("/{eventId}")
     String deleteEvent(@PathVariable Long eventId, RedirectAttributes redirectAttributes, Model model) {
         try {

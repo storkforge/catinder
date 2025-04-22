@@ -8,16 +8,16 @@
 </head>
 <body>
 <div th:replace="fragments/header"></div>
-<h2>Posts</h2>
+<h2 th:text="#{posts}" >Posts</h2>
 <div class="header-nav">
-    <a class="submit create-button" th:href="@{/posts/add}">
+    <a th:text="#{create.new.post}" class="submit create-button" th:href="@{/posts/add}">
         <span>Create New Post</span>
     </a>
 </div>
 
 <main class="posts-container">
     <div th:if="${#lists.isEmpty(posts)}">
-        <p>No posts have been added yet.</p>
+        <p th:text="#{no.posts.have.been.added.yet}" >No posts have been added yet.</p>
     </div>
     <div th:if="${!#lists.isEmpty(posts)}">
         <ul class="no-bullets">
@@ -38,14 +38,14 @@
                     <!-- Delete Button: Shown only if the post belongs to the current user -->
                     <div th:if="${post.user.userName == currentUser.userName}">
                         <form th:action="@{'/posts/' + ${post.postId} + '/delete'}" th:method="delete">
-                            <button type="submit" class="delete-button" onclick="return confirm('Delete this post?');">
+                            <button th:text="#{delete}" type="submit" class="delete-button" onclick="return confirm('Delete this post?');">
                                 Delete
                             </button>
                         </form>
                     </div>
                     <!-- Update Button: Shown only if the post belongs to the current user -->
                     <div th:if="${post.user.userName == currentUser.userName}">
-                        <a th:href="@{'/posts/' + ${post.postId} + '/edit'}" class="create-button">
+                        <a th:text="#{update}" th:href="@{'/posts/' + ${post.postId} + '/edit'}" class="create-button">
                             Update
                         </a>
                     </div>
