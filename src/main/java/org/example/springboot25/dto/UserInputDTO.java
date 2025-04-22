@@ -1,12 +1,15 @@
 package org.example.springboot25.dto;
 
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import jakarta.validation.constraints.NotNull;
 import org.example.springboot25.entities.UserRole;
 
 public class UserInputDTO {
+
+
+    private Long userId;
 
     @NotBlank
     private String userFullName;
@@ -21,13 +24,27 @@ public class UserInputDTO {
     @NotBlank
     private String userLocation;
 
-    @NotBlank
+    @NotNull
     private UserRole userRole;
 
     @NotBlank
     private String userAuthProvider;
 
+    public UserInputDTO() {}
+
+    public UserInputDTO(String userFullName, String userName, String userEmail, String userLocation,
+                        UserRole userRole, String userAuthProvider) {
+        this.userFullName = userFullName;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userLocation = userLocation;
+        this.userRole = userRole;
+        this.userAuthProvider = userAuthProvider;
+    }
+
     // Getters and Setters
+    public Long getUserId() {return userId;}
+
     public String getUserFullName() {
         return userFullName;
     }
