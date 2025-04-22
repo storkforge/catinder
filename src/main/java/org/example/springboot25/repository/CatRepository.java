@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CatRepository extends JpaRepository<Cat, Long> {
+    List<Cat> findAllByUserCatOwnerUserId(Long userId);
     List<Cat> findAllByUserCatOwner(User user);
     List<Cat> findByCatNameContainingIgnoreCase(String name);
 }

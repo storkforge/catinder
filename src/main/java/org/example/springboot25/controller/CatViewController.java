@@ -3,6 +3,7 @@ package org.example.springboot25.controller;
 import jakarta.validation.Valid;
 import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
+import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.CatMapper;
@@ -53,10 +54,9 @@ public class CatViewController {
 
     @GetMapping("/{catId}")
     public String showCatDetail(@PathVariable Long catId, Model model) {
-        CatOutputDTO cat = catService.getCatById(catId)
-                .map(catMapper::toDTO)
-                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
-        model.addAttribute("cat", cat);
+        Cat cat = catService.getCatById(catId); // now returns Cat directly
+        CatOutputDTO catDTO = catMapper.toDTO(cat);
+        model.addAttribute("cat", catDTO);
         return "cat/cat-detail";
     }
 
@@ -93,10 +93,9 @@ public class CatViewController {
 
     @GetMapping("/{catId}/edit")
     public String showEditExistingCatForm(@PathVariable Long catId, Model model) {
-        CatOutputDTO cat = catService.getCatById(catId)
-                .map(catMapper::toDTO)
-                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
-        model.addAttribute("cat", cat);
+        Cat cat = catService.getCatById(catId); // no need to map Optional
+        CatOutputDTO catDTO = catMapper.toDTO(cat);
+        model.addAttribute("cat", catDTO);
         return "cat/existing-edit-cat-form";
     }
 

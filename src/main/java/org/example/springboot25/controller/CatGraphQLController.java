@@ -34,9 +34,7 @@ public class CatGraphQLController {
 
     @QueryMapping
     public CatOutputDTO getCatById(@Argument Long catId) {
-        return catService.getCatById(catId)
-                .map(catMapper::toDTO)
-                .orElseThrow(() -> new NotFoundException("Cat with ID " + catId + " not found"));
+        return catMapper.toDTO(catService.getCatById(catId));
     }
 
     @MutationMapping

@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.annotation.Id; // Redis ID
-import org.springframework.data.redis.core.RedisHash;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.Serializable;
@@ -15,13 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@RedisHash("User")
+@Table(name = "users")
 public class User implements Serializable {
 
     private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
-    @jakarta.persistence.Id
-    @Id // Redis ID
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
@@ -65,9 +62,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
-    // ======================
     // Getters and Setters
-    // ======================
 
     public Long getUserId() {
         return userId;
@@ -132,7 +127,7 @@ public class User implements Serializable {
     }
 
     public String getUserPassword() {
-        return null; // never expose it directly
+        return null; // hide hashed password
     }
 
     public void setUserPassword(String userPassword) {

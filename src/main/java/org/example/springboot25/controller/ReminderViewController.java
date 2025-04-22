@@ -119,19 +119,16 @@ public class ReminderViewController {
     }
 
     @PostMapping
-    public String processCreateNewReminderForm(@Valid @ModelAttribute("reminder") ReminderInputDTO reminderInput,
-                                               BindingResult bindingResult,
-                                               @RequestParam Long catId, Principal principal, Model model) {
+    public String processCreateNewReminderForm(@Valid @ModelAttribute("reminder") ReminderInputDTO reminderInput, BindingResult bindingResult, @RequestParam Long catId, Principal principal, Model model) {
         User user = getCurrentUser(principal);
+
         if (bindingResult.hasErrors()) {
-            User current = getCurrentUser(principal);
-            List<Cat> cats = catService.getAllCatsByUserAsEntity(current);
+            List<Cat> cats = catService.getAllCatsByUserAsEntity(user);
             model.addAttribute("cats", cats);
             return "reminder/creating-a-new-reminder-form";
         }
 
-
-        Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+        Cat cat = catService.getCatById(catId); // Directly returns a Cat object now
 
         if (!cat.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException("You do not own this cat");

@@ -53,8 +53,7 @@ public class CatRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{catId}")
     public ResponseEntity<CatOutputDTO> getCatById(@PathVariable Long catId, Authentication auth) {
-        Cat cat = catService.getCatById(catId)
-                .orElseThrow(() -> new NotFoundException("Cat not found"));
+        Cat cat = catService.getCatById(catId); // now throws NotFoundException if not found
 
         User current = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(cat, current)) {
@@ -79,8 +78,7 @@ public class CatRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PutMapping("/{catId}")
     public ResponseEntity<CatOutputDTO> updateCat(@PathVariable Long catId, @RequestBody CatInputDTO catInputDTO, Authentication auth) {
-        Cat existing = catService.getCatById(catId)
-                .orElseThrow(() -> new NotFoundException("Cat not found"));
+        Cat existing = catService.getCatById(catId); // will throw NotFoundException if not found
 
         User currentUser = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(existing, currentUser)) {
@@ -95,8 +93,7 @@ public class CatRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PatchMapping("/{catId}")
     public ResponseEntity<CatOutputDTO> partialUpdateCat(@PathVariable Long catId, @RequestBody CatUpdateDTO catUpdateDTO, Authentication auth) {
-        Cat existing = catService.getCatById(catId)
-                .orElseThrow(() -> new NotFoundException("Cat not found"));
+        Cat existing = catService.getCatById(catId); // now throws NotFoundException if not found
 
         User current = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(existing, current)) {
@@ -110,8 +107,7 @@ public class CatRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @DeleteMapping("/{catId}")
     public ResponseEntity<Void> deleteCat(@PathVariable Long catId, Authentication auth) {
-        Cat cat = catService.getCatById(catId)
-                .orElseThrow(() -> new NotFoundException("Cat not found"));
+        Cat cat = catService.getCatById(catId); // no longer needs orElseThrow
 
         User current = userService.findUserByUserName(auth.getName());
         if (isNotOwnerOrAdmin(cat, current)) {

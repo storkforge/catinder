@@ -49,9 +49,7 @@ public class CatService {
 
     @Cacheable(value = "cats", key = "#userId")
     public List<CatOutputDTO> getAllCatsByUserId(Long userId) {
-        User user = new User();
-        user.setUserId(userId);
-        return catRepository.findAllByUserCatOwner(user)
+        return catRepository.findAllByUserCatOwnerUserId(userId)
                 .stream()
                 .map(catMapper::toDTO)
                 .collect(Collectors.toList());
@@ -73,14 +71,13 @@ public class CatService {
     }
 
     @Cacheable(value = "cat", key = "#catId")
-    public Optional<Cat> getCatById(Long catId) {
-        return catRepository.findById(catId);
+    public Cat getCatById(Long catId) {
+        return catRepository.findById(catId)
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
     }
 
-    // ✅ NEW METHOD: for convenience in controllers and services
     public Cat findCatById(Long catId) {
-        return getCatById(catId)
-                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+        return getCatById(catId);
     }
 
     public Long getOwnerIdOfCat(Long catId) {
@@ -108,10 +105,20 @@ public class CatService {
     @CacheEvict(value = "cats", allEntries = true)
     public CatOutputDTO updateCat(Long catId, CatInputDTO dto) throws NotFoundException {
         return catRepository.findById(catId).map(cat -> {
+            // keep the original owner
+            Long originalOwnerId = cat.getUserCatOwner().getUserId();
+
             catMapper.updateCatFromInputDTO(dto, cat);
+
+            // enforce ownership protection
+            if (!originalOwnerId.equals(cat.getUserCatOwner().getUserId())) {
+                cat.setUserCatOwner(userRepository.getReferenceById(originalOwnerId));
+            }
+
             return catMapper.toDTO(catRepository.save(cat));
         }).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
     }
+
 
     @CachePut(value = "cat", key = "#catId")
     @CacheEvict(value = "cats", allEntries = true)
