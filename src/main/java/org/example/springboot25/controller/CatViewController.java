@@ -1,5 +1,6 @@
 package org.example.springboot25.controller;
 
+import jakarta.validation.Valid;
 import org.example.springboot25.dto.CatInputDTO;
 import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.entities.User;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -60,30 +62,32 @@ public class CatViewController {
 
     @GetMapping("/new")
     public String showCreateNewCatForm(Model model) {
-        model.addAttribute("cat", new CatOutputDTO());
+        model.addAttribute("cat", new CatInputDTO());
         return "cat/creating-a-new-cat-form";
     }
 
     @PostMapping
-    public String processCreateNewCatForm(@ModelAttribute("cat") CatOutputDTO catDTO, Principal principal) {
+    public String processCreateNewCatForm(
+            @Valid @ModelAttribute("cat") CatInputDTO catDTO,
+            BindingResult errors,
+            Principal principal) {
+
+        if (errors.hasErrors()) {
+            return "cat/creating-a-new-cat-form";
+        }
+
         if (principal instanceof OAuth2AuthenticationToken oauthToken) {
             OAuth2User oauth2User = oauthToken.getPrincipal();
             String email = oauth2User.getAttribute("email");
 
             User user = userService.findUserByEmail(email);
-            CatInputDTO inputDto = new CatInputDTO();
-            inputDto.setUserId(user.getUserId());
-            inputDto.setCatName(catDTO.getCatName());
-            inputDto.setCatProfilePicture(catDTO.getCatProfilePicture());
-            inputDto.setCatBreed(catDTO.getCatBreed());
-            inputDto.setCatGender(catDTO.getCatGender());
-            inputDto.setCatAge(catDTO.getCatAge());
-            inputDto.setCatPersonality(catDTO.getCatPersonality());
+            catDTO.setUserId(user.getUserId());
 
-            catService.createCat(inputDto);
+            catService.createCat(catDTO);
         } else {
             return "redirect:/login";
         }
+
         return "redirect:/cats";
     }
 
@@ -99,9 +103,7 @@ public class CatViewController {
     @PostMapping("/{catId}")
     public String updateCat(@PathVariable Long catId, @ModelAttribute("cat") CatOutputDTO catDTO) {
         try {
-            Long currentOwnerId = catService.getCatById(catId)
-                    .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId))
-                    .getUser().getUserId();
+            Long currentOwnerId = catService.getOwnerIdOfCat(catId);
 
             CatInputDTO inputDto = new CatInputDTO();
             inputDto.setCatName(catDTO.getCatName());

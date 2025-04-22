@@ -29,14 +29,14 @@ import java.util.stream.Collectors;
 public class CatService {
 
     private final CatRepository catRepository;
-    private final UserRepository userRepository;
     private final CatMapper catMapper;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CatService(CatRepository catRepository, UserRepository userRepository, CatMapper catMapper) {
+    public CatService(CatRepository catRepository, CatMapper catMapper, UserRepository userRepository) {
         this.catRepository = catRepository;
-        this.userRepository = userRepository;
         this.catMapper = catMapper;
+        this.userRepository = userRepository;
     }
 
     @Cacheable(value = "cats", key = "'allCats'")
@@ -57,7 +57,7 @@ public class CatService {
                 .collect(Collectors.toList());
     }
 
-    @Deprecated // Prefer getAllCatsByUserId for better cache key safety
+    @Deprecated
     public List<CatOutputDTO> getAllCatsByUser(User user) {
         return getAllCatsByUserId(user.getUserId());
     }
@@ -77,10 +77,24 @@ public class CatService {
         return catRepository.findById(catId);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "cats", allEntries = true),
-            @CacheEvict(value = "cat", allEntries = true)
-    })
+    // ✅ NEW METHOD: for convenience in controllers and services
+    public Cat findCatById(Long catId) {
+        return getCatById(catId)
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+    }
+
+    public Long getOwnerIdOfCat(Long catId) {
+        return catRepository.findById(catId)
+                .map(cat -> {
+                    if (cat.getUserCatOwner() == null) {
+                        throw new NotFoundException("Owner not found for cat with id " + catId);
+                    }
+                    return cat.getUserCatOwner().getUserId();
+                })
+                .orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+    }
+
+    @CacheEvict(value = "cats", allEntries = true)
     public CatOutputDTO createCat(CatInputDTO dto) {
         if (!userRepository.existsById(dto.getUserId())) {
             throw new NotFoundException("User not found with id " + dto.getUserId());

@@ -40,10 +40,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // ==========================
-    // INTERNAL METHODS (Entity)
-    // ==========================
-
     @Cacheable(value = "users", key = "#userId")
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
@@ -61,10 +57,6 @@ public class UserService {
         return userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
     }
-
-    // ==========================
-    // EXTERNAL METHODS (DTO)
-    // ==========================
 
     public UserOutputDTO getUserDtoById(Long userId) {
         return userMapper.toDto(findUserById(userId));
@@ -201,8 +193,6 @@ public class UserService {
         user.setUserRole(UserRole.valueOf(newRole.toUpperCase()));
         userRepository.save(user);
     }
-
-    // ========== Filtered List Methods (not cached for now) ==========
 
     public List<UserOutputDTO> getAllUsersByUserName(String userName) {
         return userRepository.findAllByUserNameContainingIgnoreCase(userName).stream()
