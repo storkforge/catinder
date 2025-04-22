@@ -15,15 +15,15 @@
 
     <!-- Event Details Section -->
     <div class="event-meta">
-        <strong><label>Description:</label></strong>
+        <strong><label th:text="#{description.with.colon}" >Description:</label></strong>
         <p th:text="${selectedEvent.eventDescription}">Event description goes here</p>
     </div>
     <div class="event-meta">
-        <strong><label>Location:</label></strong>
+        <strong><label th:text="#{location.with.colon}" >Location:</label></strong>
         <p th:text="${selectedEvent.eventLocation}">Event location goes here</p>
     </div>
     <div class="event-meta">
-        <strong><label>Date &amp; Time:</label></strong>
+        <strong><label th:text="#{date.and.time.with.colon}" >Date &amp; Time:</label></strong>
         <p th:text="${#temporals.format(selectedEvent.eventDateTime, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</p>
     </div>
 
@@ -31,14 +31,16 @@
     <div class="event-meta">
         <!-- Attend Button -->
         <form class="form-row" th:action="@{'/events/event-details/' + ${selectedEvent.eventId} + '/attend'}" method="post" style="display:inline;">
-            <button type="submit" class="create-button">Attend</button>
+            <button th:text="#{attend}" type="submit" class="create-button">Attend</button>
         </form>
         <!-- Cancel Attendance Button -->
         <form class="form-row" th:action="@{'/events/event-details/' + ${selectedEvent.eventId} + '/cancel'}" method="post" style="display:inline;">
-            <button type="submit" class="create-button">Cancel Attendance</button>
+            <button th:text="#{cancel.attendance}" type="submit" class="create-button">Cancel Attendance</button>
         </form>
     </div>
 
+
+<!--    TODO:Kolla attendsuccess-->
     <!-- Feedback Messages -->
     <div class="event-meta" id="successMessage">
         <div class="success-content">
@@ -50,7 +52,7 @@
 
     <!-- Participants List Section -->
     <div class="event-meta">
-        <h3>Participants</h3>
+        <h3 th:text="#{participants}" >Participants</h3>
         <ul class="no-bullets">
             <li th:each="participant : ${selectedEvent.eventParticipants}">
                 <span th:text="${participant.user.userName}">Username</span>

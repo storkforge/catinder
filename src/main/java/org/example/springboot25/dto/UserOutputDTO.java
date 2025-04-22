@@ -15,6 +15,19 @@ public class UserOutputDTO {
     private UserRole userRole;
     private String userAuthProvider;
 
+    public UserOutputDTO() {}
+
+    public UserOutputDTO(Long userId, String userFullName, String userName, String userEmail,
+                         String userLocation, UserRole userRole, String userAuthProvider) {
+        this.userId = userId;
+        this.userFullName = userFullName;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userLocation = userLocation;
+        this.userRole = userRole;
+        this.userAuthProvider = userAuthProvider;
+    }
+
     // Getters and Setters
     public Long getUserId() {
         return userId;

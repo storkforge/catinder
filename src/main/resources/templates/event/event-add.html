@@ -9,29 +9,29 @@
 <body>
 <div th:replace="fragments/header"></div>
 <div class="form-container">
-    <h2>Create event</h2>
+    <h2 th:text="#{create.event}" >Create event</h2>
     <form th:action="@{/events/add}"
           th:object="${event}"
           th:method="post">
 
         <div class="form-row">
-            <label for="eventName">Event Name:</label>
-            <input type="text" id="eventName" name="eventName" placeholder="Enter event name" required class="form-control"/>
+            <label th:text="#{event.name.with.colon}" for="eventName">Event Name:</label>
+            <input type="text" id="eventName" name="eventName" th:placeholder="#{event.name.placeholder}" required class="form-control"/>
         </div>
         <div class="form-row">
-            <label for="eventDescription">Event Description:</label>
-            <textarea id="eventDescription" name="eventDescription" rows="4" placeholder="Enter event description" required class="form-control"></textarea>
+            <label th:text="#{event.description}" for="eventDescription">Event Description:</label>
+            <textarea id="eventDescription" name="eventDescription" rows="4" th:placeholder="#{event.desc.placeholder}" required class="form-control"></textarea>
         </div>
         <div class="form-row">
-            <label for="eventLocation">Event Location:</label>
-            <input type="text" id="eventLocation" name="eventLocation" placeholder="Enter event location" required class="form-control"/>
+            <label th:text="#{event.location.with.colon}" for="eventLocation">Event Location:</label>
+            <input type="text" id="eventLocation" name="eventLocation" th:placeholder="#{event.location.placeholder}" required class="form-control"/>
         </div>
         <div class="form-row">
-            <label for="eventDateTime">Event Date and Time:</label>
+            <label th:text="#{event.date.and.time.with.colon}" for="eventDateTime">Event Date and Time:</label>
             <input type="datetime-local" id="eventDateTime" name="eventDateTime" th:value="${formattedEventDateTime}"/>
         </div>
         <div class="form-row">
-            <button type="submit" >Create Event</button>
+            <button th:text="#{create.event}" type="submit" >Create Event</button>
         </div>
     </form>
 </div>

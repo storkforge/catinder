@@ -4,8 +4,8 @@
     <title>Admin - Error</title>
 </head>
 <body>
-<h1>Something went wrong</h1>
+<h1 th:text="#{oops.something.went.wrong}" >Something went wrong</h1>
 <p th:text="${error}">Default error message</p>
-<a href="/admin/posts">Back to posts</a>
+<a th:text="#{back.to.posts}" href="/admin/posts">Back to posts</a>
 </body>
 </html>

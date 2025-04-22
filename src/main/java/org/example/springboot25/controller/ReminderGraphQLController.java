@@ -8,7 +8,6 @@ import org.example.springboot25.dto.ReminderUpdateDTO;
 import org.example.springboot25.entities.Cat;
 import org.example.springboot25.entities.Reminder;
 import org.example.springboot25.entities.User;
-import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.ReminderMapper;
 import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.ReminderService;
@@ -60,8 +59,7 @@ public class ReminderGraphQLController {
         }
 
         User user = userService.findUserById(input.getUserId());
-        Cat cat = catService.getCatById(input.getCatId())
-                .orElseThrow(() -> new NotFoundException("Cat with ID: " + input.getCatId() + " not found"));
+        Cat cat = catService.findCatById(input.getCatId());
         Reminder reminder = reminderService.createReminder(reminderMapper.toEntityInput(input, user, cat));
         return reminderMapper.toDTO(reminder);
     }
@@ -79,8 +77,7 @@ public class ReminderGraphQLController {
 
         Cat cat;
         if (input.getCatId() != null) {
-            cat = catService.getCatById(input.getCatId())
-                    .orElseThrow(() -> new NotFoundException("Cat with ID: " + input.getCatId() + " not found") );
+            cat = catService.findCatById(input.getCatId());
         } else {
             cat = existing.getCatReminderCat();
         }
