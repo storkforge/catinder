@@ -5,7 +5,6 @@ import org.example.springboot25.entities.ReminderType;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.repository.ReminderRepository;
-import org.example.springboot25.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +90,6 @@ public class ReminderService {
 
         return changesMade ? reminderRepository.save(existing) : existing;
     }
-
 
     public List<Reminder> getRemindersByUserAndType(User user, ReminderType type) {
         return reminderRepository.findAllByUserAndReminderType(user, type);
