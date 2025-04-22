@@ -40,7 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/premium/**").hasRole("PREMIUM")
                         .requestMatchers("/user/**").hasAnyRole("BASIC", "PREMIUM")
-                        .requestMatchers("/", "/about", "/register", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
+                        .requestMatchers("/", "/about", "/contact", "/register", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .rememberMe(remember -> remember
