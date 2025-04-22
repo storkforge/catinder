@@ -8,10 +8,14 @@ services:
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432:5432'
+
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 'catinder:latest'
     depends_on:
       - postgres
-    image: 'catinder:latest'
     env_file:
       - .env
     environment:
