@@ -15,7 +15,7 @@
 <div class="form-container" style="text-align: center;">
     <p th:text="#{enter.event.name.to.see.users}" >Enter the event name to see which users are participating in it.</p>
 
-    <form th:action="@{/eventSearch}" method="get">
+    <form th:action="@{/participants/by-event/search}" method="get">
         <div class="form-row" style="margin: 15px;">
             <label th:text="#{event.name.with.colon}" for="eventName">Event name:</label><br>
             <input th:placeholder="#{eg.catmeeting}" type="text" id="eventName" name="eventName" placeholder="e.g. CatMeeting" required/>

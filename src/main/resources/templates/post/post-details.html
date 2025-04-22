@@ -16,10 +16,10 @@
     <img th:if="${post.postImageUrl}" th:src="${post.postImageUrl}" alt="Post image" class="post-image"/>
 
     <div class="comments-section">
-        <h3>Comments</h3>
+        <h3 th:text="#{comments}" >Comments</h3>
 
         <!-- Om det inte finns några kommentarer -->
-        <p th:if="${#lists.isEmpty(comments)}">No comments yet. Be the first to comment!</p>
+        <p th:if="${#lists.isEmpty(comments)}" th:text="#{no.comments.yet}" >No comments yet. Be the first to comment!</p>
 
         <!-- Lista av kommentarer -->
         <ul th:if="${!#lists.isEmpty(comments)}">

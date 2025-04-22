@@ -8,35 +8,35 @@
 <body>
 <header th:replace="~{fragments/header :: header}"></header>
 
-<h2>Create Reminder</h2>
+<h2 th:text="#{create.reminder}" >Create Reminder</h2>
 
 <div class="form-container">
   <form th:action="@{/reminders}" method="post">
     <input type="hidden" name="userId" th:value="${currentUser.userId}" />
 
     <div class="form-row">
-      <label for="reminderType">Reminder Type:</label>
+      <label th:text="#{reminder.type.with.colon}" for="reminderType">Reminder Type:</label>
       <select id="reminderType" name="reminderType" required>
-        <option value="">-- Select Type --</option>
-        <option value="VET_APPOINTMENT">Veterinary Appointment</option>
-        <option value="EVENT">Event</option>
+        <option th:text="#{select.type}"  value="">-- Select Type --</option>
+        <option th:text="#{vet_apt}"  value="VET_APPOINTMENT">Veterinary Appointment</option>
+        <option th:text="#{event.reminder}"  value="EVENT">Event</option>
       </select>
     </div>
 
     <div class="form-row">
-      <label for="reminderInfo">Reminder Info:</label>
+      <label th:text="#{reminder.info.with.colon}"  for="reminderInfo">Reminder Info:</label>
       <input type="text" id="reminderInfo" name="reminderInfo" required/>
     </div>
 
     <div class="form-row">
-      <label for="reminderDate">Reminder Date &amp; Time:</label>
+      <label th:text="#{reminder.dateTime}" for="reminderDate">Reminder Date &amp; Time:</label>
       <input type="datetime-local" id="reminderDate" name="reminderDate" required/>
     </div>
 
     <div class="form-row">
-      <label for="catId">Select Your Cat:</label>
+      <label th:text="#{select.your.cat}" for="catId">Select Your Cat:</label>
       <select id="catId" name="catId" required>
-        <option value="">-- Select Your Cat --</option>
+        <option th:text="#{select.your.cat.reminder}" value="">-- Select Your Cat --</option>
         <option th:each="cat : ${cats}"
                 th:value="${cat.catId}"
                 th:text="${cat.catName}">
@@ -45,8 +45,8 @@
     </div>
 
     <div class="form-row">
-      <button type="submit">Create Reminder</button>
-      <a class="create-button" th:href="@{/reminders}">Cancel</a>
+      <button th:text="#{create.reminder}" type="submit">Create Reminder</button>
+      <a th:text="#{cancel}" class="create-button" th:href="@{/reminders}">Cancel</a>
     </div>
   </form>
 </div>
