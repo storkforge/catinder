@@ -1,7 +1,9 @@
 <header th:fragment="header"
-        xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+        xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
 
-<div class="header-left">
+    <div class="header-left">
         <h1 class="logo">
             <a th:href="@{/}" title="Home">
                 <span class="cat-emoji">🐱</span>Catinder
@@ -26,12 +28,31 @@
             <img class="header-choice" th:src="@{/images/recommendation_white.png}" alt="Recommendations"/>
             <span th:text="#{recommendations}">Recommendations</span>
         </a>
-        <a class="nav-button" aria-label="Notifications" th:href="@{/reminders}" title="Notifications">
-            <img class="header-choice" th:src="@{/images/reminder_white.png}" alt="Notifications"/>
-            <span th:text="#{notifications}">Notifications</span>
+        <a class="nav-button" aria-label="Reminders"
+            th:href="@{/reminders}" title="Reminders">
+            <svg
+                    id="nav-button-reminder-icon"
+                    viewBox="0 0 26 26"
+                    aria-hidden="true"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width=".75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+            >
+                <path d="M12 24a2.4 2.4 0 0 0 2.4-2.4h-4.8A2.4
+             2.4 0 0 0 12 24zm7.2-6v-5.4c0-3.36-2.04-6.18-5.28-7.08V4.8a1.92
+             1.92 0 1 0-3.84 0v.72C6.84 6.42 4.8 9.24 4.8 12.6V18l-1.92
+             1.92v.48h18.24v-.48L19.2 18z"/>
+            </svg>
+            <span th:text="#{reminders}">Reminders</span>
         </a>
+        <th:block th:each="reminder : ${getReminders}">
+        <span class="reminder-date"
+              th:text="${reminder.reminderDate}"
+              style="display:none"/>
+        </th:block>
     </nav>
-
     <!-- Right: Settings, Login/Logout, Menu, and Language -->
     <div class="header-right">
         <!-- Top row: Settings and Logout/Login -->
@@ -40,7 +61,6 @@
                 <a sec:authorize="isAuthenticated()" class="nav-button settings-button"
                    th:href="@{/users/{userId}/edit(userId=${currentUser.userId})}" title="Settings">
                     <img class="header-choice" th:src="@{/images/profilesettings_white.png}" alt="Settings"/>
-                    <span th:text="#{settings}">Settings</span>
                 </a>
             </div>
             <div sec:authorize="!isAuthenticated()">
@@ -54,25 +74,21 @@
             </div>
         </div>
 
-
         <!-- Bottom row: Menu and Language -->
         <div class="header-bottom">
             <!-- Menu Dropdown (left) -->
-            <div class="dropdown about-dropdown stylized-button">
-                <button class="dropdown-toggle" title="Menu" th:text="#{menu}">Menu</button>
+            <div class="about-dropdown stylized-button">
+                <img th:src="@{/images/menu.png}" alt="Menu" class="dropdown-toggle"/>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" th:href="@{/about}" th:text="#{about.us}">About Us</a>
                     <a class="dropdown-item" th:href="@{/contact}" th:text="#{contact}">Contact</a>
-                    <a class="dropdown-item" th:href="@{/faq}" th:text="#{faq}">FAQ</a>
                     <a class="dropdown-item" th:href="@{/catimage}" th:text="#{random.cat.image}">Random cat image</a>
                 </div>
-
             </div>
 
             <!-- Language Dropdown (right) -->
             <div class="custom-dropdown stylized-button">
                 <button class="custom-dropdown-toggle ">
-                    <!-- Display the current language here -->
                     <span th:text="'&#127760; ' + #{language}">&#127760;Language</span>
                 </button>
                 <ul class="custom-dropdown-menu">
@@ -90,21 +106,23 @@
         </div>
     </div>
     <script>
-        const langButton = document.getElementById('langToggle');
-        const langForm = document.getElementById('langForm');
+        function refreshReminders() {
+            const dates = document.querySelectorAll('.reminder-date');
+            const now = new Date();
+            const reminderIcon = document.getElementById('nav-button-reminder-icon');
+            reminderIcon.style.color = 'white';
 
-        langButton.addEventListener('click', function() {
-            if (langForm.style.display === 'none' || langForm.style.display === '') {
-                langForm.style.display = 'block';
-            } else {
-                langForm.style.display = 'none';
-            }
-        });
-        document.addEventListener('click', function(event) {
-            if (!langButton.contains(event.target) && !langForm.contains(event.target)) {
-                langForm.style.display = 'none';
-            }
-        });
+            dates.forEach(span => {
+                const text = span.textContent.trim();
+                const reminderDate = new Date(text);
+
+                if (reminderDate < now) {
+                    reminderIcon.style.color = '#e94757';
+                }
+            });
+            setTimeout(refreshReminders, 5000);
+        }
+
+        refreshReminders();
     </script>
 </header>
-</html>

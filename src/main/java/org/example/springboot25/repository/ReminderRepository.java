@@ -10,6 +10,4 @@ import java.util.List;
 public interface ReminderRepository extends JpaRepository<Reminder, Long> {
     List<Reminder> findAllByUser(User user);
     List<Reminder> findAllByUserAndReminderType(User user, ReminderType reminderType);
-
 }
-

@@ -91,7 +91,6 @@ public class ReminderService {
         return changesMade ? reminderRepository.save(existing) : existing;
     }
 
-
     public List<Reminder> getRemindersByUserAndType(User user, ReminderType type) {
         return reminderRepository.findAllByUserAndReminderType(user, type);
     }
