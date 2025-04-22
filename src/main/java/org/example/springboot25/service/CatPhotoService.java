@@ -2,6 +2,7 @@ package org.example.springboot25.service;
 
 import org.example.springboot25.entities.CatPhoto;
 import org.example.springboot25.repository.CatPhotoRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

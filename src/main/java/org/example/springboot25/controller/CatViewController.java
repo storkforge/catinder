@@ -39,14 +39,12 @@ public class CatViewController {
         this.catService = catService;
         this.userService = userService;
     }
-
     @GetMapping
     public String showAllCats(Model model) {
         List<CatOutputDTO> cats = catService.getAllCats();
         model.addAttribute("cats", cats);
         return "cat/cats-list";
     }
-
     @GetMapping("/{catId}")
     public String showCatDetail(@PathVariable Long catId, Model model, Principal principal) {
         CatOutputDTO cat = catService.getCatDtoById(catId);
