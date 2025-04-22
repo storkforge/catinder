@@ -63,14 +63,13 @@ public class UserViewController {
     }
 
     @GetMapping("/profile/id/{userId}")
-    public String getUserById(@PathVariable() Long userId, Model model) {
+    public String getUserById(@PathVariable Long userId, Model model) {
         try {
             UserOutputDTO user = userService.getUserDtoById(userId);
             User userEntity = userMapper.toUser(user);
             List<CatOutputDTO> cats = catService.getAllCatsByUser(userEntity);
             model.addAttribute("user", user);
             model.addAttribute("cats", cats);
-
             return "user/user-details";
         } catch (NotFoundException e) {
             model.addAttribute("error", e.getMessage());
@@ -79,7 +78,7 @@ public class UserViewController {
     }
 
     @GetMapping("/profile/{userName}")
-    String getUserByUserName(@PathVariable String userName, Model model) {
+    public String getUserByUserName(@PathVariable String userName, Model model) {
         try {
             User user = userService.findUserByUserName(userName);
             model.addAttribute("user", user);
@@ -91,7 +90,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-email/{userEmail}")
-    String getUserByUserEmail(@PathVariable String userEmail, Model model) {
+    public String getUserByUserEmail(@PathVariable String userEmail, Model model) {
         try {
             User user = userService.findUserByEmail(userEmail);
             model.addAttribute("user", user);
@@ -103,7 +102,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-username/{userName}")
-    String getUsersByUserName(@PathVariable String userName, Model model) {
+    public String getUsersByUserName(@PathVariable String userName, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByUserName("%" + userName + "%");
         if (users.isEmpty())
             model.addAttribute("message", "No users found with username '" + userName + "'.");
@@ -112,7 +111,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-name/{userFullName}")
-    String getUsersByFullName(@PathVariable String userFullName, Model model) {
+    public String getUsersByFullName(@PathVariable String userFullName, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByFullName("%" + userFullName + "%");
         if (users.isEmpty())
             model.addAttribute("message", "No users found for name '" + userFullName + "'.");
@@ -121,7 +120,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-location/{userLocation}")
-    String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
+    public String getUsersByUserLocation(@PathVariable String userLocation, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByLocation(userLocation);
         if (users.isEmpty())
             model.addAttribute("message", "No users found for location '" + userLocation + "'.");
@@ -139,7 +138,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-role-location")
-    String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
+    public String getUsersByRoleAndLocation(@RequestParam String userRole, @RequestParam String userLocation, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByRoleAndLocation(userRole, userLocation);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for role '" + userRole + "' and location '" + userLocation + "'.");
@@ -148,7 +147,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-cat")
-    String getUsersByCatName(@RequestParam String catName, Model model) {
+    public String getUsersByCatName(@RequestParam String catName, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByCatName(catName);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for cat '" + catName + "'.");
@@ -157,7 +156,7 @@ public class UserViewController {
     }
 
     @GetMapping("/by-search-term/{searchTerm}")
-    String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
+    public String getUsersByUserNameOrCatName(@PathVariable String searchTerm, Model model) {
         List<UserOutputDTO> users = userService.getAllUsersByUserNameOrCatName(searchTerm);
         if (users.isEmpty())
             model.addAttribute("message", "No results found for search term '" + searchTerm + "'.");
@@ -185,6 +184,9 @@ public class UserViewController {
 
     @GetMapping("/{userId}/edit")
     public String editUserForm(@PathVariable Long userId, Model model) {
+        User current = userService.findUserByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
+        userService.checkIfOwnerOrAdmin(userId, current);
+
         try {
             UserOutputDTO userDTO = userService.getUserDtoById(userId);
             UserUpdateDTO updateDTO = userMapper.outputToUpdateDTO(userDTO);
@@ -204,6 +206,9 @@ public class UserViewController {
                              BindingResult bindingResult,
                              Model model,
                              RedirectAttributes redirectAttributes) {
+        User current = userService.findUserByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
+        userService.checkIfOwnerOrAdmin(userId, current);
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("userId", userId);
             return "user/user-update";
@@ -212,8 +217,6 @@ public class UserViewController {
             userService.updateUser(userId, updateDTO);
             redirectAttributes.addFlashAttribute("update_success", "Saved!");
 
-            // Refresh Authentication so new role is live
-            // Refresh SecurityContext with updated role
             Authentication oldAuth = SecurityContextHolder.getContext().getAuthentication();
             UserDetails freshDetails = new CustomUserDetails(userMapper.toUser(updateDTO));
 
@@ -242,9 +245,15 @@ public class UserViewController {
     }
 
     @PatchMapping("/{userId}/edit")
-    public String updateUser(@PathVariable Long userId, @RequestParam Map<String, Object> updates, RedirectAttributes redirectAttributes, Model model) {
+    public String updateUser(@PathVariable Long userId,
+                             @RequestParam Map<String, Object> updates,
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
+        User current = userService.findUserByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
+        userService.checkIfOwnerOrAdmin(userId, current);
+
         try {
-            User updatedUser = userService.updateUser(userId, updates);
+            userService.updateUser(userId, updates);
             redirectAttributes.addFlashAttribute("update_success", "Details saved!");
         } catch (AlreadyExistsException | NotFoundException ex) {
             model.addAttribute("error", ex.getMessage());
@@ -253,33 +262,14 @@ public class UserViewController {
         return "redirect:/users/" + userId + "/edit";
     }
 
-    @GetMapping("/{userId}/delete")
-    String showDeleteForm(@PathVariable Long userId, Model model) {
-        try {
-            User user = userService.findUserById(userId);
-            model.addAttribute("user", user);
-            return "user/user-update";
-        } catch (NotFoundException ex) {
-            model.addAttribute("error", ex.getMessage());
-            return "error";
-        }
-    }
-
-    /**
-     * Deletes the currently authenticated user's own account.
-     * <p>
-     * This method handles a DELETE request to allow a user to delete their own account.
-     * It invalidates the session and clears the security context upon success.
-     * If the user is not found, an error message is shown on a dedicated error page.
-     *
-     * @param userId             the ID of the user to delete
-     * @param request            the HTTP request used to invalidate the session
-     * @param redirectAttributes used to pass a success message to the redirect target
-     * @param model              the model for passing error information to the view
-     * @return a redirect to the home page or an error page if deletion fails
-     */
     @DeleteMapping("/{userId}/delete")
-    String deleteOwnAccount(@PathVariable Long userId, HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
+    public String deleteOwnAccount(@PathVariable Long userId,
+                                   HttpServletRequest request,
+                                   RedirectAttributes redirectAttributes,
+                                   Model model) {
+        User current = userService.findUserByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
+        userService.checkIfOwnerOrAdmin(userId, current);
+
         try {
             userService.deleteUserById(userId);
             redirectAttributes.addFlashAttribute("delete_success", "Account deleted!");
@@ -292,16 +282,6 @@ public class UserViewController {
         return "redirect:/";
     }
 
-    /**
-     * Deletes a user from the user list (typically by an admin or moderator).
-     * <p>
-     * This method handles a DELETE request to delete a specific user by ID. If the deletion is successful,
-     * the user is redirected to the user list view with a success message. If any error occurs,
-     * the user is redirected back with an error flag.
-     *
-     * @param id the ID of the user to delete
-     * @return a redirect string to the user list page with query parameters indicating result
-     */
     @DeleteMapping("/delete/{id}")
     public String deleteUserFromList(@PathVariable Long id) {
         try {
