@@ -1,6 +1,14 @@
 package org.example.springboot25.dto;
 
-public class CatOutputDTO {
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
+import org.example.springboot25.entities.CatPhoto;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CatOutputDTO implements Serializable {
     private Long catId;
     private String catName;
     private String catProfilePicture;
@@ -9,6 +17,17 @@ public class CatOutputDTO {
     private Integer catAge;
     private String catPersonality;
     private Long userId;
+
+    @OneToMany(mappedBy = "catPhotoCat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CatPhoto> catPhotos = new ArrayList<>();
+
+    public List<CatPhoto> getCatPhotos() {
+        return catPhotos;
+    }
+
+    public void setCatPhotos(List<CatPhoto> catPhotos) {
+        this.catPhotos = catPhotos;
+    }
 
     public Long getCatId() {
         return catId;

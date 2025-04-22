@@ -15,6 +15,9 @@ import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
@@ -101,6 +104,7 @@ public class CatService {
         catRepository.deleteById(catId);
     }
 
+    @CacheEvict(cacheNames = "cats", key = "#id")
     public void deleteCat(Long catId) {
         deleteCatById(catId);
     }
@@ -113,14 +117,17 @@ public class CatService {
         return catRepository.findAll().stream().map(catMapper::toDto).toList();
     }
 
+    @Cacheable(cacheNames = "cats", key = "#user")
     public List<CatOutputDTO> getAllCatsByUser(User user) {
         return catRepository.findAllByUserCatOwner(user).stream().map(catMapper::toDto).toList();
     }
 
+    @Cacheable(cacheNames = "cats", key = "#name")
     public List<CatOutputDTO> getCatsByName(String name) {
         return catRepository.findByCatNameContainingIgnoreCase(name).stream().map(catMapper::toDto).toList();
     }
 
+    @Cacheable(cacheNames = "catById", key = "#id")
     public CatOutputDTO getCatDtoById(Long id) {
         return catMapper.toDto(findCatById(id));
     }
@@ -136,6 +143,7 @@ public class CatService {
         return saveCat(cat);
     }
 
+    @CachePut(cacheNames = "cats", key = "#dto.id")
     public CatOutputDTO updateCat(Long catId, CatUpdateDTO dto) {
         Cat cat = findCatById(catId);
         log.info("Updating cat: {}", cat.getCatName());
@@ -143,6 +151,7 @@ public class CatService {
         return catMapper.toDto(saveCat(cat));
     }
 
+    @CachePut(cacheNames = "cats", key = "#dto.id")
     public CatOutputDTO partialUpdateCat(Long catId, Map<String, Object> updates) {
         Cat cat = findCatById(catId);
 

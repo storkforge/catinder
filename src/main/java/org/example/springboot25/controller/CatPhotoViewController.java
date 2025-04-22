@@ -6,10 +6,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Controller  // 🔹 Detta gör att Spring vet att den ska hantera HTML-sidor
-public class CatPhotoViewController {
+public class CatPhotoViewController implements Serializable {
 
     private final CatPhotoService catPhotoService;
 
@@ -25,4 +26,3 @@ public class CatPhotoViewController {
         return "catphoto/catphotos";  // 🔹 Returnerar en HTML-sida som heter "catphotos.html"
     }
 }
-

@@ -1,4 +1,8 @@
 services:
+  redis:
+    image: 'redis:7-alpine'
+    ports:
+      - "6379:6379"
   postgres:
     image: 'postgres:latest'
     container_name: 'postgres-db'
@@ -9,13 +13,19 @@ services:
     ports:
       - '5432:5432'
   app:
-    depends_on:
-      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: 'catinder:latest'
+    depends_on:
+      - redis
+      - postgres
     env_file:
       - .env
     environment:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
     ports:
       - "8080:8080"

@@ -8,12 +8,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "app_user")
-public class User {
+public class User implements Serializable {
 
     private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
