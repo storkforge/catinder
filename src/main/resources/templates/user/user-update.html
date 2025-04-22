@@ -9,7 +9,7 @@
 <body>
 <div th:replace="fragments/header"></div>
 <div class="form-container">
-    <h2 th:text="#{update.user}">Update user (userId: <span th:text="${user.userId}"></span>)</h2>
+    <h2 th:text="#{settings}"></h2>
     <form th:action="@{/users/{userId}/edit(userId=${user.userId})}" th:method="put" th:object="${user}">
         <div class="form-row">
             <label th:text="#{username}" for="userName">Username:</label>

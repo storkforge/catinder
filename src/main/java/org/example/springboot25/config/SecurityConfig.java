@@ -10,13 +10,9 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.web.SecurityFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static graphql.introspection.IntrospectionQueryBuilder.build;
 
 @Configuration
 @EnableMethodSecurity
@@ -40,7 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/premium/**").hasRole("PREMIUM")
                         .requestMatchers("/user/**").hasAnyRole("BASIC", "PREMIUM")
-                        .requestMatchers("/", "/about", "/register", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
+                        .requestMatchers("/", "/about","/contact", "/register", "/css/**", "/js/**", "/images/**", "/error/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .rememberMe(remember -> remember
