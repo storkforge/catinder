@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
