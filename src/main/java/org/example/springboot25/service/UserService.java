@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,17 @@ public class UserService {
     // ==========================
     // INTERNAL METHODS (Entity)
     // ==========================
+
+    public void checkIfOwnerOrAdmin(Long targetUserId, User currentUser) {
+        if (targetUserId == null || currentUser == null || currentUser.getUserId() == null) {
+            throw new AccessDeniedException("Missing user data.");
+        }
+        boolean isOwner = targetUserId.equals(currentUser.getUserId());
+        boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("Access denied: not owner or admin.");
+        }
+    }
 
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
