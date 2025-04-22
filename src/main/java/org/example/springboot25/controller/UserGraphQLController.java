@@ -35,8 +35,10 @@ public class UserGraphQLController {
     @PreAuthorize("isAuthenticated()")
     public UserOutputDTO getUserById(@Argument Long userId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = userService.findUserByUserName(auth.getName());
-        userService.checkIfOwnerOrAdmin(userId, currentUser);
+        if (auth != null) {
+            User currentUser = userService.findUserByUserName(auth.getName());
+            userService.checkIfOwnerOrAdmin(userId, currentUser);
+        }
         return userService.getUserDtoById(userId);
     }
 
@@ -50,8 +52,10 @@ public class UserGraphQLController {
     @PreAuthorize("isAuthenticated()")
     public UserOutputDTO updateUser(@Argument Long userId, @Argument("input") @Valid UserUpdateDTO input) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = userService.findUserByUserName(auth.getName());
-        userService.checkIfOwnerOrAdmin(userId, currentUser);
+        if (auth != null) {
+            User currentUser = userService.findUserByUserName(auth.getName());
+            userService.checkIfOwnerOrAdmin(userId, currentUser);
+        }
         return userService.updateUser(userId, input);
     }
 
@@ -59,8 +63,10 @@ public class UserGraphQLController {
     @PreAuthorize("isAuthenticated()")
     public boolean deleteUser(@Argument Long userId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = userService.findUserByUserName(auth.getName());
-        userService.checkIfOwnerOrAdmin(userId, currentUser);
+        if (auth != null) {
+            User currentUser = userService.findUserByUserName(auth.getName());
+            userService.checkIfOwnerOrAdmin(userId, currentUser);
+        }
         userService.deleteUserById(userId);
         return true;
     }

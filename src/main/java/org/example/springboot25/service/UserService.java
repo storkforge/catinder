@@ -46,6 +46,9 @@ public class UserService {
         if (targetUserId == null || currentUser == null || currentUser.getUserId() == null) {
             throw new AccessDeniedException("Missing user data.");
         }
+        if (currentUser.getUserRole() == null) {
+            throw new AccessDeniedException("Access denied: user has no role.");
+        }
         boolean isOwner = targetUserId.equals(currentUser.getUserId());
         boolean isAdmin = currentUser.getUserRole() == UserRole.ADMIN;
         if (!isOwner && !isAdmin) {
