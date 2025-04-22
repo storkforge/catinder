@@ -62,6 +62,9 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
+    public User(long l, String adminUser, String username, String mail, String testCity, UserRole userRole, String google) {
+    }
+
     // Getters and Setters
 
     public Long getUserId() {
