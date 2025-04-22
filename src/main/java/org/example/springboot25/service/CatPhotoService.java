@@ -18,7 +18,6 @@ public class CatPhotoService {
     }
 
     // 🔹 Hämta alla bilder
-    //@Cacheable
     public List<CatPhoto> getAllCatPhotos() {
         return catPhotoRepository.findAll();
     }

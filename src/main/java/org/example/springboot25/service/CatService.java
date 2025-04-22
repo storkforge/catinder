@@ -96,6 +96,7 @@ public class CatService {
         }).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
     }
 
+    @CacheEvict(cacheNames = "deleteCatById", key = "#catId")
     public void deleteCatById(Long catId) {
         if (!catRepository.existsById(catId)) {
             throw new NotFoundException("Cat not found with id " + catId);
@@ -104,7 +105,7 @@ public class CatService {
         catRepository.deleteById(catId);
     }
 
-    @CacheEvict(cacheNames = "cats", key = "#id")
+    @CacheEvict(cacheNames = "deleteCat", key = "#catId")
     public void deleteCat(Long catId) {
         deleteCatById(catId);
     }
@@ -113,16 +114,17 @@ public class CatService {
     // Externa metoder (DTO)
     // ========================
 
+    @Cacheable(cacheNames = "allCats")
     public List<CatOutputDTO> getAllCats() {
         return catRepository.findAll().stream().map(catMapper::toDto).toList();
     }
 
-    @Cacheable(cacheNames = "cats", key = "#user")
+    @Cacheable(cacheNames = "allCatsByUser", key = "#user")
     public List<CatOutputDTO> getAllCatsByUser(User user) {
         return catRepository.findAllByUserCatOwner(user).stream().map(catMapper::toDto).toList();
     }
 
-    @Cacheable(cacheNames = "cats", key = "#name")
+    @Cacheable(cacheNames = "allCatsByName", key = "#name")
     public List<CatOutputDTO> getCatsByName(String name) {
         return catRepository.findByCatNameContainingIgnoreCase(name).stream().map(catMapper::toDto).toList();
     }
@@ -143,7 +145,7 @@ public class CatService {
         return saveCat(cat);
     }
 
-    @CachePut(cacheNames = "cats", key = "#dto.id")
+    @CachePut(cacheNames = "putCat", key = "#catId")
     public CatOutputDTO updateCat(Long catId, CatUpdateDTO dto) {
         Cat cat = findCatById(catId);
         log.info("Updating cat: {}", cat.getCatName());
@@ -151,7 +153,7 @@ public class CatService {
         return catMapper.toDto(saveCat(cat));
     }
 
-    @CachePut(cacheNames = "cats", key = "#dto.id")
+    @CachePut(cacheNames = "patchCat", key = "#catId")
     public CatOutputDTO partialUpdateCat(Long catId, Map<String, Object> updates) {
         Cat cat = findCatById(catId);
 

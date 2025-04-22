@@ -10,7 +10,6 @@ import org.example.springboot25.service.CatService;
 import org.example.springboot25.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -41,7 +40,6 @@ public class CatViewController {
         this.userService = userService;
     }
     @GetMapping
-    @Cacheable(value="allCats")
     public String showAllCats(Model model) {
         List<CatOutputDTO> cats = catService.getAllCats();
         model.addAttribute("cats", cats);
