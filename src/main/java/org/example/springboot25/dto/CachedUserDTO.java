@@ -12,5 +12,4 @@ public class CachedUserDTO implements Serializable {
     private String userEmail;
     private String userLocation;
     private String userRole;
-    // only include fields you actually need in cache
 }
