@@ -1,6 +1,7 @@
 package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
+import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
@@ -39,6 +40,12 @@ public class UserGraphQLController {
         return userService.getUserDtoById(userId);
     }
 
+    @QueryMapping
+    @PreAuthorize("isAuthenticated()")
+    public UserOutputDTO getUserByUserName(@Argument String userName) {
+        return userService.getUserDtoByUserName(userName);
+    }
+
     @MutationMapping
     @PreAuthorize("isAuthenticated()")
     public UserOutputDTO updateUser(@Argument Long userId, @Argument("input") @Valid UserUpdateDTO input) {
@@ -56,5 +63,11 @@ public class UserGraphQLController {
         userService.checkIfOwnerOrAdmin(userId, currentUser);
         userService.deleteUserById(userId);
         return true;
+    }
+
+    @MutationMapping
+    @PreAuthorize("isAuthenticated()")
+    public UserOutputDTO createUser(@Argument("input") @Valid UserInputDTO input) {
+        return userService.addUser(input);
     }
 }
