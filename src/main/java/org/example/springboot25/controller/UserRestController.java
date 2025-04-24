@@ -7,6 +7,9 @@ import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
 import org.example.springboot25.service.UserService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -42,6 +45,7 @@ public class UserRestController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(value = "users")
     public List<UserOutputDTO> getAllUsers() {
         return userService.getAllUsers();
     }
@@ -49,6 +53,7 @@ public class UserRestController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/id/{userId}")
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(value = "users", key = "#userId")
     public UserOutputDTO getById(@PathVariable Long userId, Authentication auth) {
         User current = getCurrentUser(auth);
         UserOutputDTO target = userService.getUserDtoById(userId);
@@ -62,6 +67,7 @@ public class UserRestController {
 
     @GetMapping("/username/{userName}")
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(value = "usersByUsername", key = "#userName")
     public UserOutputDTO getByUserName(@PathVariable String userName) {
         return userService.getUserDtoByUserName(userName);
     }
@@ -105,6 +111,7 @@ public class UserRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @PutMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value = "users", key = "#userId")
     public UserOutputDTO updateUser(@PathVariable Long userId,
                                     @RequestBody @Valid UserUpdateDTO userUpdateDTO,
                                     Authentication auth) {
@@ -121,6 +128,7 @@ public class UserRestController {
     @PreAuthorize("hasAnyRole('BASIC', 'PREMIUM', 'ADMIN')")
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value = "users", key = "#userId")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId, Authentication auth) {
         User current = getCurrentUser(auth);
         UserOutputDTO target = userService.getUserDtoById(userId);

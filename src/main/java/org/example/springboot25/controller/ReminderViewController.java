@@ -1,7 +1,6 @@
 package org.example.springboot25.controller;
 
 import jakarta.validation.Valid;
-import org.example.springboot25.dto.CatOutputDTO;
 import org.example.springboot25.dto.ReminderInputDTO;
 import org.example.springboot25.entities.*;
 import org.example.springboot25.exceptions.NotFoundException;
@@ -75,7 +74,7 @@ public class ReminderViewController {
             throw new AccessDeniedException("You can only edit your own reminder");
         }
         model.addAttribute("reminder", reminder);
-        List<CatOutputDTO> cats = catService.getAllCatsByUser(current);
+        List<Cat> cats = catService.getAllCatsByUserAsEntity(current);
         model.addAttribute("cats", cats);
         model.addAttribute("currentUser", current);
         return "reminder/edit-reminder-details-form";
@@ -95,7 +94,7 @@ public class ReminderViewController {
         }
 
         if (bindingResult.hasErrors()) {
-            List<CatOutputDTO> cats = catService.getAllCatsByUser(currentUser);
+            List<Cat> cats = catService.getAllCatsByUserAsEntity(currentUser);
             model.addAttribute("cats", cats);
             model.addAttribute("currentUser", currentUser);
             return "reminder/edit-reminder-details-form";
@@ -113,26 +112,23 @@ public class ReminderViewController {
     public String showCreateNewReminderForm(Model model, Principal principal) {
         model.addAttribute("reminder", new Reminder());
         User current = getCurrentUser(principal);
-        List<CatOutputDTO> cats = catService.getAllCatsByUser(current);
+        List<Cat> cats = catService.getAllCatsByUserAsEntity(current);
         model.addAttribute("cats", cats);
         model.addAttribute("currentUser", current);
         return "reminder/creating-a-new-reminder-form";
     }
 
     @PostMapping
-    public String processCreateNewReminderForm(@Valid @ModelAttribute("reminder") ReminderInputDTO reminderInput,
-                                               BindingResult bindingResult,
-                                               @RequestParam Long catId, Principal principal, Model model) {
+    public String processCreateNewReminderForm(@Valid @ModelAttribute("reminder") ReminderInputDTO reminderInput, BindingResult bindingResult, @RequestParam Long catId, Principal principal, Model model) {
         User user = getCurrentUser(principal);
+
         if (bindingResult.hasErrors()) {
-            User current = getCurrentUser(principal);
-            List<CatOutputDTO> cats = catService.getAllCatsByUser(current);
+            List<Cat> cats = catService.getAllCatsByUserAsEntity(user);
             model.addAttribute("cats", cats);
             return "reminder/creating-a-new-reminder-form";
         }
 
-
-        Cat cat = catService.getCatById(catId).orElseThrow(() -> new NotFoundException("Cat not found with id " + catId));
+        Cat cat = catService.getCatById(catId); // Directly returns a Cat object now
 
         if (!cat.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException("You do not own this cat");

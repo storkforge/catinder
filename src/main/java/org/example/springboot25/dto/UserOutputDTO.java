@@ -2,6 +2,9 @@ package org.example.springboot25.dto;
 
 import org.example.springboot25.entities.UserRole;
 
+/**
+ * DTO for exposing user details externally without sensitive information.
+ */
 public class UserOutputDTO {
 
     private Long userId;

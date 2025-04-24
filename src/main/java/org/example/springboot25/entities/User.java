@@ -8,12 +8,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "app_user")
-public class User {
+@Table(name = "users")
+public class User implements Serializable {
 
     private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
@@ -33,7 +34,6 @@ public class User {
     @Column(unique = true)
     private String userEmail;
 
-    //@NotBlank
     private String userLocation;
 
     @NotNull
@@ -62,24 +62,24 @@ public class User {
     @OneToMany(mappedBy = "userPostAuthor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> userPost = new ArrayList<>();
 
-    public User () {}
-
-    public User(Long userId, String fullName, String userName, String email, String location, UserRole role, String authProvider) {
-        this.userId = userId;
-        this.userFullName = fullName;
-        this.userName = userName;
-        this.userEmail = email;
-        this.userLocation = location;
-        this.userRole = role;
-        this.userAuthProvider = authProvider;
+    public User(long l, String adminUser, String username, String mail, String testCity, UserRole userRole, String google) {
     }
 
+    public User() {
+
+    }
+
+    // Getters and Setters
 
     public Long getUserId() {
         return userId;
     }
 
-    public @NotBlank String getUserFullName() {
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUserFullName() {
         return userFullName;
     }
 
@@ -134,7 +134,7 @@ public class User {
     }
 
     public String getUserPassword() {
-        return null; // To not expose even the hashed password
+        return null; // hide hashed password
     }
 
     public void setUserPassword(String userPassword) {
@@ -145,12 +145,6 @@ public class User {
         }
     }
 
-    /**
-     * Verifies if the provided raw password matches the stored hashed password
-     *
-     * @param rawPassword the password to check
-     * @return true if the password matches, false otherwise
-     */
     public boolean checkPassword(String rawPassword) {
         return ENCODER.matches(rawPassword, this.userPassword);
     }
@@ -186,6 +180,4 @@ public class User {
     public void setUserPost(List<Post> userPost) {
         this.userPost = userPost;
     }
-
-    public void setUserId(Long userId) { this.userId = userId; }
 }

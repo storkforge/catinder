@@ -1,18 +1,22 @@
 package org.example.springboot25.service;
 
 import jakarta.transaction.Transactional;
+import org.example.springboot25.dto.CachedUserDTO;
 import org.example.springboot25.dto.UserInputDTO;
 import org.example.springboot25.dto.UserOutputDTO;
 import org.example.springboot25.dto.UserUpdateDTO;
 import org.example.springboot25.entities.User;
 import org.example.springboot25.entities.UserRole;
-import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.exceptions.AlreadyExistsException;
+import org.example.springboot25.exceptions.NotFoundException;
 import org.example.springboot25.mapper.UserMapper;
 import org.example.springboot25.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,28 +41,36 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // ==========================
-    // INTERNAL METHODS (Entity)
-    // ==========================
-
-    public User findUserById(Long userId) {
-        return userRepository.findById(userId)
+    @Cacheable(value = "users", key = "#userId")
+    public CachedUserDTO findCachedUserById(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+
+        CachedUserDTO cachedUser = new CachedUserDTO();
+        cachedUser.setUserId(user.getUserId());
+        cachedUser.setUserName(user.getUserName());
+        cachedUser.setUserEmail(user.getUserEmail());
+        cachedUser.setUserLocation(user.getUserLocation());
+        cachedUser.setUserRole(user.getUserRole().name());
+        return cachedUser;
     }
 
+    @Cacheable(value = "usersByUsername", key = "#userName")
     public User findUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
                 .orElseThrow(() -> new NotFoundException("User with username " + userName + " not found"));
     }
 
+    @Cacheable(value = "usersByEmail", key = "#email")
     public User findUserByEmail(String email) {
         return userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
     }
 
-    // ==========================
-    // EXTERNAL METHODS (DTO)
-    // ==========================
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+    }
 
     public UserOutputDTO getUserDtoById(Long userId) {
         return userMapper.toDto(findUserById(userId));
@@ -109,9 +121,11 @@ public class UserService {
         } else {
             user.setUserPassword(null);
         }
+
         return userRepository.save(user);
     }
 
+    @CachePut(value = "users", key = "#userId")
     public UserOutputDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
         User user = findUserById(userId);
 
@@ -127,6 +141,7 @@ public class UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
+    @CachePut(value = "users", key = "#userId")
     public User updateUser(Long userId, Map<String, Object> updates) {
         User existingUser = findUserById(userId);
 
@@ -174,6 +189,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    @CacheEvict(value = { "users", "usersByUsername", "usersByEmail" }, key = "#userId")
     public void deleteUserById(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id " + userId + " not found");

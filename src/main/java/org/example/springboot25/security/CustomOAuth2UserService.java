@@ -22,7 +22,6 @@ import java.util.Collections;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomOAuth2UserService.class);
-
     private final UserService userService;
 
     @Autowired
@@ -39,29 +38,41 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             logger.error("Email not found from OAuth2 provider");
             throw new OAuth2AuthenticationException("Email not found from OAuth2 provider");
         }
+
         try {
+            // Check for existing user
             User user = userService.findUserByEmail(email);
             String newFullName = oAuth2User.getAttribute("name");
-            if (!newFullName.equals(user.getUserFullName())) {
-                user.setUserFullName(newFullName);
+
+            // Only update if name has changed
+            if (newFullName != null && !newFullName.equals(user.getUserFullName())) {
+                UserUpdateDTO updateDTO = new UserUpdateDTO();
+                updateDTO.setUserFullName(newFullName);
+                updateDTO.setUserId(user.getUserId()); // Required for proper cache eviction/update
+                userService.updateUser(user.getUserId(), updateDTO);
+                logger.info("Updated existing user: {}", email);
             }
-            UserUpdateDTO updateDTO = new UserUpdateDTO();
-            updateDTO.setUserFullName(newFullName);
-            userService.updateUser(user.getUserId(), updateDTO);
-            logger.info("Updated existing user: {}", email);
+
         } catch (NotFoundException e) {
+            // Create new user if not found
             User user = new User();
             user.setUserEmail(email);
+
             String fullName = oAuth2User.getAttribute("name");
             user.setUserFullName(fullName != null ? fullName : "");
             user.setUserName(RandomUsernameGenerator.getRandomUsername());
+
             String providerName = userRequest.getClientRegistration().getRegistrationId();
             user.setUserAuthProvider(providerName);
             user.setUserRole(UserRole.BASIC);
-            userService.addUser(user);
+
+            userService.addUser(user); // This will automatically cache new user
             logger.info("Provisioned new user: {}", email);
         }
+
+        // Fetch final user for login session creation
         User finalUser = userService.findUserByEmail(email);
+
         return new DefaultOAuth2User(
                 Collections.singleton(() -> "ROLE_" + finalUser.getUserRole().name()),
                 oAuth2User.getAttributes(),
