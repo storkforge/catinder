@@ -1,30 +1,34 @@
 package org.example.springboot25.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import org.example.springboot25.entities.UserRole;
 
-/**
- * DTO used for updating existing user information.
- */
 public class UserUpdateDTO {
 
     private Long userId;
     private String userFullName;
+
+    @NotBlank
     private String userName;
     private String userEmail;
     private String userLocation;
     private UserRole userRole;
     private String userAuthProvider;
 
+
+    public UserUpdateDTO() {}
+
+    public UserUpdateDTO(String userFullName, String userName, String userEmail,
+                         String userLocation, UserRole userRole, String userAuthProvider) {
+        this.userFullName = userFullName;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userLocation = userLocation;
+        this.userRole = userRole;
+        this.userAuthProvider = userAuthProvider;
+    }
+
     // Getters and Setters
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public String getUserFullName() {
         return userFullName;
     }
@@ -71,5 +75,14 @@ public class UserUpdateDTO {
 
     public void setUserAuthProvider(String userAuthProvider) {
         this.userAuthProvider = userAuthProvider;
+    }
+
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
