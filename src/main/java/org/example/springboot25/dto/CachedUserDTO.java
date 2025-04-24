@@ -1,9 +1,7 @@
 package org.example.springboot25.dto;
 
-import org.springframework.data.redis.core.RedisHash;
 import java.io.Serializable;
 
-@RedisHash("CachedUser")
 public class CachedUserDTO implements Serializable {
 
     private Long userId;
