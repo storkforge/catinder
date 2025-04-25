@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalRESTExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(org.example.springboot25.exceptions.GlobalExceptionHandler.class);
 
@@ -27,17 +27,24 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleConflict(ConflictException ex) {
         logger.warn("ConflictException: {} ", ex.getMessage());
+    // 404 – Generell
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFoundException(NotFoundException ex) {
         return Map.of("error", ex.getMessage());
     }
 
+    // 400 – Valideringsfel (t.ex. @NotBlank)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationErrors(MethodArgumentNotValidException ex) {
         logger.warn("MethodArgumentNotValidException: {} ", ex.getMessage());
         Map<String, String> errors = new HashMap<>();
+
         ex.getBindingResult().getFieldErrors().forEach(
                 error -> errors.put(error.getField(), error.getDefaultMessage())
         );
+
         return errors;
     }
 
